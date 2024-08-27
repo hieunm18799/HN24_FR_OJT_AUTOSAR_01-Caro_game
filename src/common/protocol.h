@@ -4,9 +4,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/socket.h>
 
 #define MAX_LENGTH 255
-typedef enum REQ_OPCODE{
+#define BOARD_LENGTH 10
+typedef enum REQ_OPCODE {
     // close terminal event
     CLOSE,
     //login
@@ -21,10 +23,10 @@ typedef enum REQ_OPCODE{
     GET_REPLAYS,
     // admin
     GET_USERS,
-    GET_GAMES
-} REQ_OPCODE; 
+    GET_GAMES,
+} REQ_OPCODE;
 
-typedef enum RES_OPCODE{
+typedef enum RES_OPCODE {
     // error
     SYNTAX_ERROR,
     // login
@@ -48,6 +50,36 @@ typedef enum RES_OPCODE{
     OTHER_PLAYER_WIN,
 } RES_OPCODE;
 
+// Request string
+#define STRING_CLOSE "CLOSE"
+#define STRING_SIGN_UP "SIGN_UP"
+#define STRING_SIGN_IN "SIGN_IN"
+#define STRING_SIGN_OUT "SIGN_OUT"
+#define STRING_FIND_GAME "FIND_GAME"
+#define STRING_PICK "PICK"
+#define STRING_QUIT "QUIT"
+#define STRING_GET_REPLAYS "GET_REPLAYS"
+#define STRING_GET_USERS "GET_USERS"
+#define STRING_GET_GAMES "GET_GAMES"
+// Response string
+#define STRING_SYNTAX_ERROR "SYNTAX_ERROR"
+#define STRING_SIGN_UP_INPUT_WRONG "SIGN_UP_INPUT_WRONG"
+#define STRING_USERNAME_NOT_EXISTED "USERNAME_NOT_EXISTED"
+#define STRING_WRONG_PASSWORD "WRONG_PASSWORD"
+#define STRING_USERNAME_EXISTED "USERNAME_EXISTED"
+#define STRING_ACCOUNT_BUSY "ACCOUNT_BUSY"
+#define STRING_SIGN_IN_SUCCESS "SIGN_IN_SUCCESS"
+#define STRING_SIGN_UP_SUCCESS "SIGN_UP_SUCCESS"
+#define STRING_SIGN_OUT_SUCCESS "SIGN_OUT_SUCCESS"
+#define STRING_DISCONNECTED "DISCONNECTED"
+#define STRING_WAITING_PLAYER "WAITING_PLAYER"
+#define STRING_GAME_START "GAME_START"
+#define STRING_YOUR_TURN "YOUR_TURN"
+#define STRING_OTHER_PLAYER_TURN "OTHER_PLAYER_TURN"
+#define STRING_PICK_FAIL "PICK_FAIL"
+#define STRING_PICK_SUCCESS "PICK_SUCCESS"
+#define STRING_YOU_WIN "YOU_WIN"
+#define STRING_OTHER_PLAYER_WIN "OTHER_PLAYER_WIN"
 typedef struct Request {
     REQ_OPCODE code;
     char message[MAX_LENGTH];
@@ -58,6 +90,9 @@ typedef struct Response {
     char message[MAX_LENGTH];
     char data[MAX_LENGTH];
 } Response;
+
+Request *createRequest();
+Response *createResponse();
 
 int sendReq(int socket, Request *buff, int size, int flags);
 int recvReq(int socket, Request *buff, int size, int flags); 

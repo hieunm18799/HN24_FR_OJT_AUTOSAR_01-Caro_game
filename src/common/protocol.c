@@ -1,7 +1,20 @@
-#include <sys/socket.h>
 #include "protocol.h"
 
 #define BUFF_SIZE 255
+
+Request *createRequest() {
+    Request *ret = (Request *)malloc(sizeof(Request));
+    if (ret == NULL)
+        perror("MEMORY LEAKED!");
+    return ret;
+}
+
+Response *createResponse() {
+    Response *ret = (Response *)malloc(sizeof(Response));
+    if (ret == NULL)
+        perror("MEMORY LEAKED!");
+    return ret;
+}
 
 int recvReq(int socket, Request *buff, int size, int flags) {
     int n = recv(socket, buff, size, flags);

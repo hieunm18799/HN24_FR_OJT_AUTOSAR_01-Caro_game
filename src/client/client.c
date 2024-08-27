@@ -3,17 +3,17 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-// For ..
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 #include "protocol.h"
 
-#define BUFF_SIZE 255
-
 void recv_handler(int serverfd);
+void handle_sigint(int sig);
 
 int main(int argc, char const *argv[]) {
+    signal(SIGINT, handle_sigint);
     // input: IPv4 + Port
 	if(argc != 3) {
 		printf("Please input IP address and port number\n");
@@ -51,7 +51,7 @@ void recv_handler(int serverfd) {
     
     while (1)
     {
-
+        signin(serverfd, "hieu", "hieu");
         rcvBytes = recvRes(serverfd, res, sizeof(Response), 0);
         if (rcvBytes < 0) {
             perror("\nError: ");
@@ -65,4 +65,9 @@ void recv_handler(int serverfd) {
 
     close(serverfd);
     return;
+}
+
+void handle_sigint(int sig) {
+    printf("\nCaught signal %d (SIGINT), exiting...\n", sig);
+    exit(0);
 }

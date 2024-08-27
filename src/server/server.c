@@ -10,15 +10,19 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "users.h"
 #include "protocol.h"
 
 #define MAX_CLIENT 20
 
-fd_set masterfds;
+User *global_users = NULL;
+
+fd_set masterfds; // tập readfds để check các socket, 1 tập để lưu lại nhưng thay đổi của tập readfds.
 fd_set readfds;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+    initializeUser();
+
     // input: Port
 	if(argc != 2) {
 		printf("Please input port number\n");
@@ -31,18 +35,15 @@ int main(int argc, char *argv[])
     
     // Tao server socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1)
-    {
+    if (sockfd == -1) {
         perror("CREATE SOCKET");
         exit(0);
     }
     // Set reuse option
-    int i = 1;
-    int check = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(int));
+    int tempfd = 1;
+    int check = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &tempfd, sizeof(int));
     if (check == -1)
-    {
         perror("Set reuse");
-    }
 
     //Step 2: Bind address to socket
     bzero(&servaddr, sizeof(servaddr));
@@ -50,16 +51,14 @@ int main(int argc, char *argv[])
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(port_number);
 
-    if ((bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr))) != 0)
-    {
+    if ((bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr))) != 0) {
         perror("BLIND");
         exit(0);
     }
     
     // Step 3: listen to sockfd
     check = listen(sockfd, 10);
-    if (check == -1)
-    {
+    if (check == -1) {
         perror("Listen");
         exit(1);
     }
@@ -75,15 +74,13 @@ int main(int argc, char *argv[])
     struct timeval timeout;
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
-    //fd_set masterfds; // tập readfds để check các socket, 1 tập để lưu lại nhưng thay đổi của tập readfds.
     FD_ZERO(&masterfds);
     FD_ZERO(&readfds);
     FD_SET(sockfd, &masterfds); // add serverSock vào tập masterfds.
 
     int max_fd = sockfd;
     int n_select;
-    do
-    {
+    do {
         memcpy(&readfds, &masterfds, sizeof(masterfds)); // Copy masterfds vao readfds để đợi sự kiện
         n_select = select(max_fd + 1, &readfds, NULL, NULL, &timeout);
         // Hàm này sẽ block chương trình đến khi có 1 sự kiên ready to read xảy ra
@@ -94,15 +91,11 @@ int main(int argc, char *argv[])
         else if (n_select == 0) {
             // No connect/message
         }
-        else
-        {
-            for (i = 0; i <= max_fd; i++) // Duyệt tất cả các socket đến max_fd.
-            {
-                if (FD_ISSET(i, &readfds)) // Nếu serverSock có sự kiện ready to read nghĩa là nó có kết nối mới.
-                {
+        else {
+            for (tempfd = 0; tempfd <= max_fd; tempfd++) {// Duyệt tất cả các socket đến max_fd.
+                if (FD_ISSET(tempfd, &readfds)) {// Nếu serverSock có sự kiện ready to read nghĩa là nó có kết nối mới.
                     int close_fd = 0; // Kiểm tra xem socket có nên được đóng sau khi xử lý không
-                    if (i == sockfd)
-                    {
+                    if (tempfd == sockfd) {
                         int newCon = accept(sockfd, (struct sockaddr *)&clieaddr, &len); // Chấp nhận kết nối đó
                         printf("New connection \n");
 
@@ -110,20 +103,18 @@ int main(int argc, char *argv[])
                         if (newCon > max_fd)
                             max_fd = newCon;
                     }
-                    else
-                    {
-                        Request *req = (Request *)malloc(sizeof(Request));
-                        Response *res = (Response *)malloc(sizeof(Response));
-                        printf("Receive data in socket %d\n", i);
-                        int nrecv = recv(i, req, sizeof(Request), 0);
-                        if (nrecv == -1)
-                        {
-                            printf("In socket %d\n", i);
+                    else {
+                        Request *req = createRequest();
+                        Response *res = createResponse();
+                        
+                        printf("Receive data in socket %d\n", tempfd);
+                        int nrecv = recv(tempfd, req, sizeof(Request), 0);
+                        if (nrecv == -1) {
+                            printf("In socket %d\n", tempfd);
                             perror("RECEIVE");
                             close_fd = 1;
                         }
-                        else
-                        {
+                        else {
                             switch (req->code)
                             {
                             default:
@@ -133,14 +124,14 @@ int main(int argc, char *argv[])
                         free(req);
                         free(res);
                     }
-                    if (close_fd == 1)
-                    {
-                        FD_CLR(i, &masterfds);
-                        close(i);
+                    if (close_fd == 1) {
+                        FD_CLR(tempfd, &masterfds);
+                        close(tempfd);
                     }
                 }
             }
         }
     } while (1);
+
     return 0;
 }
