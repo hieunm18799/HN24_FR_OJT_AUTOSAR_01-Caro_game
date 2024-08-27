@@ -11,7 +11,7 @@ MODEL_SOURCE_DIR = $(SOURCE_DIR)/model
 VIEW_SOURCE_DIR = $(SOURCE_DIR)/view
 CONTROL_SOURCE_DIR = $(SOURCE_DIR)/control
 
-CFLAGS = -Wall -Wextra -I./$(COMMON_SOURCE_DIR) -I./$(MODEL_SOURCE_DIR) -I./$(VIEW_SOURCE_DIR) -I./$(COMMON_SOURCE_DIR)
+CFLAGS = -Wall -Wextra -pthread -I./$(COMMON_SOURCE_DIR) -I./$(MODEL_SOURCE_DIR) -I./$(VIEW_SOURCE_DIR) -I./$(COMMON_SOURCE_DIR)
 
 # Find all source files dynamically
 CLIENT_SOURCE_FILES = $(shell find $(CLIENT_SOURCE_DIR) -name '*.c')

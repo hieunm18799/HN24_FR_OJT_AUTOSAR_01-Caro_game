@@ -7,10 +7,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <pthread.h>
 #include "protocol.h"
 
-void recv_handler(int serverfd);
+void *recv_handler(int serverfd);
 void handle_sigint(int sig);
+void startGUI(int sockfd);
 
 int main(int argc, char const *argv[]) {
     signal(SIGINT, handle_sigint);
@@ -39,13 +41,15 @@ int main(int argc, char const *argv[]) {
         perror("CONNECT_ERROR");
         exit(0);
     }
-    recv_handler(sockfd);
+    pthread_t tid;
+    pthread_create(&tid, NULL, &recv_handler, &sockfd);
+    startGUI(sockfd);
 
     close(sockfd);
     return 0;
 }
 
-void recv_handler(int serverfd) {
+void *recv_handler(int serverfd) {
     int rcvBytes;
     Response *res = (Response *)malloc(sizeof(Response));
     
@@ -64,10 +68,18 @@ void recv_handler(int serverfd) {
     }
 
     close(serverfd);
-    return;
 }
 
 void handle_sigint(int sig) {
     printf("\nCaught signal %d (SIGINT), exiting...\n", sig);
     exit(0);
+}
+
+void startGUI(int sockfd) {
+    while (1) {
+        processLoginScreen(sockfd);
+        // Here you can add the logic to handle screen transitions.
+        // For example, call processLoginScreen() when Sign In is selected.
+        // Or processSignupScreen() when Sign Up is selected.
+    }
 }

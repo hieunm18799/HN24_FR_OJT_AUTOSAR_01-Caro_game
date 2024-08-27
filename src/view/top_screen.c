@@ -31,7 +31,7 @@ void drawTopLoginedScreen(){
 }
 
 // Function to handle user input for username and password during login
-void enterCredentials(char *username, char *password) {
+void enterCredentials(int sockfd, char *username, char *password) {
     COORD coord = {12, 6};  // Position of the username input field in the console
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
     scanf("%s", username);
@@ -57,12 +57,13 @@ void enterCredentials(char *username, char *password) {
             printf("*");  // Print asterisks instead of the actual character
         }
     }
-    printf("\n%s",username);
-    printf("\n%s",password);
+    // printf("\n%s",username);
+    // printf("\n%s",password);
+    signin(int sockfd, char* username, char* password);
 }
 
 // Function to process login screen events
-void processLoginScreen() {
+void processLoginScreen(int sockfd) {
     // Add the logic to handle login screen clicks and inputs here
     HANDLE hInput;
     DWORD events;
@@ -87,7 +88,7 @@ void processLoginScreen() {
                 if (pos.Y == 8 && (pos.X >= 23 && pos.X <= 34)) {
                     printf("You clicked Sign In at (%d, %d)\n", pos.X, pos.Y);
                     drawLoginScreen();
-                    enterCredentials(signin_username, signin_password);  // Enter username and password
+                    enterCredentials(sockfd, signin_username, signin_password);  // Enter username and password
                     break;
                 }
                 else if (pos.Y == 12 && (pos.X >= 23 && pos.X <= 34)) {
