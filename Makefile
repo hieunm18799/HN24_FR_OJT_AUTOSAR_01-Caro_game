@@ -1,6 +1,5 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -I./common -I./model -I./view -I./control
 
 # Directories
 SOURCE_DIR = src
@@ -11,6 +10,8 @@ COMMON_SOURCE_DIR = $(SOURCE_DIR)/common
 MODEL_SOURCE_DIR = $(SOURCE_DIR)/model
 VIEW_SOURCE_DIR = $(SOURCE_DIR)/view
 CONTROL_SOURCE_DIR = $(SOURCE_DIR)/control
+
+CFLAGS = -Wall -Wextra -I./$(COMMON_SOURCE_DIR) -I./$(MODEL_SOURCE_DIR) -I./$(VIEW_SOURCE_DIR) -I./$(COMMON_SOURCE_DIR)
 
 # Find all source files dynamically
 CLIENT_SOURCE_FILES = $(shell find $(CLIENT_SOURCE_DIR) -name '*.c')
