@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 
-#define MAX_LENGTH 255
+#define MAX_LENGTH 256
 #define BOARD_LENGTH 10
 typedef enum REQ_OPCODE {
     // close terminal event
@@ -81,14 +81,14 @@ typedef enum RES_OPCODE {
 #define STRING_YOU_WIN "YOU_WIN"
 #define STRING_OTHER_PLAYER_WIN "OTHER_PLAYER_WIN"
 typedef struct Request {
-    REQ_OPCODE code;
     char message[MAX_LENGTH];
+    REQ_OPCODE code;
 } Request;
 
 typedef struct Response {
-    RES_OPCODE code;
     char message[MAX_LENGTH];
     char data[MAX_LENGTH];
+    RES_OPCODE code;
 } Response;
 
 Request *createRequest();
