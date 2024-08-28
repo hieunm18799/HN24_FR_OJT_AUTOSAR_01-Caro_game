@@ -1,157 +1,164 @@
-#include <stdio.h>
-#include <windows.h>
 #include <conio.h>
+#include <windows.h>
 #include <top_screen.h>
-#include <sign_in.h>
-#include <sign_up.h>
 
-void drawTopNotLoginScreen() {
-    system("cls");  // Clear the console
-    printf("************************************************************\n");
-    printf("*                                                          *\n");
-    printf("*                                                          *\n");
-    printf("*                        Caro Game                         *\n");
-    printf("*                                                          *\n");
-    printf("*                                                          *\n");
-    printf("*                                                          *\n");
-    printf("*                      ************                        *\n");
-    printf("*                      *  Sign in  *                       *\n");
-    printf("*                      ************                        *\n");
-    printf("*                                                          *\n");
-    printf("*                      ************                        *\n");
-    printf("*                      *  Sign up  *                       *\n");
-    printf("*                      ************                        *\n");
-    printf("*                                                          *\n");
-    printf("*                                                          *\n");
-    printf("************************************************************\n");
-}
-
-void drawTopLoginedScreen(){
-
-}
-
-// Function to handle user input for username and password during login
-void enterCredentials(char *username, char *password) {
-    COORD coord = {12, 6};  // Position of the username input field in the console
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    scanf("%s", username);
-
-    coord.Y = 7;  // Position of the password input field in the console
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    // Handle password input to hide the characters
-    int i = 0;
-    char ch;
-    while (1) {
-        ch = _getch();  // Get input without echoing to console
-        if (ch == 13) { // Enter key
-            password[i] = '\0';
-            break;
-        } else if (ch == 8) { // Backspace key
-            if (i > 0) {
-                i--;
-                printf("\b \b");  // Move back, overwrite with space, move back again
-            }
-        } else {
-            password[i] = ch;
-            i++;
-            printf("*");  // Print asterisks instead of the actual character
-        }
-    }
-    printf("\n%s",username);
-    printf("\n%s",password);
 }
 
-// Function to process login screen events
-void processLoginScreen() {
-    // Add the logic to handle login screen clicks and inputs here
+void drawInitialUI() {
+    system("cls");
+    gotoxy(38, 8);
+    printf("Caro Game");
+    
+    gotoxy(35, 10);
+    printf("[ Sign in ]");
+    
+    gotoxy(35, 12);
+    printf("[ Sign up ]");
+
+    currentScreen = 0; // Đặt màn hình hiện tại là màn hình ban đầu
+}
+
+// Hàm xử lý sự kiện click chuột
+void handleMouseClick() {
     HANDLE hInput;
     DWORD events;
     INPUT_RECORD inputRecord;
-    char signin_username[50];
-    char signin_password[50];
-    char signup_username[50];
-    char signup_password[50];
-    char sigup_reenterPassword[50];
 
     hInput = GetStdHandle(STD_INPUT_HANDLE);
     SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 
-    while (1) {
-        ReadConsoleInput(hInput, &inputRecord, 1, &events);
+    // Đọc sự kiện chuột
+    if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
         if (inputRecord.EventType == MOUSE_EVENT) {
             MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
             if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                COORD pos = mouseEvent.dwMousePosition;
-
-                // Handle "Sign In" button click
-                if (pos.Y == 8 && (pos.X >= 23 && pos.X <= 34)) {
-                    printf("You clicked Sign In at (%d, %d)\n", pos.X, pos.Y);
-                    drawLoginScreen();
-                    enterCredentials(signin_username, signin_password);  // Enter username and password
-                    break;
-                }
-                else if (pos.Y == 12 && (pos.X >= 23 && pos.X <= 34)) {
-                    printf("You clicked Sign In at (%d, %d)\n", pos.X, pos.Y);
-                    drawSignupScreen();
-                    enterSignupCredentials(signup_username, signup_password, sigup_reenterPassword);
-                    break;
-                }
-                else if (pos.Y == 15 && (pos.X >= 28 && pos.X <= 35)){
-                    printf("You clicked Back at (%d, %d)\n", pos.X, pos.Y);
-                    vdrawTopNotLoginScreen();
-                    break;
-                }
+                MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
+                Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
+                Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
             }
         }
     }
 }
 
-void enterSignupCredentials(char *username, char *password, char *reenterPassword) {
-    COORD coord = {12, 6};  // Position of the username input field in the console
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    scanf("%s", username);
+void handleClickOnInitialScreen() {
+    if (MousePos.Y == 10 && MousePos.X >= 35 && MousePos.X <= 45) {
+        drawSignInUI(); // Mở giao diện đăng nhập
+        enterSigninCredentials(signin_username, signin_password);   // Hàm nhập dữ liệu trong giao diện đăng nhập
+    } else if (MousePos.Y == 12 && MousePos.X >= 35 && MousePos.X <= 45) {
+        drawSignUpUI(); // Mở giao diện đăng ký
+        enterSignupCredentials(signup_username, signup_password, signup_reenterPassword);   // Hàm nhập dữ liệu trong giao diện đăng ký
+    }
+}
 
-    coord.Y = 7;  // Position of the password input field in the console
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-
-    int i = 0;
+void enterSigninCredentials(char *username, char *password) {
     char ch;
-    while (1) {
-        ch = _getch();  // Get input without echoing to console
-        if (ch == 13) { // Enter key
-            password[i] = '\0';
-            break;
-        } else if (ch == 8) { // Backspace key
+    int i = 0;
+
+    // Input username
+    gotoxy(32, 10);  // Position of the username input field
+    i = 0;
+    while ((ch = _getch()) != '\r') { // Enter key
+        if (ch == '\b') { // Backspace key
             if (i > 0) {
                 i--;
-                printf("\b \b");  // Move back, overwrite with space, move back again
+                printf("\b \b"); // Move back, overwrite with space, move back again
+            }
+        } else if (ch != 0 && ch != '\xE0') { // Ignore special keys
+            username[i] = ch;
+            i++;
+            printf("%c", ch); // Echo the character
+        }
+    }
+    username[i] = '\0'; // Null-terminate the string
+    printf("\n");
+
+    // Input password
+    gotoxy(32, 12);  // Position of the password input field
+    i = 0;
+    while (1) {
+        ch = _getch(); // Get input without echoing to console
+        if (ch == '\r') { // Enter key
+            password[i] = '\0'; // Null-terminate the string
+            break;
+        } else if (ch == '\b') { // Backspace key
+            if (i > 0) {
+                i--;
+                printf("\b \b"); // Move back, overwrite with space, move back again
             }
         } else {
             password[i] = ch;
             i++;
-            printf("*");  // Print asterisks instead of the actual character
+            printf("*"); // Print asterisks instead of the actual character
         }
     }
+    printf("\n");
+}
 
-    coord.Y = 8;  // Position of the re-enter password input field in the console
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+void enterSignupCredentials(char *username, char *password, char *reenterPassword) {
+    char ch;
+    int i = 0;
 
+    // Input username
+    gotoxy(32, 10);  // Position of the username input field
     i = 0;
-    while (1) {
-        ch = _getch();  // Get input without echoing to console
-        if (ch == 13) { // Enter key
-            reenterPassword[i] = '\0';
-            break;
-        } else if (ch == 8) { // Backspace key
+    while ((ch = _getch()) != '\r') { // Enter key
+        if (ch == '\b') { // Backspace key
             if (i > 0) {
                 i--;
-                printf("\b \b");  // Move back, overwrite with space, move back again
+                printf("\b \b"); // Move back, overwrite with space, move back again
+            }
+        } else if (ch != 0 && ch != '\xE0') { // Ignore special keys
+            username[i] = ch;
+            i++;
+            printf("%c", ch); // Echo the character
+        }
+    }
+    username[i] = '\0'; // Null-terminate the string
+    printf("\n");
+
+    // Input password
+    gotoxy(32, 12);  // Position of the password input field
+    i = 0;
+    while (1) {
+        ch = _getch(); // Get input without echoing to console
+        if (ch == '\r') { // Enter key
+            password[i] = '\0'; // Null-terminate the string
+            break;
+        } else if (ch == '\b') { // Backspace key
+            if (i > 0) {
+                i--;
+                printf("\b \b"); // Move back, overwrite with space, move back again
+            }
+        } else {
+            password[i] = ch;
+            i++;
+            printf("*"); // Print asterisks instead of the actual character
+        }
+    }
+    printf("\n");
+
+    gotoxy(32, 14);  // Position of the password input field
+    i = 0;
+    while (1) {
+        ch = _getch(); // Get input without echoing to console
+        if (ch == '\r') { // Enter key
+            reenterPassword[i] = '\0'; // Null-terminate the string
+            break;
+        } else if (ch == '\b') { // Backspace key
+            if (i > 0) {
+                i--;
+                printf("\b \b"); // Move back, overwrite with space, move back again
             }
         } else {
             reenterPassword[i] = ch;
             i++;
-            printf("*");  // Print asterisks instead of the actual character
+            printf("*"); // Print asterisks instead of the actual character
         }
     }
+    printf("\n");
 }
-
