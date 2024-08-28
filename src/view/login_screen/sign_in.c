@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <conio.h>
 #include <windows.h>
-#include <top_screen.h>
+#include "top_screen.h"
+
 
 void drawSignInUI() {
     system("cls");
@@ -45,7 +46,5 @@ void handleClickOnSigninScreen(){
     else if (MousePos.Y == 15 && MousePos.X >= 30 && MousePos.X <= 40){
         // Hàm check đăng nhập ở đây
 
-        char role[6] = "user";
-        dashbroad(role); // Mở giao diện Dashboard
     }
 }
