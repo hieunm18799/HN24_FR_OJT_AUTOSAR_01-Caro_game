@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <windows.h>
 
-int currentScreen = 4;
-
  void frameDashbroadAdmin() {
 	system("cls");
 	gotoxy(31, 1);
