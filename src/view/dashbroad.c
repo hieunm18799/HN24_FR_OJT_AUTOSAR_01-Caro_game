@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <windows.h>
-#include "vFunction.h"
 
 int currentScreen = 4;
 
@@ -82,34 +81,6 @@ int currentScreen = 4;
 	 }
  }
 
- int main() {
-	 struct User* users = NULL;
-	 initializeUsers(2);
-	
-	 dashbroad("admin", "addf");
 
-		 while (1) {
-			 handleMouseClick(); // Gọi hàm để xử lý sự kiện chuột
-
-			 if (Click_flag) { // Nếu có sự kiện click
-				 Click_flag = 0; // Reset cờ click
-
-				 if (currentScreen == 5){// Nếu đang ở màn hình ban đầu
-					 openAdmin();
-				 } 
-				 if (currentScreen == 7) {// Nếu đang ở màn hình ban đầu
-					 addEditDelete(users, count);
-				 }
-				 if (currentScreen == 8) {// Nếu đang ở màn hình ban đầu
-					 userInput();
-				 }
-				 if (currentScreen == 0) {
-					 handleClickOnInitialScreen();
-				 }
-			 }
-		 }
-
-      return 0;
- }
  
 
