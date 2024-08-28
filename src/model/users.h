@@ -28,7 +28,6 @@ void writeUsersIni(const char* filename);    // Ghi danh sách người dùng v�
 void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
 User* getUsers();                            // Lấy danh sách người dùng
 
-=======
 // Các hàm sign_in, sign_up, sign_out
 void sign_in(SOCKET clientSocket);
 void sign_up(SOCKET clientSocket);

@@ -6,21 +6,22 @@
 #include "users.h"
 #include "games.h"
 
-bool signup(int clientfd, Request *req, Response* res);
-bool signin(int clientfd, Request *req, Response *res);
-bool signout(int clientfd, Request *req, Response *res);
-bool findGame(int sockfd, int clientfd, Request *req, Response *res);
-bool pick(int clientfd, Request *req, Response *res);
-bool quit(int clientfd, Request *req, Response *res);
+bool handleSignup(int clientfd, Request *req, Response* res);
+bool handleSignin(int clientfd, Request *req, Response *res);
+bool handleSignout(int clientfd, Request *req, Response *res);
+bool handleFindGame(int sockfd, int clientfd, Request *req, Response *res);
+bool handlePick(int clientfd, Request *req, Response *res);
+bool handleQuit(int clientfd, Request *req, Response *res);
 
-bool signup(int clientfd, Request *req, Response *res) {
+bool handleSignup(int clientfd, Request *req, Response *res) {
     char *username, *password, *confirmPassword;
 
+    printf("%s\n", req->message);
     username = strtok(req->message, "@");
     password = strtok(NULL, "@");
     confirmPassword = strtok(NULL, "\0");
 
-    // If Sign up input wrong: pass != conf_pass, pass == '', username = ''
+    // If Sign up input wrong: pass != conf_pass, pass == "', username = ''
     if (0) {
         res->code = SIGN_UP_INPUT_WRONG;
         setMessageResponse(res);
@@ -44,9 +45,10 @@ bool signup(int clientfd, Request *req, Response *res) {
     return true;
 }
 
-bool signin(int clientfd, Request *req, Response *res) {
+bool handleSignin(int clientfd, Request *req, Response *res) {
     char *username, *password;
-
+    
+    printf("%s\n", req->message);
     username = strtok(req->message, "@");
     password = strtok(NULL, "\0");
 
@@ -68,7 +70,7 @@ bool signin(int clientfd, Request *req, Response *res) {
 
     // User is signed in
     if (0) {
-        res->code = STRING_ACCOUNT_BUSY;
+        res->code = ACCOUNT_BUSY;
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);
         return false;
@@ -80,7 +82,7 @@ bool signin(int clientfd, Request *req, Response *res) {
     return true;
 }
 
-bool signout(int clientfd, Request *req, Response *res) {
+bool handleSignout(int clientfd, Request *req, Response *res) {
     // Change user status to not_sign_in
     res->code = SIGN_OUT_SUCCESS;
     setMessageResponse(res);
@@ -88,7 +90,7 @@ bool signout(int clientfd, Request *req, Response *res) {
     return true;
 }
 
-bool findGame(int sockfd, int clientfd, Request *req, Response *res) {
+bool handleFindGame(int sockfd, int clientfd, Request *req, Response *res) {
     // Find game not play yet
     // if no game than create a game (user = player1) and wait for user to join with 
     if(0) {
@@ -99,7 +101,7 @@ bool findGame(int sockfd, int clientfd, Request *req, Response *res) {
     }
     // The previous should return the player1's clientfd and game id
     // Need response to the orther waitinng player
-    u_int16_t gameid;
+    unsigned int gameid;
     int client2fd;
 
     res->code = GAME_START;
@@ -110,11 +112,11 @@ bool findGame(int sockfd, int clientfd, Request *req, Response *res) {
     return true;
 }
 
-bool pick(int clientfd, Request *req, Response *res) {
+bool handlePick(int clientfd, Request *req, Response *res) {
     char *username;
-    strcpy(username, strtok(req->message, '@'));
-    u_int16_t gameid = atoi(strtok(NULL, '@'));
-    u_int8_t x = atoi(strtok(NULL, '@')), y = atoi(strtok(NULL, '\0'));
+    strcpy(username, strtok(req->message, "@"));
+    unsigned int gameid = atoi(strtok(NULL, "@"));
+    unsigned char x = atoi(strtok(NULL, "@")), y = atoi(strtok(NULL, "\0"));
 
     // Check current turn
     if (0) {
@@ -153,10 +155,10 @@ bool pick(int clientfd, Request *req, Response *res) {
     return true;
 }
 
-bool quit(int clientfd, Request *req, Response *res) {
+bool handleQuit(int clientfd, Request *req, Response *res) {
     char *username;
-    strcpy(username, strtok(req->message, '@'));
-    u_int16_t gameid = atoi(strtok(NULL, '\0'));
+    strcpy(username, strtok(req->message, "@"));
+    unsigned int gameid = atoi(strtok(NULL, "\0"));
     bool endGame = false;
     int client2fd;
     // Check if game is end or not

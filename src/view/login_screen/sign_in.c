@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <conio.h>
+#include "protocol.h"
 #include <windows.h>
 #include "top_screen.h"
-
 
 void drawSignInUI() {
     system("cls");
@@ -30,7 +30,7 @@ void drawSignInUI() {
     gotoxy(38, 17);
     printf("Back");
 
-    currentScreen = 1; // Đặt màn hình hiện tại là màn hình đăng nhập
+    currentScreen = VIEW_SIGN_IN; // Đặt màn hình hiện tại là màn hình đăng nhập
 }
 
 void handleClickOnSigninScreen(){
@@ -45,6 +45,27 @@ void handleClickOnSigninScreen(){
     // Khi nhấn Sign In ở giao diện đăng nhập
     else if (MousePos.Y == 15 && MousePos.X >= 30 && MousePos.X <= 40){
         // Hàm check đăng nhập ở đây
-
+        signin(sockfd, signin_username, signin_password);
+        Response *res = (Response *)malloc(sizeof(Response));
+        int rcvBytes = recvRes(sockfd, res, sizeof(res), 0);
+        if (rcvBytes != -1) {
+            printf("%d\n", res->code);
+            switch (res->code) {
+            case SIGN_IN_SUCCESS:
+                drawPlayCaroBoard();
+                break;
+            case USERNAME_NOT_EXISTED:
+                // Show error
+                break;
+            case WRONG_PASSWORD:
+                // Show error
+                break;
+            case ACCOUNT_BUSY:
+                // Show error
+                break;
+            default:
+                break;
+            }
+        }
     }
 }

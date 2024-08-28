@@ -31,7 +31,6 @@
 void SetConsoleSize(int width, int height);
 void drawPlayCaroBoard();
 void MovePlayCaro();
-void handleMouseClick();
 void DisplayCountdown();
 void HandleRedo();
 int CheckWin(int last_x, int last_y);
@@ -48,7 +47,7 @@ static int redo_requested = 0; // Flag to indicate if redo is requested
 static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 
 int current_screen;
-int board_width, board_height;
+int board_width = 10, board_height = 10;
 int console_width, console_height; // Console dimensions
 char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
 int last_move_x = -1;
@@ -74,11 +73,11 @@ void SetConsoleSize(int width, int height) {
 void drawPlayCaroBoard() {
     current_screen = 9;
     // Input board size from the user
-    printf("Enter board width (number of cells): ");
-    scanf("%d", &board_width);
-    printf("Enter board height (number of cells): ");
-    scanf("%d", &board_height);
-    system("cls");
+    // printf("Enter board width (number of cells): ");
+    // scanf("%d", &board_width);
+    // printf("Enter board height (number of cells): ");
+    // scanf("%d", &board_height);
+    // system("cls");
 
     // Initialize the board state
     for (int i = 0; i < board_height; i++) {
@@ -157,29 +156,7 @@ void drawPlayCaroBoard() {
     hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
     if (hThread == NULL) {
         printf("Error creating thread\n");
-        return 1;
-    }
-}
-
-// Function to handle a single mouse click
-void handleMouseClick() {
-    HANDLE hInput;
-    DWORD events;
-    INPUT_RECORD inputRecord;
-
-    hInput = GetStdHandle(STD_INPUT_HANDLE);
-    SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-
-    // Read mouse input
-    if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
-        if (inputRecord.EventType == MOUSE_EVENT) {
-            MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
-            if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                MousePos = mouseEvent.dwMousePosition; // Save the mouse position
-                Click_flag = 1;  // Set the click flag to indicate a click occurred
-                Sleep(100); // Debounce delay to avoid multiple captures of the same click
-            }
-        }
+        return;
     }
 }
 
