@@ -1,11 +1,17 @@
-// Network libraries
-#include <sys/types.h>
+#ifdef linux
+#include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <sys/select.h>
 #include <sys/time.h> 
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
+#endif
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <windows.h>
+#endif
 // For ..
 #include <string.h>
 #include <stdlib.h>

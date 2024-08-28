@@ -1,16 +1,27 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#ifdef linux
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <sys/time.h> 
+#include <netinet/in.h>
 #include <unistd.h>
+#endif
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
 #include "protocol.h"
 
-void recv_handler(int serverfd);
+void *recv_handler(int serverfd);
 void handle_sigint(int sig);
+void startGUI(int sockfd);
 
 int main(int argc, char const *argv[]) {
     signal(SIGINT, handle_sigint);
@@ -32,20 +43,20 @@ int main(int argc, char const *argv[]) {
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(atoi(argv[2]));
     servaddr.sin_addr.s_addr = inet_addr(argv[1]);
-    socklen_t len = sizeof(struct sockaddr_in);
+    int len = sizeof(struct sockaddr_in);
 
     int check = connect(sockfd, (struct sockaddr *)&servaddr, len);
     if (check == -1) {
         perror("CONNECT_ERROR");
         exit(0);
     }
-    recv_handler(sockfd);
+    startGUI(sockfd);
 
     close(sockfd);
     return 0;
 }
 
-void recv_handler(int serverfd) {
+void *recv_handler(int serverfd) {
     int rcvBytes;
     Response *res = (Response *)malloc(sizeof(Response));
     
@@ -64,10 +75,18 @@ void recv_handler(int serverfd) {
     }
 
     close(serverfd);
-    return;
 }
 
 void handle_sigint(int sig) {
     printf("\nCaught signal %d (SIGINT), exiting...\n", sig);
     exit(0);
+}
+
+void startGUI(int sockfd) {
+    while (1) {
+        processLoginScreen(sockfd);
+        // Here you can add the logic to handle screen transitions.
+        // For example, call processLoginScreen() when Sign In is selected.
+        // Or processSignupScreen() when Sign Up is selected.
+    }
 }
