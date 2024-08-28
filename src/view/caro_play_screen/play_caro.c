@@ -24,15 +24,18 @@
 #define COUNT_DOWN_PRINT_TURN 13
 #define AGREE_POSITION_X 15
 #define AGREE_POSITION_Y (console_height - 3)
-
+#define WIN_CONDITION 4
+#define WIN_NOTIFY 15
 
 // Function prototypes
-void set_console_size(int width, int height);
+void SetConsoleSize(int width, int height);
 void drawPlayCaroBoard();
 void MovePlayCaro();
 void handleMouseClick();
-void display_countdown();
-void handle_redo_request();
+void DisplayCountdown();
+void HandleRedo();
+int CheckWin(int last_x, int last_y);
+
 // Global variables
 static COORD CursorPosition;
 static COORD MousePos;
@@ -44,7 +47,7 @@ static int countdown_active = 1;
 static int redo_requested = 0; // Flag to indicate if redo is requested
 static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 
-
+int current_screen;
 int board_width, board_height;
 int console_width, console_height; // Console dimensions
 char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
@@ -52,14 +55,14 @@ int last_move_x = -1;
 int last_move_y = -1;
 
 DWORD WINAPI CountdownThread(LPVOID lpParam) {
-    display_countdown();
+    DisplayCountdown();
     return 0;
 }
 
 HANDLE hThread;
 
 // Function to set the console size
-void set_console_size(int width, int height) {
+void SetConsoleSize(int width, int height) {
     COORD buffer_size = { width, height };
     SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
     
@@ -69,6 +72,7 @@ void set_console_size(int width, int height) {
 
 // Function to draw the board and initialize board state
 void drawPlayCaroBoard() {
+    current_screen = 9;
     // Input board size from the user
     printf("Enter board width (number of cells): ");
     scanf("%d", &board_width);
@@ -88,7 +92,7 @@ void drawPlayCaroBoard() {
     console_height = board_height * 2 + 10;
 
     // Set the console size
-    set_console_size(console_width, console_height);
+    SetConsoleSize(console_width, console_height);
 
     // Set up game title position
     CursorPosition.X = CARO_GAME_STRING_POSITION_X;
@@ -179,7 +183,7 @@ void handleMouseClick() {
     }
 }
 
-void display_countdown() {
+void DisplayCountdown() {
     while (End_flag == 1) {
         if (countdown_active) {
             CursorPosition.X = COUNT_DOWN_POSITION_X;
@@ -220,7 +224,7 @@ void MovePlayCaro() {
         // Check if click is within "REDO" button
         if (MousePos.Y == REDO_POSITION_Y && MousePos.X >= REDO_POSITION_X && MousePos.X <= REDO_POSITION_X + BUTTON_WIDTH) {
             redo_requested = 1; // Set redo requested flag
-            handle_redo_request();
+            HandleRedo();
             CursorPosition.X = 0;
             CursorPosition.Y = AGREE_POSITION_Y - 1;
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
@@ -273,8 +277,8 @@ void MovePlayCaro() {
                 last_move_x = cell_x;
                 last_move_y = cell_y;
 
-                 if (check_win(cell_x, cell_y)) {
-                    CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY;
+                 if (CheckWin(cell_x, cell_y)) {
+                    CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY ;
                     CursorPosition.Y = PLAYER_1_POSITION_Y ;
                     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
@@ -287,7 +291,38 @@ void MovePlayCaro() {
     }
 }
 
-void handle_redo_request() {
+int CheckWin(int last_x, int last_y) {
+    char player = board[last_y][last_x];
+    int count;
+
+    // Check horizontal
+    count = 1;
+    for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
+    for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check vertical
+    count = 1;
+    for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
+    for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check diagonal from top-left to bottom-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check diagonal from bottom-left to top-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    return 0; // No win condition met
+}
+
+void HandleRedo() {
     CursorPosition.X = CARO_BOARD_POSITION_X;
     CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 1;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
