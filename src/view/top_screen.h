@@ -1,14 +1,11 @@
 #ifndef TOP_SCREEN_H
 #define TOP_SCREEN_H
 
-COORD MousePos; // Biến lưu trữ vị trí chuột
-int Click_flag = 0; // Cờ để xác định xem đã click chuột hay chưa
-int currentScreen = 0; 
-char signin_username[50];
-char signin_password[50];
-char signup_username[50];
-char signup_password[50];
-char signup_reenterPassword[50];
+extern COORD MousePos; // Biến lưu trữ vị trí chuột
+extern int Click_flag; // Cờ để xác định xem đã click chuột hay chưa
+extern int currentScreen; 
+
+void gotoxy(int x, int y);
 
 void drawInitialUI();
 void drawSignInUI();
