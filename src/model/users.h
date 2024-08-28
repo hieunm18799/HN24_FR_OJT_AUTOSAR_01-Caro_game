@@ -22,15 +22,15 @@ typedef struct User {
     char password[MAX_LENGTH];
     ROLE role;
     USER_STATUS status;
-    int clientfd;
-    __uint16_t wins, losses, draws;
+    long unsigned int clientfd;
+    unsigned int wins, losses, draws;
     struct User *next;
 } User;
 
-User *newUser(char *username, char *password, ROLE role, USER_STATUS status, int clientfd, __uint16_t wins, __uint16_t losses, __uint16_t draws);
+User *newUser(char *username, char *password, ROLE role, USER_STATUS status, int clientfd, unsigned int wins, unsigned int losses, unsigned int draws);
 void initializeUser();
 User *findUser(char *username);
-__uint8_t adddUser(char *username, char *password, ROLE role);
+unsigned char adddUser(char *username, char *password, ROLE role);
 ROLE checkUser(char *username, char *password);
 void changeUser(char *username, char *password);
 void deleteUser(char *username);

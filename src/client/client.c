@@ -1,13 +1,22 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#ifdef linux
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <sys/time.h> 
+#include <netinet/in.h>
 #include <unistd.h>
+#endif
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
-#include <pthread.h>
 #include "protocol.h"
 
 void *recv_handler(int serverfd);
@@ -34,15 +43,13 @@ int main(int argc, char const *argv[]) {
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(atoi(argv[2]));
     servaddr.sin_addr.s_addr = inet_addr(argv[1]);
-    socklen_t len = sizeof(struct sockaddr_in);
+    int len = sizeof(struct sockaddr_in);
 
     int check = connect(sockfd, (struct sockaddr *)&servaddr, len);
     if (check == -1) {
         perror("CONNECT_ERROR");
         exit(0);
     }
-    pthread_t tid;
-    pthread_create(&tid, NULL, &recv_handler, &sockfd);
     startGUI(sockfd);
 
     close(sockfd);

@@ -4,7 +4,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
+#ifdef linux
+#include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <sys/time.h> 
+#include <netinet/in.h>
+#include <unistd.h>
+#endif
 
 #define MAX_LENGTH 256
 #define BOARD_LENGTH 10

@@ -1,27 +1,57 @@
 #include <stdio.h>
-#include "sign_up.h"
+#include <conio.h>
+#include <windows.h>
+#include <top_screen.h>
 
 
-void drawSignupScreen() {
-    system("cls");  // Clear the console
-    printf("************************************************************\n");
-    printf("*                                                          *\n");
-    printf("*                        Sign in                           *\n");
-    printf("*                        Caro Game                         *\n");
-    printf("*                                                          *\n");
-    printf("*                                                          *\n");
-    printf("*  Username:                                               *\n");
-    printf("*  Password:                                               *\n");
-    printf("*  Re-enter password:                                      *\n");
-    printf("*                                                          *\n");
-    printf("*                                                          *\n");
-    printf("*                       ************                       *\n");
-    printf("*                       *  Sign up *                       *\n");
-    printf("*                       ************                       *\n");
-    printf("*                                                          *\n");
-    printf("*                         *********                        *\n");
-    printf("*                         * Back  *                        *\n");
-    printf("*                         *********                        *\n");
-    printf("*                                                          *\n");
-    printf("************************************************************\n");
+void drawSignUpUI() {
+    system("cls");
+    gotoxy(60, 2);
+    printf("[ Sign in ]");
+
+    gotoxy(38, 8);
+    printf("Caro Game");
+
+    gotoxy(20, 10);
+    printf("Username");
+
+    gotoxy(30, 10);
+    printf("[                    ]");
+
+    gotoxy(20, 12);
+    printf("Password");
+
+    gotoxy(30, 12);
+    printf("[                    ]");
+
+    gotoxy(20, 14);
+    printf("Re-enter password");
+
+    gotoxy(30, 14);
+    printf("[                    ]");
+
+    gotoxy(35, 17);
+    printf("[ Sign up ]");
+
+    gotoxy(38, 19);
+    printf("Back");
+
+    currentScreen = 2; // Đặt màn hình hiện tại là màn hình đăng ký
+}
+
+void handleClickOnSignupScreen(){
+    // Khi nhấn Sign In ở giao diện đăng ký
+    if (MousePos.Y == 2 && MousePos.X >= 60 && MousePos.X <= 70) {
+        drawSignInUI(); // Mở giao diện đăng nhập từ màn hình đăng ký
+    }
+    // Khi nhấn Back ở giao diện đăng ký
+    else if (MousePos.Y == 19 && MousePos.X >= 35 && MousePos.X <= 40){
+        drawInitialUI(); // Button Back mở giao diện ban đầu
+    }
+    // Khi nhấn Sign Up ở giao diện đăng ký
+    else if (MousePos.Y == 17 && MousePos.X >= 30 && MousePos.X <= 40){
+        // Hàm check đăng ký ở đây
+
+        drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
+    }
 }

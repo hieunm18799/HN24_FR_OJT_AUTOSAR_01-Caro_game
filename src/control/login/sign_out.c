@@ -3,7 +3,7 @@
 #include <string.h>
 #include <winsock2.h>
 #include <windows.h>
-#include "user.h"
+#include "users.h"
 
 #define USERS_FILE "Users.ini"
 
@@ -16,7 +16,7 @@ void sign_out(SOCKET clientSocket) {
     if (recvResult == SOCKET_ERROR) {
         printf("Failed to receive username.\n");
         return;
-    }
+    } 
     username[recvResult] = '\0'; // Null-terminate the string
 
     // Cập nhật trạng thái người dùng
