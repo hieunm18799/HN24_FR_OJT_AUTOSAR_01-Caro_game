@@ -1,40 +1,40 @@
-#ifndef USERS_H
-#define USERS_H
+#ifndef USER_H
+#define USER_H
 
-#include <string.h>
-#include "protocol.h"
+#include <stdbool.h>
+#include <winsock2.h>
 
-#define USER_FILE "src/model/Users.ini"
-
-typedef enum USER_STATUS {
-    NOT_SIGN_IN,
-    SIGNED_IN,
-    PLAYING,
-} USER_STATUS;
-
-typedef enum ROLE {
-    USER,
-    ADMIN,
-} ROLE;
-
+// Cấu trúc dữ liệu của người dùng
 typedef struct User {
-    char username[MAX_LENGTH];
-    char password[MAX_LENGTH];
-    ROLE role;
-    USER_STATUS status;
-    long unsigned int clientfd;
-    unsigned int wins, losses, draws;
-    struct User *next;
+    char username[50];
+    char password[50];
+    char role[50];
+    char status[50];
+    SOCKET clientfd; // Thay đổi kiểu dữ liệu từ int sang SOCKET
+    int wins;
+    int losses;
+    int draws;
+    struct User* next;
 } User;
 
-User *newUser(char *username, char *password, ROLE role, USER_STATUS status, int clientfd, unsigned int wins, unsigned int losses, unsigned int draws);
-void initializeUser();
-User *findUser(char *username);
-unsigned char adddUser(char *username, char *password, ROLE role);
-ROLE checkUser(char *username, char *password);
-void changeUser(char *username, char *password);
-void deleteUser(char *username);
-User *getUsers();
-void freeUsers();
+extern User* userList;
 
-#endif
+// Hàm quản lý người dùng
+void initializeUser();                        // Khởi tạo danh sách người dùng từ Users.ini
+bool validateUser(const char* username, const char* password);  // Xác thực người dùng
+void newUser(const char* username, const char* password, const char* role);  // Tạo người dùng mới
+bool setUserStatus(const char* username, const char* status);  // Cập nhật trạng thái người dùng
+void writeUsersIni(const char* filename);    // Ghi danh sách người dùng vào tệp INI
+void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
+User* getUsers();                            // Lấy danh sách người dùng
+
+=======
+// Các hàm sign_in, sign_up, sign_out
+void sign_in(SOCKET clientSocket);
+void sign_up(SOCKET clientSocket);
+void sign_out(SOCKET clientSocket);
+
+// Hàm đọc file Users.ini
+void readUsersIni(const char* filename);
+
+#endif // USER_H
