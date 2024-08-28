@@ -217,8 +217,6 @@ void MovePlayCaro() {
     int cell_width = CELL_WIDTH;
     int cell_height = CELL_HEIGHT;
 
-    if (Click_flag == 1) {  // Process click if the flag is set
-        Click_flag = 0;  // Reset flag to prevent continuous detection
         countdown_active = 0; // Pause the countdown
         
         // Check if click is within "REDO" button
@@ -288,7 +286,6 @@ void MovePlayCaro() {
         }
         countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
         countdown_active = 1;
-    }
 }
 
 int CheckWin(int last_x, int last_y) {
