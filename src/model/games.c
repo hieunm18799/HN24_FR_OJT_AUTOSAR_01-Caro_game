@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "game.h"
+#include "games.h"
 
 #define MAX_GAMES 100
 
 static Game *games = NULL;  // Danh sách liên kết của các trận đấu
-static __uint16_t gameCount = 0;  // Đếm số lượng trận đấu hiện có
+static unsigned int gameCount = 0;  // Đếm số lượng trận đấu hiện có
 
 // Khởi tạo danh sách các trận đấu
 int initializeGame() {
@@ -16,7 +16,7 @@ int initializeGame() {
 }
 
 // Thêm một trận đấu mới vào danh sách
-int addGame(char *player1_name, char *player2_name, char *result, __uint8_t *moves) {
+int addGame(char *player1_name, char *player2_name, char *result, unsigned char *moves) {
     if (gameCount >= MAX_GAMES) {
         printf("Không thể thêm trận đấu mới, danh sách đã đầy.\n");
         return -1;
@@ -52,7 +52,7 @@ int findGame() {
 }
 
 // Thay đổi thông tin của một trận đấu
-int changeGame(__uint16_t id, char *player1_name, char *player2_name) {
+int changeGame(unsigned int id, char *player1_name, char *player2_name) {
     Game *current = games;
     while (current != NULL) {
         if (current->id == id) {
@@ -66,7 +66,7 @@ int changeGame(__uint16_t id, char *player1_name, char *player2_name) {
 }
 
 // Thêm nước đi vào trận đấu
-int addMove(__uint16_t id, char *player_name, __uint8_t x, __uint8_t y) {
+int addMove(unsigned int id, char *player_name, unsigned char x, unsigned char y) {
     Game *current = games;
     while (current != NULL) {
         if (current->id == id) {
@@ -84,7 +84,7 @@ int addMove(__uint16_t id, char *player_name, __uint8_t x, __uint8_t y) {
 }
 
 // Hoàn tác một nước đi trong trận đấu (redo)
-int changeMove(__uint16_t id, __uint8_t x, __uint8_t y) {
+int changeMove(unsigned int id, unsigned char x, unsigned char y) {
     Game *current = games;
     while (current != NULL) {
         if (current->id == id) {
@@ -100,7 +100,7 @@ int changeMove(__uint16_t id, __uint8_t x, __uint8_t y) {
 }
 
 // Xóa một trận đấu khỏi danh sách
-int deleteGame(__uint16_t id) {
+int deleteGame(unsigned int id) {
     Game *current = games;
     Game *prev = NULL;
     while (current != NULL) {

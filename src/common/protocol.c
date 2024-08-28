@@ -5,38 +5,38 @@
 Request *createRequest() {
     Request *ret = (Request *)malloc(sizeof(Request));
     if (ret == NULL)
-        perror("MEMORY LEAKED!");
+        printf("MEMORY LEAKED!\n");
     return ret;
 }
 
 Response *createResponse() {
     Response *ret = (Response *)malloc(sizeof(Response));
     if (ret == NULL)
-        perror("MEMORY LEAKED!");
+        printf("MEMORY LEAKED!\n");
     return ret;
 }
 
 int recvReq(int socket, Request *buff, int size, int flags) {
-    int n = recv(socket, buff, size, flags);
-    if (n < 0) perror("Error: ");
+    int n = recv(socket, (char*)buff, size, flags);
+    if (n < 0) printf("Failed to receive request!\n");
     return n;
 }
 
 int sendReq(int socket, Request *buff, int size, int flags) {
-    int n = send(socket, buff, size, flags);
-    if (n < 0) perror("Error: ");
+    int n = send(socket, (char*)buff, size, flags);
+    if (n < 0) printf("Failed to send request!\n");
     return n;
 }
 
 int sendRes(int socket, Response *msg, int size, int flags) {
-    int n = send(socket, msg, size, flags);
-    if (n < 0) perror("Error: ");
+    int n = send(socket, (char*)msg, size, flags);
+    if (n < 0) printf("Failed to send response!\n");
     return n;
 }
 
 int recvRes(int socket, Response *msg, int size, int flags) {
-    int n = recv(socket, msg, size, flags);
-    if (n < 0) perror("Error: ");
+    int n = recv(socket, (char*)msg, size, flags);
+    if (n < 0) printf("Failed to send receive!\n");
     return n;
 }
 
@@ -91,8 +91,8 @@ void setMessageResponse(Response *msg) {
             strcat(msg->data, " won!");
             strcpy(msg->message, msg->data);
             break;
-        case DISCONNECTED:
-            strcpy(msg->message, "You have been disconnected!");
+        case QUIT_SUCCESS:
+            strcpy(msg->message, "You have been quited!");
             break;
         default:
             break;
@@ -119,27 +119,25 @@ void readMessageReponse(Response *msg) {
     }
 }
 
-void setOpcodeRequest(Request *req, char *input)
-{
+void setOpcodeRequest(Request *req, char *input) {
   char code[BUFF_SIZE], data[BUFF_SIZE];
 
   splitMessage(input, code, data);
-  printf("\n%s-%s\n", code, data);
   strcpy(req->message, data);
 
-    if (strcmp(code, "REGISTER") == 0)
+    if (strcmp(code, STRING_SIGN_UP) == 0)
         req->code = SIGN_UP;
-    else if (strcmp(code, "LOGIN") == 0)
+    else if (strcmp(code, STRING_SIGN_IN) == 0)
         req->code = SIGN_IN;
-    else if (strcmp(code, "SIGN_OUT") == 0)
+    else if (strcmp(code, STRING_SIGN_OUT) == 0)
         req->code = SIGN_OUT;
-    else if (strcmp(code, "CLOSE") == 0)
+    else if (strcmp(code, STRING_CLOSE) == 0)
         req->code = CLOSE;
-    else if (strcmp(code, "FIND_GAME") == 0)
+    else if (strcmp(code, STRING_FIND_GAME) == 0)
         req->code = FIND_GAME;
-    else if (strcmp(code, "PICK") == 0)
+    else if (strcmp(code, STRING_PICK) == 0)
         req->code = PICK;
-    else if (strcmp(code, "QUIT") == 0)
+    else if (strcmp(code, STRING_QUIT) == 0)
         req->code = QUIT;
     else{
         req->code = -1;

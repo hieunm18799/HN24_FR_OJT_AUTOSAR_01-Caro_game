@@ -25,8 +25,6 @@ int signup(int clientfd, char* username, char* password, char* confirm_pass) {
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
     free(req);
     return 1;
 }
@@ -37,8 +35,6 @@ int signin(int clientfd, char* username, char* password) {
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return 0;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
     free(req);
     return 1;
 }
@@ -49,8 +45,6 @@ int signout(int clientfd, char* username) {
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
     free(req);
     return 1;
 }
@@ -61,8 +55,6 @@ int signoutByX(int clientfd, char* username) {
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
     free(req);
     return 1;
 }
@@ -73,8 +65,6 @@ int startGame(int clientfd, char *username) {
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
     free(req);
     return 1;
 }
@@ -85,8 +75,6 @@ int pick(int clientfd, char *pickedNumber) {
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
     free(req);
     return 1;
 }
@@ -97,8 +85,6 @@ int quit(int clientfd, char *username) {
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
     free(req);
     return 1;
 }
