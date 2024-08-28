@@ -21,11 +21,13 @@ typedef struct Game {
 } Game;
 
 int initializeGame();
+
+
 int addGame(char *player1_name, char *player2_name, char *result, __uint8_t *moves);
 int findGame();
 int changeGame(__uint16_t id, char *player1_name, char *player2_name);
 int addMove(__uint16_t id, char *player1_name, __uint8_t x, __uint8_t y);
-int changeMove(__uint16_t id, __uint8_t x, __uint8_t y);
+int changeMove(__uint16_t id, __uint8_t x, __uint8_t y); //redo
 int deleteGame(__uint16_t id);
 int getGamesByUsername(char *username);
 Game *getGames();
