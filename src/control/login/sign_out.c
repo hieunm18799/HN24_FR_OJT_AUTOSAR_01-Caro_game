@@ -3,7 +3,7 @@
 #include <string.h>
 #include <winsock2.h>
 #include <windows.h>
-#include "user.h"
+#include "users.h"
 
 #define USERS_FILE "Users.ini"
 
