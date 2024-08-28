@@ -16,7 +16,7 @@
 #define COUNT_DOWN_POSITION_Y (console_height - 2)
 #define QUIT_POSITION_X 5
 #define QUIT_POSITION_Y (console_height - 1) 
-#define BUTTON_WIDTH 20  // Approximate width of the buttons
+#define BUTTON_WIDTH 5  // Approximate width of the buttons
 #define BUTTON_HEIGHT 1  // Height of the buttons
 #define CELL_WIDTH 4
 #define CELL_HEIGHT 2
@@ -24,15 +24,18 @@
 #define COUNT_DOWN_PRINT_TURN 13
 #define AGREE_POSITION_X 15
 #define AGREE_POSITION_Y (console_height - 3)
-
+#define WIN_CONDITION 4
+#define WIN_NOTIFY 15
 
 // Function prototypes
-void set_console_size(int width, int height);
-void draw_board();
-void Move();
+void SetConsoleSize(int width, int height);
+void drawPlayCaroBoard();
+void MovePlayCaro();
 void handleMouseClick();
-void display_countdown();
-void handle_redo_request();
+void DisplayCountdown();
+void HandleRedo();
+int CheckWin(int last_x, int last_y);
+
 // Global variables
 static COORD CursorPosition;
 static COORD MousePos;
@@ -44,41 +47,22 @@ static int countdown_active = 1;
 static int redo_requested = 0; // Flag to indicate if redo is requested
 static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 
-
+int current_screen;
 int board_width, board_height;
 int console_width, console_height; // Console dimensions
 char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
+int last_move_x = -1;
+int last_move_y = -1;
 
 DWORD WINAPI CountdownThread(LPVOID lpParam) {
-    display_countdown();
+    DisplayCountdown();
     return 0;
 }
 
-
-int main() {
-    // Draw the board and handle user input
-    draw_board();
-    HANDLE hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
-    if (hThread == NULL) {
-        printf("Error creating thread\n");
-        return 1;
-    }
-    while (End_flag == 1) {
-        handleMouseClick();
-        Move();
-        if (redo_requested) {
-            handle_redo_request(); // Handle redo requests
-        }
-    }
-    
-    // Wait for user input before closing
-    getchar(); // To wait for the actual user input
-    CloseHandle(hThread); // Clean up the thread handle
-    return 0;
-}
+HANDLE hThread;
 
 // Function to set the console size
-void set_console_size(int width, int height) {
+void SetConsoleSize(int width, int height) {
     COORD buffer_size = { width, height };
     SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
     
@@ -87,7 +71,8 @@ void set_console_size(int width, int height) {
 }
 
 // Function to draw the board and initialize board state
-void draw_board() {
+void drawPlayCaroBoard() {
+    current_screen = 9;
     // Input board size from the user
     printf("Enter board width (number of cells): ");
     scanf("%d", &board_width);
@@ -107,7 +92,7 @@ void draw_board() {
     console_height = board_height * 2 + 10;
 
     // Set the console size
-    set_console_size(console_width, console_height);
+    SetConsoleSize(console_width, console_height);
 
     // Set up game title position
     CursorPosition.X = CARO_GAME_STRING_POSITION_X;
@@ -168,6 +153,12 @@ void draw_board() {
     CursorPosition.Y = QUIT_POSITION_Y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
     printf("QUIT");
+
+    hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
+    if (hThread == NULL) {
+        printf("Error creating thread\n");
+        return 1;
+    }
 }
 
 // Function to handle a single mouse click
@@ -192,8 +183,37 @@ void handleMouseClick() {
     }
 }
 
+void DisplayCountdown() {
+    while (End_flag == 1) {
+        if (countdown_active) {
+            CursorPosition.X = COUNT_DOWN_POSITION_X;
+            CursorPosition.Y = COUNT_DOWN_POSITION_Y;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+
+            if (Player1_turn) {
+                CursorPosition.X = COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN;
+                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                printf("Player 1's turn: %2d", countdown_time);
+            } else {
+                CursorPosition.X = COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN;
+                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                printf("Player 2's turn: %2d", countdown_time);
+            }
+
+            Sleep(1000); // Wait for 1 second
+            countdown_time--;
+
+            // Reset the countdown when it reaches 0
+            if (countdown_time < 0) {
+                countdown_time = COUNT_DOWN_TIME;
+                Player1_turn = !Player1_turn; // Switch turns
+            }
+        }
+    }
+}
+
 // Function to handle mouse clicks and display X/O on the board
-void Move() {
+void MovePlayCaro() {
     int cell_width = CELL_WIDTH;
     int cell_height = CELL_HEIGHT;
 
@@ -204,12 +224,25 @@ void Move() {
         // Check if click is within "REDO" button
         if (MousePos.Y == REDO_POSITION_Y && MousePos.X >= REDO_POSITION_X && MousePos.X <= REDO_POSITION_X + BUTTON_WIDTH) {
             redo_requested = 1; // Set redo requested flag
+            HandleRedo();
+            CursorPosition.X = 0;
+            CursorPosition.Y = AGREE_POSITION_Y - 1;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            // Xóa dòng bằng cách ghi đè bằng khoảng trắng
+            DWORD written;
+            CONSOLE_SCREEN_BUFFER_INFO csbi;
+            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+            int console_width = csbi.dwSize.X; // Chiều rộng của console
+
+            // In khoảng trắng để xóa dòng
+            FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', console_width, CursorPosition, &written);
             return;
         }
 
         // Check if click is within "QUIT" button
         if (MousePos.Y == QUIT_POSITION_Y && MousePos.X >= QUIT_POSITION_X && MousePos.X <= QUIT_POSITION_X + BUTTON_WIDTH) {
             End_flag = 0; // Exit the loop to quit the game
+            CloseHandle(hThread); // Clean up the thread handle
             return;
         }
 
@@ -240,6 +273,17 @@ void Move() {
                     board[cell_y][cell_x] = 'O'; // Update the board state
                     Player1_turn = 1;
                 }
+                // Save the last move position
+                last_move_x = cell_x;
+                last_move_y = cell_y;
+
+                 if (CheckWin(cell_x, cell_y)) {
+                    CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY ;
+                    CursorPosition.Y = PLAYER_1_POSITION_Y ;
+                    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                    printf("Player %s wins!\n", Player1_turn ? "2" : "1");
+                    End_flag = 0; // End the game
+                }
             }
         }
         countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
@@ -247,64 +291,74 @@ void Move() {
     }
 }
 
-void display_countdown() {
-    while (End_flag == 1) {
-        if (countdown_active) {
-            CursorPosition.X = COUNT_DOWN_POSITION_X;
-            CursorPosition.Y = COUNT_DOWN_POSITION_Y;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+int CheckWin(int last_x, int last_y) {
+    char player = board[last_y][last_x];
+    int count;
 
-            if (Player1_turn) {
-                CursorPosition.X = COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN;
-                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
-                printf("Player 1's turn: %2d", countdown_time);
-            } else {
-                CursorPosition.X = COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN;
-                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
-                printf("Player 2's turn: %2d", countdown_time);
-            }
+    // Check horizontal
+    count = 1;
+    for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
+    for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
 
-            Sleep(1000); // Wait for 1 second
-            countdown_time--;
+    // Check vertical
+    count = 1;
+    for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
+    for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
 
-            // Reset the countdown when it reaches 0
-            if (countdown_time < 0) {
-                countdown_time = COUNT_DOWN_TIME;
-                Player1_turn = !Player1_turn; // Switch turns
-            }
-        }
-    }
+    // Check diagonal from top-left to bottom-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check diagonal from bottom-left to top-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    return 0; // No win condition met
 }
 
-
-void handle_redo_request() {
-    // Draw a prompt for Player 2
+void HandleRedo() {
     CursorPosition.X = CARO_BOARD_POSITION_X;
     CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 1;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
-    printf("Player 1 requests a redo. Player 2, do you agree? Click AGREE to accept.");
+    printf("Requested a redo.");
 
-    while (redo_requested) {
-        handleMouseClick(); // Wait for Player 2's response
+    // Wait for Player 2's response
+    while (!redo_agreed && End_flag) {
+        handleMouseClick(); // Capture Player 2's response
 
         // Check if click is within "AGREE" button
         if (MousePos.Y == AGREE_POSITION_Y && MousePos.X >= AGREE_POSITION_X && MousePos.X <= AGREE_POSITION_X + BUTTON_WIDTH) {
-            if (redo_agreed) {
-                // Implement redo functionality here
-                // For example: Undo the last move
-                // ... (Undo last move implementation)
-
-                // Reset redo flags
-                redo_requested = 0;
-                redo_agreed = 0;
-                printf("Redo agreed. The last move has been undone.\n");
-                return;
-            } else {
-                printf("Redo request was not agreed upon.\n");
-                redo_requested = 0; // Reset redo request flag
-                redo_agreed = 0; // Reset redo agreed flag
-                return;
-            }
+            redo_agreed = 1; // Set redo agreed flag
         }
+    }
+
+    if (redo_agreed) {
+        // Undo the last move
+        if (last_move_x >= 0 && last_move_y >= 0) {
+            CursorPosition.X = CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2;
+            CursorPosition.Y = CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            printf(" "); // Clear the last move from the board
+            board[last_move_y][last_move_x] = ' '; // Reset the board state
+
+            // Switch back the turn to the player who made the last move
+            Player1_turn = !Player1_turn;
+
+            printf("Redo agreed. The last move has been undone.\n");
+
+            // Reset redo flags
+            redo_requested = 0;
+            redo_agreed = 0;
+        }
+    } else {
+        printf("Redo request was not agreed upon.\n");
+        redo_requested = 0; // Reset redo request flag
+        redo_agreed = 0; // Reset redo agreed flag
     }
 }
