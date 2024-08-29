@@ -1,5 +1,6 @@
 #include <stdio.h> 
 #include <windows.h>
+#include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10
 #define CARO_GAME_STRING_POSITION_Y 0
@@ -59,9 +60,7 @@ void handleClickOnFindPlayerScreen() {
             system("cls");    
         }
     }
-
-    currentScreen = VIEW_PLAY_GAME;
-    system("cls"); 
+    drawPlayCaroBoard();
 }
 
 
