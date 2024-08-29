@@ -46,26 +46,5 @@ void handleClickOnSigninScreen(){
     else if (MousePos.Y == 15 && MousePos.X >= 30 && MousePos.X <= 40){
         // Hàm check đăng nhập ở đây
         signin(sockfd, signin_username, signin_password);
-        Response *res = (Response *)malloc(sizeof(Response));
-        int rcvBytes = recvRes(sockfd, res, sizeof(res), 0);
-        if (rcvBytes != -1) {
-            printf("%d\n", res->code);
-            switch (res->code) {
-            case SIGN_IN_SUCCESS:
-                drawPlayCaroBoard();
-                break;
-            case USERNAME_NOT_EXISTED:
-                // Show error
-                break;
-            case WRONG_PASSWORD:
-                // Show error
-                break;
-            case ACCOUNT_BUSY:
-                // Show error
-                break;
-            default:
-                break;
-            }
-        }
     }
 }

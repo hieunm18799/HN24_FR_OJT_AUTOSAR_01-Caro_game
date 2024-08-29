@@ -3,7 +3,8 @@
 
 enum SCREEN {
     VIEW_TOP_NOT_SIGN_IN,
-    VIEW_TOP_SIGNED_IN,
+    VIEW_TOP_SIGNED_IN_ADMIN,
+    VIEW_TOP_SIGNED_IN_USER,
     VIEW_SIGN_IN,
     VIEW_SIGN_UP,
     VIEW_FIND_GAME,
@@ -17,7 +18,9 @@ enum SCREEN {
 
 extern COORD MousePos; // Biến lưu trữ vị trí chuột
 extern int Click_flag; // Cờ để xác định xem đã click chuột hay chưa
-extern int currentScreen; 
+extern int currentScreen;
+extern char signed_in_role[50];
+extern char signed_in_username[50];
 extern char signin_username[50];
 extern char signin_password[50];
 extern char signup_username[50];
@@ -38,6 +41,7 @@ void handleClickOnInitialScreen();
 void handleClickOnSigninScreen();
 void handleClickOnSignupScreen();
 
+
 void gotoxy(int x, int y);
 void handleMouseClick();
 void dashboard(char* role, char *username);
@@ -47,4 +51,21 @@ void openUser(char* role, char* username);
 void frameAdminScreen();
 void openAdminScreen(char *role, char* username);
 
+
+void handleRowClick();
+void fetchReplayData();
+void drawReplayManagementUI();
+void handleOnScreenReplayManagement();
+void deleteReplay(int replayId);
+void sendDataToServer();
+
+void frameScreenAdmin();
+
+
+void drawReplayInfoUI();
+void fetchReplayInfoData();
+void displayReplayInfoData();
+void handleOnScreenReplayInfo();
+
 #endif
+

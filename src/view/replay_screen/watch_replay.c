@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <Windows.h>
+#include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10
 #define CARO_GAME_STRING_POSITION_Y 0
@@ -23,12 +24,12 @@ int console_width, console_height;
 int replay_active = 0; // Flag to track replay state
 int current_move_index = 0;
 
-void gotoxy(int x, int y) {
-    COORD coord;
-    coord.X = x;
-    coord.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
+// void gotoxy(int x, int y) {
+//     COORD coord;
+//     coord.X = x;
+//     coord.Y = y;
+//     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+// }
 
 void handleStartStop() {
     replay_active = !replay_active;  // Toggle replay state
@@ -43,34 +44,35 @@ void set_console_size(int width, int height) {
 }
 
 
-COORD MousePos;
-int Click_flag;
-int current_screen;
+// COORD MousePos;
+// int Click_flag;
+// int currentScreen;
 
 // Hàm xử lý sự kiện click chuột
-void handleMouseClick() {
-    HANDLE hInput;
-    DWORD events;
-    INPUT_RECORD inputRecord;
+// void handleMouseClick() {
+//     HANDLE hInput;
+//     DWORD events;
+//     INPUT_RECORD inputRecord;
 
-    hInput = GetStdHandle(STD_INPUT_HANDLE);
-    SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+//     hInput = GetStdHandle(STD_INPUT_HANDLE);
+//     SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 
-    // Đọc sự kiện chuột
-    if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
-        if (inputRecord.EventType == MOUSE_EVENT) {
-            MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
-            if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
-                Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
-                Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
-            }
-        }
-    }
-}
+//     // Đọc sự kiện chuột
+//     if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
+//         if (inputRecord.EventType == MOUSE_EVENT) {
+//             MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
+//             if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+//                 MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
+//                 Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
+//                 Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
+//             }
+//         }
+//     }
+// }
 
 void DrawReplayBoard() {
-    current_screen = 11;
+    system("cls");
+    currentScreen = VIEW_WATCH_REPLAY;
 
     console_width = board_width * 4 + 5;
     console_height = board_height * 2 + 10;
@@ -122,7 +124,9 @@ void handleClickOnWatchReplayScreen() {
         } else if (MousePos.Y == STOP_POSITION_Y && MousePos.X >= STOP_POSITION_X && MousePos.X <= (STOP_POSITION_X + BUTTON_WIDTH)) {
             replay_active = 0; // Dừng replay
         } else if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
-            current_screen = 10; // Trở về màn hình trước
+         // Trở về màn hình SHOW REPLAY
+        
+
         }
     }
 }

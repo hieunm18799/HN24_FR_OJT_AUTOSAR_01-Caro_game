@@ -17,25 +17,25 @@ Response *createResponse() {
 }
 
 int recvReq(int socket, Request *buff, int size, int flags) {
-    int n = recv(socket, (char*)buff, size, flags);
+    int n = recv(socket, buff, size, flags);
     if (n < 0) printf("Failed to receive request!\n");
     return n;
 }
 
 int sendReq(int socket, Request *buff, int size, int flags) {
-    int n = send(socket, (char*)buff, size, flags);
+    int n = send(socket, buff, size, flags);
     if (n < 0) printf("Failed to send request!\n");
     return n;
 }
 
 int sendRes(int socket, Response *msg, int size, int flags) {
-    int n = send(socket, (char*)msg, size, flags);
+    int n = send(socket, msg, size, flags);
     if (n < 0) printf("Failed to send response!\n");
     return n;
 }
 
 int recvRes(int socket, Response *msg, int size, int flags) {
-    int n = recv(socket, (char*)msg, size, flags);
+    int n = recv(socket, msg, size, flags);
     if (n < 0) printf("Failed to send receive!\n");
     return n;
 }
@@ -93,25 +93,6 @@ void setMessageResponse(Response *msg) {
             break;
         case QUIT_SUCCESS:
             strcpy(msg->message, "You have been quited!");
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-void readMessageReponse(Response *msg) {
-    if (msg->code != -1) {
-        printf("%s\n", msg->message);
-        switch (msg->code) {
-        case SYNTAX_ERROR:
-            printf("%s\n", msg->message);
-            break;
-        case SIGN_IN_SUCCESS:
-            printf("Welcome %s\n", msg->data);
-            break;
-        case USERNAME_EXISTED:
-            printf("%s\n", msg->message);
             break;
         default:
             break;

@@ -1,18 +1,24 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <winsock2.h>
-#include <windows.h>
 #include "users.h"
 #include "protocol.h"
 
-#define USERS_FILE "Users.ini"
+RES_OPCODE sign_out(int clientfd, char *username) {
+    User* user = userList;
+    while (user) {
+        if (strcmp(user->username, username) == 0) {
+            if (user->clientfd == clientfd) {
+                // Cập nhật trạng thái người dùng
+                setUserStatus(username, "NOT_SIGN_IN");
+                user->clientfd = INVALID_SOCKET;
 
-RES_OPCODE sign_out(char *username) {
-    // Cập nhật trạng thái người dùng
-    if (setUserStatus(username, "NOT_SIGN_IN")) {
-        writeUsersIni(USERS_FILE);
-        return SIGN_OUT_SUCCESS;
+                // Phản hồi đăng xuất thành công
+                return SIGN_OUT_SUCCESS;
+            } else {
+                return SIGN_OUT_FAIL;
+            }
+        }
+        user = user->next;
     }
-    return SIGN_OUT_FAIL;
+
+    // Nếu không tìm thấy username
+    return USERNAME_NOT_EXISTED;
 }

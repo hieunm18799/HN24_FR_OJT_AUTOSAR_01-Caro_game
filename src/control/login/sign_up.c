@@ -1,44 +1,22 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <winsock2.h>
-#include <windows.h>
 #include "users.h"
+#include "protocol.h"
 
-#define USERS_FILE "Users.ini"
-
-void sign_up(SOCKET clientSocket) {
-    char username[50];
-    char password[50];
-    char response[100];
-    char role[50] = "default";
-
-    // Nhận dữ liệu từ client
-    int recvResult = recv(clientSocket, username, sizeof(username) - 1, 0);
-    if (recvResult == SOCKET_ERROR) {
-        printf("Failed to receive username.\n");
-        return;
-    }
-    username[recvResult] = '\0'; // Null-terminate the string
-
-    recvResult = recv(clientSocket, password, sizeof(password) - 1, 0);
-    if (recvResult == SOCKET_ERROR) {
-        printf("Failed to receive password.\n");
-        return;
-    }
-    password[recvResult] = '\0'; // Null-terminate the string
-
-    // Kiểm tra xem tài khoản đã tồn tại chưa
-    if (validateUser(username, "")) {
-        snprintf(response, sizeof(response), "Username already exists.");
-        send(clientSocket, response, strlen(response), 0);
-        return;
+RES_OPCODE sign_up(char* username, char* password, char* confirmPassword) {
+    // Kiểm tra xem username đã tồn tại chưa
+    if (strcmp(username, "") == 0 || strcmp(password, "") == 0 || strcmp(confirmPassword, "") == 0 || strcmp(password, confirmPassword) != 0)
+        return SIGN_UP_INPUT_WRONG;
+    User* user = userList;
+    while (user) {
+        if (strcmp(user->username, username) == 0) {
+            return USERNAME_EXISTED;
+        }
+        user = user->next;
     }
 
-    // Tạo tài khoản mới
-    newUser(username, password, role);
-    writeUsersIni(USERS_FILE);
+    // Tạo người dùng mới
+    newUser(username, password, "default");
+    writeUsersIni("Users.ini");
 
-    snprintf(response, sizeof(response), "Account created successfully.");
-    send(clientSocket, response, strlen(response), 0);
+    // Gửi phản hồi thành công
+    return SIGN_UP_SUCCESS;
 }

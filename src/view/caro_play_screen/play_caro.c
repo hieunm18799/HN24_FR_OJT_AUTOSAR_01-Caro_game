@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <Windows.h>
+#include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10
 #define CARO_GAME_STRING_POSITION_Y 0
@@ -30,15 +31,13 @@
 // Function prototypes
 void SetConsoleSize(int width, int height);
 void drawPlayCaroBoard();
-void MovePlayCaro();
+int MovePlayCaro();
 void DisplayCountdown();
-void HandleRedo();
+void handleRedoRequest();
 int CheckWin(int last_x, int last_y);
 
 // Global variables
 static COORD CursorPosition;
-static COORD MousePos;
-static int Click_flag = 0;
 static int Player1_turn = 1;  // Player 1 starts first
 static int End_flag = 1;      // Flag to control the display loop
 static int countdown_time = COUNT_DOWN_TIME;
@@ -46,8 +45,8 @@ static int countdown_active = 1;
 static int redo_requested = 0; // Flag to indicate if redo is requested
 static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 
-int current_screen;
-int board_width = 10, board_height = 10;
+int currentScreen;
+int board_width, board_height;
 int console_width, console_height; // Console dimensions
 char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
 int last_move_x = -1;
@@ -74,7 +73,7 @@ void drawPlayCaroBoard() {
 
     system("cls");
 
-    current_screen = 9;
+    currentScreen = VIEW_PLAY_GAME;
     // Input board size from the user
     // printf("Enter board width (number of cells): ");
     // scanf("%d", &board_width);
@@ -151,7 +150,7 @@ void DisplayCountdown() {
     while (End_flag == 1) {
         if (countdown_active) {
             gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
-
+            printf("COUNTDOWN:");
             if (Player1_turn) {
                 gotoxy(COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN,COUNT_DOWN_POSITION_Y);
                 printf("Player 1's turn: %2d", countdown_time);
@@ -172,40 +171,44 @@ void DisplayCountdown() {
     }
 }
 
-// Function to handle mouse clicks and display X/O on the board
-void MovePlayCaro() {
+int MovePlayCaro() {  // Change return type to int
     int cell_width = CELL_WIDTH;
     int cell_height = CELL_HEIGHT;
 
+    if (Click_flag == 1) {  // Process click if the flag is set
+        Click_flag = 0;  // Reset flag to prevent continuous detection
         countdown_active = 0; // Pause the countdown
-        
+
         // Check if click is within "REDO" button
         if (MousePos.Y == REDO_POSITION_Y && MousePos.X >= REDO_POSITION_X && MousePos.X <= REDO_POSITION_X + BUTTON_WIDTH) {
             redo_requested = 1; // Set redo requested flag
-            HandleRedo();
-            gotoxy(0, AGREE_POSITION_Y - 1);
-            // Xóa dòng bằng cách ghi đè bằng khoảng trắng
+            handleRedoRequest();
+            // Clear the previous message
+            CursorPosition.X = 0;
+            CursorPosition.Y = AGREE_POSITION_Y - 1;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
             DWORD written;
             CONSOLE_SCREEN_BUFFER_INFO csbi;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-            int console_width = csbi.dwSize.X; // Chiều rộng của console
-
-            // In khoảng trắng để xóa dòng
+            int console_width = csbi.dwSize.X;
             FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', console_width, CursorPosition, &written);
-            return;
+            return 0;  // Indicate that no move was made during the redo request
         }
 
         // Check if click is within "QUIT" button
         if (MousePos.Y == QUIT_POSITION_Y && MousePos.X >= QUIT_POSITION_X && MousePos.X <= QUIT_POSITION_X + BUTTON_WIDTH) {
             End_flag = 0; // Exit the loop to quit the game
             CloseHandle(hThread); // Clean up the thread handle
-            return;
+
+            //Redirect to TOP (LOGINED)
+            frameDashbroadUser();
+            return 0;  // Indicate that no move was made due to quitting
         }
 
         // Check if click is within "AGREE" button
         if (MousePos.Y == AGREE_POSITION_Y && MousePos.X >= AGREE_POSITION_X && MousePos.X <= AGREE_POSITION_X + BUTTON_WIDTH) {
             redo_agreed = 1; // Set redo agreed flag
-            return;
+            return 0;  // Indicate that no move was made
         }
 
         // Calculate which cell was clicked based on the mouse position
@@ -215,7 +218,10 @@ void MovePlayCaro() {
         // Ensure the click is within the board boundaries
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
             // Redraw the specific cell
-            gotoxy(CARO_BOARD_POSITION_X + cell_x * cell_width + 2, CARO_BOARD_POSITION_Y + cell_y * cell_height + 1 );
+            CursorPosition.X = CARO_BOARD_POSITION_X + cell_x * cell_width + 2;
+            CursorPosition.Y = CARO_BOARD_POSITION_Y + cell_y * cell_height + 1;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+
             if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
                 if (Player1_turn) {
                     printf("X");
@@ -230,82 +236,86 @@ void MovePlayCaro() {
                 last_move_x = cell_x;
                 last_move_y = cell_y;
 
-                 if (CheckWin(cell_x, cell_y)) {
-                    gotoxy( PLAYER_1_POSITION_X + WIN_NOTIFY,PLAYER_1_POSITION_Y);
+                if (CheckWin(cell_x, cell_y)) {
+                    CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY;
+                    CursorPosition.Y = PLAYER_1_POSITION_Y;
+                    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
-                    CloseHandle(hThread); // Clean up the thread handle
                     End_flag = 0; // End the game
+                    getchar();
+
+                    //Direct to TOP (LOGINED)
+                    frameDashbroadUser();
                 }
+
+                countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
+                countdown_active = 1;
+                return 1;  // Indicate that a move was successfully made
             }
         }
-        countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
-        countdown_active = 1;
+    }
+
+    return 0;  // Indicate that no move was made
 }
 
-int CheckWin(int last_x, int last_y) {
-    char player = board[last_y][last_x];
-    int count;
+void handleRedoRequest() {
+    // Display a message requesting a redo
+    CursorPosition.X = CARO_BOARD_POSITION_X;
+    CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 1;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    printf("Requested a redo. Waiting for approval...");
 
-    // Check horizontal
-    count = 1;
-    for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
-    for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
+    // Wait for Player 2's response or a new move
+    redo_agreed = 0;  // Reset the redo agreed flag
+    int move_made = 0; // Flag to check if a move is made
 
-    // Check vertical
-    count = 1;
-    for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
-    for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
-
-    // Check diagonal from top-left to bottom-right
-    count = 1;
-    for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
-    for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
-
-    // Check diagonal from bottom-left to top-right
-    count = 1;
-    for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
-    for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
-
-    return 0; // No win condition met
-}
-
-void HandleRedo() {
-    gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y + board_height * 2 + 1);
-    printf("Requested a redo.");
-
-    // Wait for Player 2's response
-    while (!redo_agreed && End_flag) {
+    while (!redo_agreed && !move_made && End_flag) {
         handleMouseClick(); // Capture Player 2's response
 
-        // Check if click is within "AGREE" button
+        // Check if click is within the "AGREE" button
         if (MousePos.Y == AGREE_POSITION_Y && MousePos.X >= AGREE_POSITION_X && MousePos.X <= AGREE_POSITION_X + BUTTON_WIDTH) {
             redo_agreed = 1; // Set redo agreed flag
+        } else {
+            move_made = MovePlayCaro(); // Allow other moves to be processed while waiting for approval
+            if (move_made) {
+                redo_requested = 0;  // Reset redo request flag if a move is made
+                break; // Exit the loop if a move is made
+            }
         }
     }
 
     if (redo_agreed) {
         // Undo the last move
         if (last_move_x >= 0 && last_move_y >= 0) {
-            gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1);
+            CursorPosition.X = CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2;
+            CursorPosition.Y = CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
             printf(" "); // Clear the last move from the board
             board[last_move_y][last_move_x] = ' '; // Reset the board state
 
             // Switch back the turn to the player who made the last move
             Player1_turn = !Player1_turn;
 
-            printf("Redo agreed. The last move has been undone.\n");
-
             // Reset redo flags
             redo_requested = 0;
             redo_agreed = 0;
         }
+    } else if (move_made) {
+        // If a move was made, treat it as a rejection of the redo request
+        CursorPosition.X = CARO_BOARD_POSITION_X;
+        CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        //printf("Redo request was denied due to new move.");
+
+        redo_requested = 0;  // Reset redo request flag
     } else {
-        printf("Redo request was not agreed upon.\n");
-        redo_requested = 0; // Reset redo request flag
-        redo_agreed = 0; // Reset redo agreed flag
+        // If the redo is not agreed upon, just reset the request
+        CursorPosition.X = CARO_BOARD_POSITION_X;
+        CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        //printf("Redo request was denied.");
+
+        redo_requested = 0;  // Reset redo request flag
+        redo_agreed = 0;     // Reset redo agreed flag
     }
 }

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "games.h"
+#include <math.h>  // Để sử dụng hàm fabs()
+#include "users.h"
 
 #define MAX_GAMES 100
 
@@ -41,14 +43,61 @@ int addGame(char *player1_name, char *player2_name, char *result, unsigned char 
     return 0; // Trả về 0 nếu thêm thành công
 }
 
-// Tìm kiếm trận đấu dựa trên các tiêu chí (tạm thời bỏ qua tham số cho đơn giản)
-int findGame() {
-    Game *current = games;
+
+// Hàm tính tỷ lệ thắng dựa trên thông tin của người chơi
+double calculateWinRate(User *user) {
+    int totalGames = user->wins + user->losses + user->draws;
+    if (totalGames == 0) {
+        return 0.0; // Tránh chia cho 0 nếu chưa có trận đấu nào
+    }
+    return (double)user->wins / totalGames;
+}
+
+// Tìm kiếm người chơi khác có cùng trình độ với người đang tìm trận
+int findGame(char *player_name, User **matchedUser) {
+    User *current = userList; // `userList` là con trỏ tới danh sách người chơi
+    User *targetUser = NULL;
+
+    // Tìm người chơi đang tìm trận dựa trên tên
     while (current != NULL) {
-        // Kiểm tra điều kiện tìm kiếm
+        if (strcmp(current->username, player_name) == 0) {
+            targetUser = current;
+            break;
+        }
         current = current->next;
     }
-    return -1; // Trả về -1 nếu không tìm thấy
+
+    if (targetUser == NULL) {
+        return USERNAME_NOT_EXISTED; // Không tìm thấy người chơi
+    }
+
+    double targetWinRate = calculateWinRate(targetUser);
+    User *bestMatch = NULL;
+    current = userList;
+
+    // Tìm kiếm người chơi có cùng trình độ với người đang tìm trận
+    while (current != NULL) {
+        if (current == targetUser || strcmp(current->status, "playing") == 0) {
+            current = current->next;
+            continue;
+        }
+
+        double currentWinRate = calculateWinRate(current);
+        if (abs(currentWinRate - targetWinRate) < 0.1) { // Tìm người chơi có tỷ lệ thắng gần bằng
+            bestMatch = current;
+            break;
+        }
+        current = current->next;
+    }
+
+    if (bestMatch != NULL) {
+        *matchedUser = bestMatch; // Gán người chơi tìm thấy vào con trỏ
+        printf("Tìm thấy người chơi có trình độ tương đương: %s\n", bestMatch->username);
+        return GAME_FOUND; // Trả về mã thành công nếu tìm thấy
+    } else {
+        printf("Không tìm thấy người chơi có trình độ tương đương.\n");
+        return GAME_NOT_FOUND; // Không tìm thấy, trả về mã lỗi
+    }
 }
 
 // Thay đổi thông tin của một trận đấu
