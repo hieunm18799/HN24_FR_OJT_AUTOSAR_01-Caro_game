@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "game.h"
+#include "games.h"
 
 // định nghĩa 1 struct lịch sử đấu
 typedef struct MatchHistory {
     char player_name[MAX_LENGTH];
-    __uint16_t game_id;
+    unsigned char game_id;
     char result[MAX_LENGTH];
-    __uint8_t moves[BOARD_LENGTH * BOARD_LENGTH * 2];
+    unsigned char moves[BOARD_LENGTH * BOARD_LENGTH * 2];
     struct MatchHistory *next;
 } MatchHistory;
 
@@ -46,9 +46,9 @@ MatchHistory *loadMatchHistoryFromFile(const char *filename) {
 
     MatchHistory *head = NULL, *tail = NULL;
     char player_name[MAX_LENGTH];
-    __uint16_t game_id;
+    unsigned char game_id;
     char result[MAX_LENGTH];
-    __uint8_t moves[BOARD_LENGTH * BOARD_LENGTH * 2];
+    unsigned char moves[BOARD_LENGTH * BOARD_LENGTH * 2];
 
     while (fscanf(file, "Player: %s, Game ID: %hu, Result: %s\n", player_name, &game_id, result) == 3) {
         for (int i = 0; i < BOARD_LENGTH * BOARD_LENGTH * 2; i++) {
