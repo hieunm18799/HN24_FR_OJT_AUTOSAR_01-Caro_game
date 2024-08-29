@@ -22,6 +22,7 @@
 
 void handle_sigint(int sig);
 void startGUI(int sockfd);
+DWORD WINAPI ReceiveHandler(void *socket_desc);
 
 int sockfd;
 
@@ -48,13 +49,6 @@ int main(int argc, char const *argv[]) {
         printf("Failed to create socket.\n");
         exit(0);
     }
-    u_long mode = 1;
-    if (ioctlsocket(sockfd, FIONBIO, &mode) == SOCKET_ERROR) {
-        printf("ioctlsocket failed. Error: %d\n", WSAGetLastError());
-        closesocket(sockfd);
-        WSACleanup();
-        return 1;
-    }
     // Specify server address
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(atoi(argv[2]));
@@ -63,43 +57,10 @@ int main(int argc, char const *argv[]) {
     int check = connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
     #ifdef _WIN32
     if (check == SOCKET_ERROR) {
-        int error = WSAGetLastError();
-        if (error == WSAEWOULDBLOCK) {
-            // Connection is in progress, we need to use select to check when it's done
-            printf("Connection in progress...\n");
-
-            fd_set writefds;
-            FD_ZERO(&writefds);
-            FD_SET(sockfd, &writefds);
-
-            struct timeval timeout;
-            timeout.tv_sec = 0;
-            timeout.tv_usec = 100000;  // 0.1 seconds
-
-            check = select(0, NULL, &writefds, NULL, &timeout);
-
-            if (check > 0 && FD_ISSET(sockfd, &writefds)) {
-                printf("Connected successfully!\n");
-            } else if (check == 0) {
-                printf("Connection timed out.\n");
-                closesocket(sockfd);
-                WSACleanup();
-                return 1;
-            } else {
-                printf("select failed or connection error. Error: %d\n", WSAGetLastError());
-                closesocket(sockfd);
-                WSACleanup();
-                return 1;
-            }
-        } else {
-            // Some other error occurred during connect
-            printf("Connection failed immediately. Error: %d\n", error);
-            closesocket(sockfd);
-            WSACleanup();
-            return 1;
-        }
-    } else {
-        printf("Connected immediately!\n");
+        printf("Connection failed. Error: %d\n", WSAGetLastError());
+        closesocket(sockfd);
+        WSACleanup();
+        return 0;
     }
     #endif
     #ifdef linux
@@ -108,6 +69,13 @@ int main(int argc, char const *argv[]) {
         exit(0);
     }
     #endif
+    HANDLE recvThread = CreateThread(NULL, 0, ReceiveHandler, (void *)&sockfd, 0, NULL);
+    if (recvThread == NULL) {
+        printf("Could not create receive thread. Error: %d\n", GetLastError());
+        closesocket(sockfd);
+        WSACleanup();
+        return 1;
+    }
     startGUI(sockfd);
 
     #ifdef _WIN32
@@ -130,43 +98,6 @@ void startGUI(int sockfd) {
     timeout.tv_usec = 100000;  // 0.1 seconds
 
     while (1) {
-        fd_set readfds;
-        FD_ZERO(&readfds);
-        FD_SET(sockfd, &readfds);
-        result = select(0, &readfds, NULL, NULL, &timeout);
-
-        if (result > 0) {
-            if (FD_ISSET(sockfd, &readfds)) {
-                Response *res = (Response *)malloc(sizeof(Response));
-                int rcvBytes = recvRes(sockfd, res, sizeof(res), 0);
-                if (rcvBytes != -1) {
-                    switch (res->code) {
-                    case SIGN_IN_SUCCESS:
-                        strcpy(signed_in_role, "");
-                    	strcpy(signed_in_username, "");
-                        dashbroad();
-                        break;
-                    case USERNAME_NOT_EXISTED:
-                        // Show error
-                        break;
-                    case WRONG_PASSWORD:
-                        // Show error
-                        break;
-                    case ACCOUNT_BUSY:
-                        // Show error
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                free(res);
-            }
-        } else if (result == 0) {
-        } else {
-            printf("select failed. Error: %d\n", WSAGetLastError());
-            break;
-        }
-
         handleMouseClick(); // Gọi hàm để xử lý sự kiện chuột
 
         if (Click_flag) { // Nếu có sự kiện click
@@ -188,4 +119,43 @@ void startGUI(int sockfd) {
             
         }
     }
+}
+
+DWORD WINAPI ReceiveHandler(void *socket_desc) {
+    SOCKET sock = *(SOCKET *)socket_desc;
+
+    while (1) {
+        Response *res = (Response *)malloc(sizeof(Response));
+        int rcvBytes = recvRes(sockfd, res, sizeof(Response), 0);
+        if (rcvBytes != -1) {
+            switch (res->code) {
+            case SIGN_IN_SUCCESS:
+                readSigninSuccess(res->data, signed_in_username, signed_in_role);
+                dashbroad();
+                break;
+            case USERNAME_NOT_EXISTED:
+                // Show error
+                break;
+            case WRONG_PASSWORD:
+                // Show error
+                break;
+            case ACCOUNT_BUSY:
+                // Show error
+                break;
+            case SIGN_UP_SUCCESS:
+                drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
+                break;
+            case USERNAME_EXISTED:
+                // Show error
+                break;
+            case SIGN_UP_INPUT_WRONG:
+                // Show error
+                break;
+            default:
+                break;
+            }
+        }
+        free(res);
+    }
+    return 0;
 }

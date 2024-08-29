@@ -53,22 +53,5 @@ void handleClickOnSignupScreen(){
     // Khi nhấn Sign Up ở giao diện đăng ký
     else if (MousePos.Y == 17 && MousePos.X >= 30 && MousePos.X <= 40){
         signup(sockfd, signup_username, signup_password, signup_reenterPassword);
-        Response *res = (Response *)malloc(sizeof(Response));
-        int rcvBytes = recvRes(sockfd, res, sizeof(res), 0);
-        if (rcvBytes != -1) {
-            switch (res->code) {
-            case SIGN_UP_SUCCESS:
-                drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
-                break;
-            case USERNAME_EXISTED:
-                // Show error
-                break;
-            case SIGN_UP_INPUT_WRONG:
-                // Show error
-                break;
-            default:
-                break;
-            }
-        }
     }
 }
