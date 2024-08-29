@@ -184,7 +184,9 @@ int MovePlayCaro() {  // Change return type to int
             redo_requested = 1; // Set redo requested flag
             handleRedoRequest();
             // Clear the previous message
-            gotoxy(0,AGREE_POSITION_Y - 1 );
+            CursorPosition.X = 0;
+            CursorPosition.Y = AGREE_POSITION_Y - 1;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
             DWORD written;
             CONSOLE_SCREEN_BUFFER_INFO csbi;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -234,9 +236,7 @@ int MovePlayCaro() {  // Change return type to int
 
                 if (0) {
                 // if (CheckWin(cell_x, cell_y)) {
-                    CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY;
-                    CursorPosition.Y = PLAYER_1_POSITION_Y;
-                    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                    gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
                     End_flag = 0; // End the game
                     getchar();
