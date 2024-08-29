@@ -56,7 +56,7 @@ void frameUserManagement() {
 
     gotoxy(0, tableStartY + numUsers * rowHeight);
     printf("-------------------------------------------------------------------------------");
-    currentScreen = 6;
+    currentScreen = VIEW_ADMIN_USER_MANAGE;
 }
 
 // Function to fetch replay data from the server

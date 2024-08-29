@@ -19,7 +19,7 @@ void frameAdminScreen() {
 	gotoxy(13, 6);  printf("User Management");
 	gotoxy(13, 10); printf("Replay Management");
 	gotoxy(17, 14); printf("Back");
-	currentScreen = 5;
+	currentScreen = VIEW_ADMIN_MANAGE;
 }
 
 void openAdminScreen(char* role, char* username) {
