@@ -1,46 +1,54 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <winsock2.h>
-#include <windows.h>
 #include "users.h"
-
-#define USERS_FILE "Users.ini"
+#include "protocol.h"
 
 void sign_in(SOCKET clientSocket) {
-    char username[50];
-    char password[50];
-    char response[100];
-
-    // Nhận dữ liệu từ client
-    int recvResult = recv(clientSocket, username, sizeof(username) - 1, 0);
-    if (recvResult == SOCKET_ERROR) {
-        printf("Failed to receive username.\n");
+    Request req;
+    Response res;
+    
+    // Nhận yêu cầu từ client
+    if (recvReq(clientSocket, &req, sizeof(Request), 0) <= 0) {
+        printf("Failed to receive sign in request.\n");
         return;
     }
-    username[recvResult] = '\0'; // Null-terminate the string
 
-    recvResult = recv(clientSocket, password, sizeof(password) - 1, 0);
-    if (recvResult == SOCKET_ERROR) {
-        printf("Failed to receive password.\n");
-        return;
+    char username[MAX_LENGTH], password[MAX_LENGTH];
+    sscanf(req.message, "%s %s", username, password);
+
+    User* user = userList;
+    while (user) {
+        if (strcmp(user->username, username) == 0) {
+            // Kiểm tra password
+            if (strcmp(user->password, password) == 0) {
+                if (strcmp(user->status, "NOT_SIGN_IN") == 0) {
+                    // Cập nhật trạng thái người dùng
+                    setUserStatus(username, "SIGNED_IN");
+                    user->clientfd = clientSocket;
+
+                    // Phản hồi đăng nhập thành công
+                    res.code = SIGN_IN_SUCCESS;
+                    strcpy(res.data, username);
+                    setMessageResponse(&res);
+                    sendRes(clientSocket, &res, sizeof(Response), 0);
+                } else {
+                    // Người dùng đã đăng nhập từ trước
+                    res.code = ACCOUNT_BUSY;
+                    setMessageResponse(&res);
+                    sendRes(clientSocket, &res, sizeof(Response), 0);
+                }
+                return;
+            } else {
+                // Sai password
+                res.code = WRONG_PASSWORD;
+                setMessageResponse(&res);
+                sendRes(clientSocket, &res, sizeof(Response), 0);
+                return;
+            }
+        }
+        user = user->next;
     }
-    password[recvResult] = '\0'; // Null-terminate the string
 
-    // Xác thực người dùng
-    if (validateUser(username, password)) {
-        setUserStatus(username, "SIGN_IN");
-        writeUsersIni(USERS_FILE);
-
-        // Lấy vai trò của người dùng
-        char* role = getUserRole(username);
-
-        // Xây dựng phản hồi cho client dựa trên vai trò
-        snprintf(response, sizeof(response), "Sign-in successful. Role: %s", role);
-    } else {
-        snprintf(response, sizeof(response), "Invalid username or password.");
-    }
-
-    // Gửi phản hồi tới client
-    send(clientSocket, response, strlen(response), 0);
+    // Nếu không tìm thấy username
+    res.code = USERNAME_NOT_EXISTED;
+    setMessageResponse(&res);
+    sendRes(clientSocket, &res, sizeof(Response), 0);
 }
