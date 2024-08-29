@@ -297,21 +297,18 @@ void handleRedoRequest() {
         }
     } else if (move_made) {
         // If a move was made, treat it as a rejection of the redo request
-        // CursorPosition.X = CARO_BOARD_POSITION_X;
-        // CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
-        // SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y + board_height * 2 + 2);
         //printf("Redo request was denied due to new move.");
 
         redo_requested = 0;  // Reset redo request flag
     } else {
         // If the redo is not agreed upon, just reset the request
-        // CursorPosition.X = CARO_BOARD_POSITION_X;
-        // CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
-        // SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 2 );
         //printf("Redo request was denied.");
 
         redo_requested = 0;  // Reset redo request flag
         redo_agreed = 0;     // Reset redo agreed flag
     }
 }
+
 
