@@ -123,7 +123,7 @@ void handleOnScreenReplayManagement(){
 
     if (MousePos.Y == (tableStartY + numReplays * rowHeight + 2) && MousePos.X >= 26 && MousePos.X <= 34){
         // Example: Call delete function (You can change to other operations)
-            deleteReplay(replayId);
+        deleteReplay(replayId);
     }
     else if (MousePos.Y == (tableStartY + numReplays * rowHeight + 2) && MousePos.X >= 40 && MousePos.X <= 46){
         // Gọi hàm frameScreenAdmin ở đây
