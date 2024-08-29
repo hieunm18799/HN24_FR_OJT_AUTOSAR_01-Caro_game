@@ -115,6 +115,14 @@ void startGUI(int sockfd) {
                 case VIEW_TOP_SIGNED_IN_USER:
                     openUser();
                     break;
+                case VIEW_ADMIN_REPLAY_MANAGE:
+                    // handleRowClick();
+                    // handleOnScreenReplayManagement();
+                    break;
+                case VIEW_REPLAY_LIST:
+                    // handleRowClick();
+                    // handleOnScreenReplayInfo();
+                    break;
                 default:
                     break;
             }
@@ -145,6 +153,7 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
                 break;
             case SIGN_UP_SUCCESS:
                 drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
+                enterSigninCredentials(signin_username, signin_password);   // Hàm nhập dữ liệu trong giao diện đăng nhập
                 break;
             case USERNAME_EXISTED:
                 // Show error
