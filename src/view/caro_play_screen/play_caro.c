@@ -236,7 +236,7 @@ int MovePlayCaro() {  // Change return type to int
                 last_move_x = cell_x;
                 last_move_y = cell_y;
 
-                if (check_win(cell_x, cell_y)) {
+                if (CheckWin(cell_x, cell_y)) {
                     CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY;
                     CursorPosition.Y = PLAYER_1_POSITION_Y;
                     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
@@ -276,7 +276,7 @@ void handleRedoRequest() {
         if (MousePos.Y == AGREE_POSITION_Y && MousePos.X >= AGREE_POSITION_X && MousePos.X <= AGREE_POSITION_X + BUTTON_WIDTH) {
             redo_agreed = 1; // Set redo agreed flag
         } else {
-            move_made = Move(); // Allow other moves to be processed while waiting for approval
+            move_made = MovePlayCaro(); // Allow other moves to be processed while waiting for approval
             if (move_made) {
                 redo_requested = 0;  // Reset redo request flag if a move is made
                 break; // Exit the loop if a move is made
