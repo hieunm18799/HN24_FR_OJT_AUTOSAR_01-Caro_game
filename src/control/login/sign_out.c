@@ -1,18 +1,45 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <winsock2.h>
-#include <windows.h>
 #include "users.h"
 #include "protocol.h"
 
-#define USERS_FILE "Users.ini"
+void sign_out(SOCKET clientSocket) {
+    Request req;
+    Response res;
 
-RES_OPCODE control_sign_out(char *username) {
-    // Cập nhật trạng thái người dùng
-    if (setUserStatus(username, "NOT_SIGN_IN")) {
-        writeUsersIni(USERS_FILE);
-        return SIGN_OUT_SUCCESS;
+    // Nhận yêu cầu từ client
+    if (recvReq(clientSocket, &req, sizeof(Request), 0) <= 0) {
+        printf("Failed to receive sign out request.\n");
+        return;
     }
-    return SIGN_OUT_FAIL;
+
+    char username[MAX_LENGTH];
+    sscanf(req.message, "%s", username);
+
+    User* user = userList;
+    while (user) {
+        if (strcmp(user->username, username) == 0) {
+            if (user->clientfd == clientSocket) {
+                // Cập nhật trạng thái người dùng
+                setUserStatus(username, "NOT_SIGN_IN");
+                user->clientfd = INVALID_SOCKET;
+
+                // Phản hồi đăng xuất thành công
+                res.code = SIGN_OUT_SUCCESS;
+                setMessageResponse(&res);
+                sendRes(clientSocket, &res, sizeof(Response), 0);
+                return;
+            } else {
+                // Nếu người dùng không đăng nhập từ socket này
+                res.code = SIGN_OUT_FAIL;
+                setMessageResponse(&res);
+                sendRes(clientSocket, &res, sizeof(Response), 0);
+                return;
+            }
+        }
+        user = user->next;
+    }
+
+    // Nếu không tìm thấy username
+    res.code = USERNAME_NOT_EXISTED;
+    setMessageResponse(&res);
+    sendRes(clientSocket, &res, sizeof(Response), 0);
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <Windows.h>
 #include "top_screen.h"
+
 #define CARO_GAME_STRING_POSITION_X 10
 #define CARO_GAME_STRING_POSITION_Y 0
 #define PLAYER_1_POSITION_X 5
@@ -37,8 +38,6 @@ int CheckWin(int last_x, int last_y);
 
 // Global variables
 static COORD CursorPosition;
-static COORD MousePos;
-static int Click_flag = 0;
 static int Player1_turn = 1;  // Player 1 starts first
 static int End_flag = 1;      // Flag to control the display loop
 static int countdown_time = COUNT_DOWN_TIME;
