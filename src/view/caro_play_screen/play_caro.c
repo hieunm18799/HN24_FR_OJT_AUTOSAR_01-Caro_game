@@ -280,6 +280,7 @@ void MovePlayCaro() {
                     CursorPosition.Y = PLAYER_1_POSITION_Y ;
                     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
+                    CloseHandle(hThread); // Clean up the thread handle
                     End_flag = 0; // End the game
                 }
             }
