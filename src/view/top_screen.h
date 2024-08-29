@@ -38,4 +38,13 @@ void handleClickOnInitialScreen();
 void handleClickOnSigninScreen();
 void handleClickOnSignupScreen();
 
+void handleRowClick();
+void fetchReplayData();
+void drawReplayManagementUI();
+void handleOnScreenReplayManagement();
+void deleteReplay(int replayId);
+void sendDataToServer();
+
+void frameScreenAdmin();
+
 #endif
