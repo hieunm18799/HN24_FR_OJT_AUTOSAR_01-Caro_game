@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <Windows.h>
+#include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10
 #define CARO_GAME_STRING_POSITION_Y 0
@@ -37,8 +38,6 @@ int CheckWin(int last_x, int last_y);
 
 // Global variables
 static COORD CursorPosition;
-static COORD MousePos;
-static int Click_flag = 0;
 static int Player1_turn = 1;  // Player 1 starts first
 static int End_flag = 1;      // Flag to control the display loop
 static int countdown_time = COUNT_DOWN_TIME;
@@ -201,8 +200,8 @@ void MovePlayCaro() {
         if (MousePos.Y == QUIT_POSITION_Y && MousePos.X >= QUIT_POSITION_X && MousePos.X <= QUIT_POSITION_X + BUTTON_WIDTH) {
             End_flag = 0; // Exit the loop to quit the game
             system("cls");
-            currentScreen = VIEW_TOP_SIGNED_IN;
             CloseHandle(hThread); // Clean up the thread handle
+            dashbroad();
             return;
         }
 
@@ -241,7 +240,7 @@ void MovePlayCaro() {
                     End_flag = 0; // End the game
                     Sleep(5000);
                     system("cls");
-                    currentScreen = VIEW_TOP_SIGNED_IN;
+                    dashbroad();
                 }
             }
         }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <Windows.h>
+#include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10
 #define CARO_GAME_STRING_POSITION_Y 0
@@ -43,31 +44,31 @@ void set_console_size(int width, int height) {
 }
 
 
-COORD MousePos;
-int Click_flag;
-int currentScreen;
+// COORD MousePos;
+// int Click_flag;
+// int currentScreen;
 
 // Hàm xử lý sự kiện click chuột
-void handleMouseClick() {
-    HANDLE hInput;
-    DWORD events;
-    INPUT_RECORD inputRecord;
+// void handleMouseClick() {
+//     HANDLE hInput;
+//     DWORD events;
+//     INPUT_RECORD inputRecord;
 
-    hInput = GetStdHandle(STD_INPUT_HANDLE);
-    SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+//     hInput = GetStdHandle(STD_INPUT_HANDLE);
+//     SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 
-    // Đọc sự kiện chuột
-    if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
-        if (inputRecord.EventType == MOUSE_EVENT) {
-            MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
-            if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
-                Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
-                Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
-            }
-        }
-    }
-}
+//     // Đọc sự kiện chuột
+//     if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
+//         if (inputRecord.EventType == MOUSE_EVENT) {
+//             MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
+//             if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+//                 MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
+//                 Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
+//                 Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
+//             }
+//         }
+//     }
+// }
 
 void DrawReplayBoard() {
     system("cls");
