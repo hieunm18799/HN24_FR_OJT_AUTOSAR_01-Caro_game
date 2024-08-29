@@ -22,7 +22,7 @@ void frameAdminScreen() {
 	currentScreen = VIEW_ADMIN_MANAGE;
 }
 
-void openAdminScreen(char* role, char* username) {
+void openAdminScreen() {
 	if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
 		// chuyen sang user management
 	}
@@ -30,6 +30,6 @@ void openAdminScreen(char* role, char* username) {
 		//chuyen sang man hinh replay
 	}
 	else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
-		dashboard(role, username);
+		dashboard();
 	}
 }

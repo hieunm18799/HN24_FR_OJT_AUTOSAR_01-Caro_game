@@ -80,8 +80,8 @@ void frameDashboardAdmin(char* role, char* username) {
 
  void dashboard() {
 	 if (strcmp(signed_in_role, "admin") == 0) {
-		 frameDashboardUser( signed_in_role, signed_in_username);
-	 } else
 		 frameDashboardAdmin(signed_in_role, signed_in_username);
+	 } else
+		 frameDashboardUser( signed_in_role, signed_in_username);
  }
  

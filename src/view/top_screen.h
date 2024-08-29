@@ -49,7 +49,7 @@ void dashboard();
 void openAdmin();
 void openUser();
 void frameAdminScreen();
-void openAdminScreen(char *role, char* username);
+void openAdminScreen();
 
 
 void handleRowClick();

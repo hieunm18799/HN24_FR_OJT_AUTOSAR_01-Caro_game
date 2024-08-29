@@ -1,18 +1,8 @@
-#include <stdio.h>
-#include <conio.h>
 #include <windows.h>
-#include "top_screen.h"
+#include <stdio.h>
+#include <string.h>
 
-COORD MousePos; // Biến lưu trữ vị trí chuột
-int Click_flag = 0; // Cờ để xác định xem đã click chuột hay chưa
-int currentScreen = VIEW_TOP_NOT_SIGN_IN;
-char signed_in_role[50];
-char signed_in_username[50];
-char signin_username[50];
-char signin_password[50];
-char signup_username[50];
-char signup_password[50];
-char signup_reenterPassword[50];
+#define USERNAME_MAX_LEN 20
 
 void gotoxy(int x, int y) {
     COORD coord;
@@ -21,156 +11,78 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void drawInitialUI() {
-    system("cls");
-    gotoxy(38, 8);
-    printf("Caro Game");
-    
-    gotoxy(35, 10);
-    printf("[ Sign in ]");
-    
-    gotoxy(35, 12);
-    printf("[ Sign up ]");
-
-    currentScreen = VIEW_TOP_NOT_SIGN_IN; // Đặt màn hình hiện tại là màn hình ban đầu
+void drawLoginScreen() {
+    system("cls");  // Clear the screen
+    gotoxy(10, 5);
+    printf("Username: ");
+    gotoxy(10, 7);
+    printf("[ Login ]");
 }
 
-// Hàm xử lý sự kiện click chuột
-void handleMouseClick() {
+int main() {
+    char username[USERNAME_MAX_LEN + 1] = {0};
+    int cursorPos = 0;
     HANDLE hInput;
-    DWORD events;
     INPUT_RECORD inputRecord;
+    DWORD events;
 
+    // Enable mouse input
     hInput = GetStdHandle(STD_INPUT_HANDLE);
-    SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+    SetConsoleMode(hInput, ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT);
 
-    // Đọc sự kiện chuột
-    if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
-        if (inputRecord.EventType == MOUSE_EVENT) {
+    drawLoginScreen();
+    gotoxy(20, 5);  // Move the cursor to the input position
+
+    while (1) {
+        ReadConsoleInput(hInput, &inputRecord, 1, &events);
+
+        if (inputRecord.EventType == KEY_EVENT) {
+            KEY_EVENT_RECORD keyEvent = inputRecord.Event.KeyEvent;
+            if (keyEvent.bKeyDown) {
+                if (keyEvent.wVirtualKeyCode == VK_RETURN) {
+                    if (strlen(username) > 0) {
+                        gotoxy(10, 9);
+                        printf("Logging in as %s...\n", username);
+                        break;
+                    }
+                } else if (keyEvent.wVirtualKeyCode == VK_BACK) {
+                    if (cursorPos > 0) {
+                        cursorPos--;
+                        username[cursorPos] = '\0';
+                        gotoxy(20 + cursorPos, 5);
+                        printf(" ");
+                        gotoxy(20 + cursorPos, 5);
+                    }
+                } else if (keyEvent.uChar.AsciiChar != 0 && cursorPos < USERNAME_MAX_LEN) {
+                    username[cursorPos] = keyEvent.uChar.AsciiChar;
+                    cursorPos++;
+                    printf("%c", keyEvent.uChar.AsciiChar);
+                }
+            }
+        } else if (inputRecord.EventType == MOUSE_EVENT) {
             MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
-            if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
-                Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
-                Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
+
+            if (mouseEvent.dwEventFlags == 0 && mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+                int mouseX = mouseEvent.dwMousePosition.X;
+                int mouseY = mouseEvent.dwMousePosition.Y;
+
+                // Debug output to show mouse position
+                gotoxy(0, 10);
+                printf("Mouse Clicked at (%d, %d)\n", mouseX, mouseY);
+
+                if (mouseX >= 10 && mouseX <= 17 && mouseY == 7) {
+                    if (strlen(username) > 0) {
+                        gotoxy(10, 9);
+                        printf("Logging in as %s...\n", username);
+                        break;
+                    } else {
+                        gotoxy(10, 9);
+                        printf("Username cannot be empty.\n");
+                    }
+                }
             }
         }
     }
-}
 
-void handleClickOnInitialScreen() {
-    if (MousePos.Y == 10 && MousePos.X >= 35 && MousePos.X <= 45) {
-        drawSignInUI(); // Mở giao diện đăng nhập
-        enterSigninCredentials(signin_username, signin_password);   // Hàm nhập dữ liệu trong giao diện đăng nhập
-    } else if (MousePos.Y == 12 && MousePos.X >= 35 && MousePos.X <= 45) {
-        drawSignUpUI(); // Mở giao diện đăng ký
-        enterSignupCredentials(signup_username, signup_password, signup_reenterPassword);   // Hàm nhập dữ liệu trong giao diện đăng ký
-    }
-}
-
-void enterSigninCredentials(char *username, char *password) {
-    char ch;
-    int i = 0;
-
-    // Input username
-    gotoxy(32, 10);  // Position of the username input field
-    i = 0;
-    while ((ch = _getch()) != '\r') { // Enter key
-        if (ch == '\b') { // Backspace key
-            if (i > 0) {
-                i--;
-                printf("\b \b"); // Move back, overwrite with space, move back again
-            }
-        } else if (ch != 0 && ch != '\xE0') { // Ignore special keys
-            username[i] = ch;
-            i++;
-            printf("%c", ch); // Echo the character
-        }
-    }
-    username[i] = '\0'; // Null-terminate the string
-    printf("\n");
-
-    // Input password
-    gotoxy(32, 12);  // Position of the password input field
-    i = 0;
-    while (1) {
-        ch = _getch(); // Get input without echoing to console
-        if (ch == '\r') { // Enter key
-            password[i] = '\0'; // Null-terminate the string
-            break;
-        } else if (ch == '\b') { // Backspace key
-            if (i > 0) {
-                i--;
-                printf("\b \b"); // Move back, overwrite with space, move back again
-            }
-        } else {
-            password[i] = ch;
-            i++;
-            printf("*"); // Print asterisks instead of the actual character
-        }
-    }
-    printf("\n");
-}
-
-void enterSignupCredentials(char *username, char *password, char *reenterPassword) {
-    char ch;
-    int i = 0;
-
-    // Input username
-    gotoxy(32, 10);  // Position of the username input field
-    i = 0;
-    while ((ch = _getch()) != '\r') { // Enter key
-        if (ch == '\b') { // Backspace key
-            if (i > 0) {
-                i--;
-                printf("\b \b"); // Move back, overwrite with space, move back again
-            }
-        } else if (ch != 0 && ch != '\xE0') { // Ignore special keys
-            username[i] = ch;
-            i++;
-            printf("%c", ch); // Echo the character
-        }
-    }
-    username[i] = '\0'; // Null-terminate the string
-    printf("\n");
-
-    // Input password
-    gotoxy(32, 12);  // Position of the password input field
-    i = 0;
-    while (1) {
-        ch = _getch(); // Get input without echoing to console
-        if (ch == '\r') { // Enter key
-            password[i] = '\0'; // Null-terminate the string
-            break;
-        } else if (ch == '\b') { // Backspace key
-            if (i > 0) {
-                i--;
-                printf("\b \b"); // Move back, overwrite with space, move back again
-            }
-        } else {
-            password[i] = ch;
-            i++;
-            printf("*"); // Print asterisks instead of the actual character
-        }
-    }
-    printf("\n");
-
-    gotoxy(32, 14);  // Position of the password input field
-    i = 0;
-    while (1) {
-        ch = _getch(); // Get input without echoing to console
-        if (ch == '\r') { // Enter key
-            reenterPassword[i] = '\0'; // Null-terminate the string
-            break;
-        } else if (ch == '\b') { // Backspace key
-            if (i > 0) {
-                i--;
-                printf("\b \b"); // Move back, overwrite with space, move back again
-            }
-        } else {
-            reenterPassword[i] = ch;
-            i++;
-            printf("*"); // Print asterisks instead of the actual character
-        }
-    }
-    printf("\n");
+    return 0;
 }
