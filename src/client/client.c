@@ -118,9 +118,17 @@ void startGUI(int sockfd) {
                 case VIEW_TOP_SIGNED_IN_USER:
                     openUser();
                     break;
+                case VIEW_PLAY_GAME:
+                    MovePlayCaro();
+                    break;
+                case VIEW_ADMIN_MANAGE:
+                    openAdminScreen();
+                    break;
+                case VIEW_ADMIN_USER_MANAGE:
+                    break;
                 case VIEW_ADMIN_REPLAY_MANAGE:
-                    // handleRowClick();
-                    // handleOnScreenReplayManagement();
+                    handleRowClick();
+                    handleOnScreenReplayManagement();
                     break;
                 case VIEW_REPLAY_LIST:
                     // handleRowClick();

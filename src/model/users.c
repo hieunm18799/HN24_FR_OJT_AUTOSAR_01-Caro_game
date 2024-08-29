@@ -8,27 +8,24 @@ User* userList = NULL;
 void initializeUser() {
     readUsersIni("Users.ini");
 }
-bool validateUser(const char* username, const char* password) {
-    User* current = userList;
-    while (current) {
-        if (strcmp(current->username, username) == 0 && strcmp(current->password, password) == 0) {
-            return true;
-        }
-        current = current->next;
-    }
-    return false;
+
+User *createUser(const char* username, const char* password, const char* role) {
+    User *res = (User*)malloc(sizeof(User));
+    if (res == NULL) return NULL;
+    strcpy(res->username, username);
+    strcpy(res->password, password);
+    if (role == "") strcpy(res->role, "default");
+    else strcpy(res->role, role);
+    strcpy(res->status, "NOT_SIGN_IN");
+    res->clientfd = INVALID_SOCKET;
+    res->wins = 0;
+    res->losses = 0;
+    res->draws = 0;
+    return res;
 }
 
 void newUser(const char* username, const char* password, const char* role) {
-    User* newUser = (User*)malloc(sizeof(User));
-    strcpy(newUser->username, username);
-    strcpy(newUser->password, password);
-    strcpy(newUser->role, role);
-    strcpy(newUser->status, "NOT_SIGN_IN");
-    newUser->clientfd = INVALID_SOCKET;
-    newUser->wins = 0;
-    newUser->losses = 0;
-    newUser->draws = 0;
+    User* newUser = createUser(username, password, role);
     newUser->next = userList;
     userList = newUser;
 }
@@ -77,4 +74,27 @@ char* getUserRole(const char* username) {
 
 User* getUsers() {
     return userList;
+}
+
+User *findUserByName(const char* username) {
+    User *current = userList; // `userList` là con trỏ tới danh sách người chơi
+    User *res = NULL;
+
+    // Tìm người chơi đang tìm trận dựa trên tên
+    while (current != NULL) {
+        if (strcmp(current->username, username) == 0) {
+            res = current;
+            break;
+        }
+        current = current->next;
+    }
+    return res;
+}
+
+void freeGames() {
+    while (userList != NULL) {
+        User *temp = userList;
+        userList = userList->next;
+        free(temp);
+    }
 }
