@@ -59,6 +59,7 @@ void handleClickOnSignupScreen(){
             switch (res->code) {
             case SIGN_UP_SUCCESS:
                 drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
+                enterSigninCredentials(signin_username, signin_password);   // Hàm nhập dữ liệu trong giao diện đăng nhập
                 break;
             case USERNAME_EXISTED:
                 // Show error
