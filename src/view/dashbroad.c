@@ -2,8 +2,6 @@
 #include <windows.h>
 #include "top_screen.h"
 
-int currentScreen = 0;
-
 void frameDashboardAdmin(char* role, char* username) {
 	system("cls");
 	gotoxy(27, 1);
@@ -26,10 +24,10 @@ void frameDashboardAdmin(char* role, char* username) {
 	currentScreen = VIEW_TOP_SIGNED_IN_ADMIN;
 }
 
- void frameDashboardUser(char *role, char *username) {
+ void frameDashboardUser() {
 	 system("cls");
 	 gotoxy(27, 1);
-	 printf("%s", username);
+	 printf("%s", signed_in_username);
 	 gotoxy(17, 3);
 	 printf("CARO GAME");
 	 for (int i = 2; i <= 7; i++) {
@@ -49,44 +47,41 @@ void frameDashboardAdmin(char* role, char* username) {
  }
  
  //open new screen from adminScreen
- void openAdmin(char *role, char *username) {
+ void openAdmin() {
 	 if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
-		 //man hinh playgame 
+		 //man hinh playgame
+		 drawPlayCaroBoard();
 	 }
-	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
-		    adminManagement();
-	 }else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
+	else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay 
 	 }
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 frameAdminScreen();
 	 }
 	 else if (MousePos.Y == 18 && MousePos.X >= 10 && MousePos.X <= 33) {
-		 drawInitialUI();
+		 signout(sockfd, signed_in_username);
 	 }
  }
 
  //open new screen from userCreen
- void openUser(char* role, char* username) {
+ void openUser() {
 	 if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hình playgame
+		 drawPlayCaroBoard();
 	 }
 	 else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay
 	 }
 
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
-		 drawInitialUI();
+		 signout(sockfd, signed_in_username);
 	 }
  }
 
- void dashboard(char *role, char *username) {
-	 if (strcmp(role, "user") == 0) {
-		 frameDashboardUser( role, username);
-	 } else if (strcmp(role, "admin") == 0) {
-		 frameDashboardAdmin(role, username);
-	 } else {
-		 printf("ERROR);
-	 }
+ void dashboard() {
+	 if (strcmp(signed_in_role, "admin") == 0) {
+		 frameDashboardUser( signed_in_role, signed_in_username);
+	 } else
+		 frameDashboardAdmin(signed_in_role, signed_in_username);
  }
  
