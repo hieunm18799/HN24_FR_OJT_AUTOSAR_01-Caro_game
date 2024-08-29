@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "game.h" // Để truy cập vào cấu trúc và danh sách các trận đấu
+#include "games.h" // Để truy cập vào cấu trúc và danh sách các trận đấu
 
 // Hàm hiển thị tất cả các lịch sử đấu
 void displayAllMatches() {
@@ -17,7 +17,7 @@ void displayAllMatches() {
 }
 
 // Hàm xóa lịch sử đấu theo ID
-int deleteMatchById(__uint16_t id) {
+int deleteMatchById(unsigned int id) {
     Game *current = getGames(); // Giả sử getGames() trả về con trỏ đầu của danh sách các trận đấu
     Game *previous = NULL;
     while (current != NULL) {

@@ -7,7 +7,7 @@
 // định nghĩa 1 struct lịch sử đấu
 typedef struct MatchHistory {
     char player_name[MAX_LENGTH];
-    unsigned char game_id;
+    unsigned int game_id;
     char result[MAX_LENGTH];
     unsigned char moves[BOARD_LENGTH * BOARD_LENGTH * 2];
     struct MatchHistory *next;
@@ -46,7 +46,7 @@ MatchHistory *loadMatchHistoryFromFile(const char *filename) {
 
     MatchHistory *head = NULL, *tail = NULL;
     char player_name[MAX_LENGTH];
-    unsigned char game_id;
+    unsigned int game_id;
     char result[MAX_LENGTH];
     unsigned char moves[BOARD_LENGTH * BOARD_LENGTH * 2];
 
