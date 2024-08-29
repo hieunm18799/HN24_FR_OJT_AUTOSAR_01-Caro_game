@@ -48,6 +48,14 @@ void handleOnScreenReplayManagement();
 void deleteReplay(int replayId);
 void sendDataToServer();
 
+void handleMouseClick();
+
 void frameScreenAdmin();
+
+
+void drawReplayInfoUI();
+void fetchReplayInfoData();
+void displayReplayInfoData();
+void handleOnScreenReplayInfo();
 
 #endif
