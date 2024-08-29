@@ -184,9 +184,7 @@ int MovePlayCaro() {  // Change return type to int
             redo_requested = 1; // Set redo requested flag
             handleRedoRequest();
             // Clear the previous message
-            CursorPosition.X = 0;
-            CursorPosition.Y = AGREE_POSITION_Y - 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(0,AGREE_POSITION_Y - 1 );
             DWORD written;
             CONSOLE_SCREEN_BUFFER_INFO csbi;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -218,9 +216,7 @@ int MovePlayCaro() {  // Change return type to int
         // Ensure the click is within the board boundaries
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
             // Redraw the specific cell
-            CursorPosition.X = CARO_BOARD_POSITION_X + cell_x * cell_width + 2;
-            CursorPosition.Y = CARO_BOARD_POSITION_Y + cell_y * cell_height + 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(CARO_BOARD_POSITION_X + cell_x * cell_width + 2, CARO_BOARD_POSITION_Y + cell_y * cell_height + 1);
 
             if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
                 if (Player1_turn) {
@@ -237,9 +233,7 @@ int MovePlayCaro() {  // Change return type to int
                 last_move_y = cell_y;
 
                 if (CheckWin(cell_x, cell_y)) {
-                    CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY;
-                    CursorPosition.Y = PLAYER_1_POSITION_Y;
-                    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                    gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
                     End_flag = 0; // End the game
                     getchar();
@@ -260,9 +254,7 @@ int MovePlayCaro() {  // Change return type to int
 
 void handleRedoRequest() {
     // Display a message requesting a redo
-    CursorPosition.X = CARO_BOARD_POSITION_X;
-    CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 1;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 1);
     printf("Requested a redo. Waiting for approval...");
 
     // Wait for Player 2's response or a new move
@@ -284,12 +276,12 @@ void handleRedoRequest() {
         }
     }
 
+    // Đồng ý undo
     if (redo_agreed) {
         // Undo the last move
         if (last_move_x >= 0 && last_move_y >= 0) {
-            CursorPosition.X = CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2;
-            CursorPosition.Y = CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1 );
+
             printf(" "); // Clear the last move from the board
             board[last_move_y][last_move_x] = ' '; // Reset the board state
 
@@ -302,20 +294,53 @@ void handleRedoRequest() {
         }
     } else if (move_made) {
         // If a move was made, treat it as a rejection of the redo request
-        CursorPosition.X = CARO_BOARD_POSITION_X;
-        CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        // CursorPosition.X = CARO_BOARD_POSITION_X;
+        // CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
+        // SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
         //printf("Redo request was denied due to new move.");
 
         redo_requested = 0;  // Reset redo request flag
     } else {
         // If the redo is not agreed upon, just reset the request
-        CursorPosition.X = CARO_BOARD_POSITION_X;
-        CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        // CursorPosition.X = CARO_BOARD_POSITION_X;
+        // CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
+        // SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
         //printf("Redo request was denied.");
 
         redo_requested = 0;  // Reset redo request flag
         redo_agreed = 0;     // Reset redo agreed flag
     }
 }
+
+// Hàm kiểm tra điều kiện thắng bằng xem trạng thái của bảng đã vẽ 
+int CheckWin(int last_x, int last_y) {
+    char player = board[last_y][last_x];
+    int count;
+
+    // Check horizontal
+    count = 1;
+    for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
+    for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;   //return 1: win 
+
+    // Check vertical
+    count = 1;
+    for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
+    for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check diagonal from top-left to bottom-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check diagonal from bottom-left to top-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    return 0; // No win condition met
+}
+
