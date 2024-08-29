@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <windows.h>
-#include "vFunction.h"
+#include "top_screen.h"
 
-int currentScreen = 4;
+// int currentScreen = 4;
 
 void frameDashbroadAdmin(char* username) {
 	system("cls");
@@ -23,7 +23,7 @@ void frameDashbroadAdmin(char* username) {
 	gotoxy(13, 14); printf("Admin management");
 	gotoxy(17, 18); printf("Sign out");
 	gotoxy(1, 20);
-	currentScreen = 5;
+	currentScreen = VIEW_TOP_SIGNED_IN_ADMIN;
 }
 
  void frameDashbroadUser(char *username) {
@@ -44,7 +44,7 @@ void frameDashbroadAdmin(char* username) {
 	 gotoxy(17, 10); printf("Replay list");
 	 gotoxy(17, 14); printf("Sign out");
 	 gotoxy(1, 20);
-	 currentScreen = 6;
+	 currentScreen = VIEW_TOP_SIGNED_IN_USER;
  }
  
  //open new screen from adminScreen
@@ -55,7 +55,7 @@ void frameDashbroadAdmin(char* username) {
 		 drawInitialUI();
 	 }
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
-		 adminManagement();
+		//  adminManagement();
 	 }else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay 
 	 }
@@ -74,14 +74,10 @@ void frameDashbroadAdmin(char* username) {
 	 }
  }
 
- void dashbroad(char *role, char *username) {
-	 if (strcmp(role, "user") == 0) {
-		 frameDashbroadUser(username);
-		 openAdmin();
-	 } else if (strcmp(role, "admin") == 0) {
-		 frameDashbroadAdmin(username);
-		 openUser();
+ void dashbroad() {
+	 if (strcmp(signed_in_role, "admin") == 0) {
+		 frameDashbroadAdmin(signed_in_username);
 	 } else {
-		 printf("ERROR");
+		 frameDashbroadUser(signed_in_username);
 	 }
  }

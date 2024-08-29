@@ -142,7 +142,9 @@ void startGUI(int sockfd) {
                 if (rcvBytes != -1) {
                     switch (res->code) {
                     case SIGN_IN_SUCCESS:
-                        drawPlayCaroBoard();
+                        strcpy(signed_in_role, "");
+                    	strcpy(signed_in_username, "");
+                        dashbroad();
                         break;
                     case USERNAME_NOT_EXISTED:
                         // Show error
@@ -157,6 +159,7 @@ void startGUI(int sockfd) {
                         break;
                     }
                 }
+                free(res);
             }
         } else if (result == 0) {
         } else {
@@ -175,6 +178,12 @@ void startGUI(int sockfd) {
                 handleClickOnSigninScreen();
             } else if (currentScreen == VIEW_SIGN_UP) { // Nếu đang ở màn hình đăng ký
                 handleClickOnSignupScreen();
+            } else if (currentScreen == VIEW_TOP_SIGNED_IN_ADMIN) {
+                openAdmin();
+            } else if (currentScreen == VIEW_TOP_SIGNED_IN_USER) {
+                openUser();
+            } else {
+
             }
             
         }
