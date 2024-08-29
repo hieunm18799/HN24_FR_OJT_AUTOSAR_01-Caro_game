@@ -87,6 +87,7 @@ void handleOnScreenReplayInfo(){
         // Gọi hàm hiển thị màn hình Watch Replay
 
         // Trả về cho control giá trị của Id (replayId)
+        
     }
     else if (MousePos.Y == (tableStartY + numReplays * rowHeight + 2) && MousePos.X >= 40 && MousePos.X <= 46){
         // Gọi hàm hiển thị màn hình Top Logined ở đây
