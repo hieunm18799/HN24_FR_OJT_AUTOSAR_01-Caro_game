@@ -27,6 +27,7 @@ bool setUserStatus(const char* username, const char* status);  // Cập nhật t
 void writeUsersIni(const char* filename);    // Ghi danh sách người dùng vào tệp INI
 void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
 User* getUsers();                            // Lấy danh sách người dùng
+char* getUserRole(const char* username);      // Lấy role người dùng
 
 // Các hàm sign_in, sign_up, sign_out
 void sign_in(SOCKET clientSocket);

@@ -64,6 +64,17 @@ void deleteUser(const char* username) {
     }
 }
 
+char* getUserRole(const char* username) {
+    User* current = userList;
+    while (current) {
+        if (strcmp(current->username, username) == 0) {
+            return current->role;
+        }
+        current = current->next;
+    }
+    return "default"; // Mặc định nếu không tìm thấy người dùng
+}
+
 User* getUsers() {
     return userList;
 }

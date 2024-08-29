@@ -31,10 +31,16 @@ void sign_in(SOCKET clientSocket) {
     if (validateUser(username, password)) {
         setUserStatus(username, "SIGN_IN");
         writeUsersIni(USERS_FILE);
-        snprintf(response, sizeof(response), "Sign-in successful.");
+
+        // Lấy vai trò của người dùng
+        char* role = getUserRole(username);
+
+        // Xây dựng phản hồi cho client dựa trên vai trò
+        snprintf(response, sizeof(response), "Sign-in successful. Role: %s", role);
     } else {
         snprintf(response, sizeof(response), "Invalid username or password.");
     }
 
+    // Gửi phản hồi tới client
     send(clientSocket, response, strlen(response), 0);
 }
