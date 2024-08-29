@@ -1,27 +1,14 @@
 #include "users.h"
 #include "protocol.h"
 
-void sign_up(SOCKET clientSocket) {
-    Request req;
-    Response res;
-    
-    // Nhận yêu cầu từ client
-    if (recvReq(clientSocket, &req, sizeof(Request), 0) <= 0) {
-        printf("Failed to receive sign up request.\n");
-        return;
-    }
-
-    char username[MAX_LENGTH], password[MAX_LENGTH];
-    sscanf(req.message, "%s %s", username, password);
-
+RES_OPCODE sign_up(char* username, char* password, char* confirmPassword) {
     // Kiểm tra xem username đã tồn tại chưa
+    if (strcmp(username, "") == 0 || strcmp(password, "") == 0 || strcmp(confirmPassword, "") == 0 || strcmp(password, confirmPassword) != 0)
+        return SIGN_UP_INPUT_WRONG;
     User* user = userList;
     while (user) {
         if (strcmp(user->username, username) == 0) {
-            res.code = USERNAME_EXISTED;
-            setMessageResponse(&res);
-            sendRes(clientSocket, &res, sizeof(Response), 0);
-            return;
+            return USERNAME_EXISTED;
         }
         user = user->next;
     }
@@ -31,7 +18,5 @@ void sign_up(SOCKET clientSocket) {
     writeUsersIni("Users.ini");
 
     // Gửi phản hồi thành công
-    res.code = SIGN_UP_SUCCESS;
-    setMessageResponse(&res);
-    sendRes(clientSocket, &res, sizeof(Response), 0);
+    return SIGN_UP_SUCCESS;
 }

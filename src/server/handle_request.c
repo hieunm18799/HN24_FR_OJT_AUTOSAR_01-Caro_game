@@ -21,25 +21,8 @@ bool handleSignup(int clientfd, Request *req, Response *res) {
     password = strtok(NULL, "@");
     confirmPassword = strtok(NULL, "\0");
 
-    // If Sign up input wrong: pass != conf_pass, pass == "', username = ''
-    if (0) {
-        res->code = SIGN_UP_INPUT_WRONG;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
-    }
-
-    // If Username existed
-    if (0) {
-        res->code = USERNAME_EXISTED;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
-    }
-    // add User to global_user
-    // add User to ini file
-
-    res->code = SIGN_UP_SUCCESS;
+    RES_OPCODE ret = sign_up(username, password, confirmPassword);
+    res->code = ret;
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
@@ -47,44 +30,35 @@ bool handleSignup(int clientfd, Request *req, Response *res) {
 
 bool handleSignin(int clientfd, Request *req, Response *res) {
     char *username, *password;
+    char role[MAX_LENGTH];
     
     printf("%s\n", req->message);
     username = strtok(req->message, "@");
     password = strtok(NULL, "\0");
 
-    // User not existed
-    if (0) {
-        res->code = USERNAME_NOT_EXISTED;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
-    }
-
-    // User is ok but not pass
-    if (0) {
-        res->code = WRONG_PASSWORD;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
-    }
-
-    // User is signed in
-    if (0) {
-        res->code = ACCOUNT_BUSY;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
-    }
-
-    res->code = SIGN_IN_SUCCESS;
+    RES_OPCODE ret = sign_in(clientfd, username, password, role);
+    res->code = ret;
     setMessageResponse(res);
+
+    // User not existed
+    if (ret == SIGN_IN_SUCCESS) {
+        strcpy(res->data, username);
+        strcat(res->data, "@");
+        strcat(res->data, role);
+        strcat(res->data, "\0");
+    }
+    printf("%s %s\n", res->message, res->data);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
 }
 
 bool handleSignout(int clientfd, Request *req, Response *res) {
-    // Change user status to not_sign_in
-    res->code = SIGN_OUT_SUCCESS;
+    char *username;
+    
+    printf("%s\n", req->message);
+    username = strtok(req->message, "\0");
+    RES_OPCODE ret = sign_out(clientfd, username);
+    res->code = ret;
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
