@@ -44,10 +44,10 @@ void handleClickOnSignupScreen();
 
 void gotoxy(int x, int y);
 void handleMouseClick();
-void dashboard(char* role, char *username);
+void dashboard();
 
-void openAdmin(char* role, char* username);
-void openUser(char* role, char* username);
+void openAdmin();
+void openUser();
 void frameAdminScreen();
 void openAdminScreen(char *role, char* username);
 
@@ -57,7 +57,6 @@ void fetchReplayData();
 void drawReplayManagementUI();
 void handleOnScreenReplayManagement();
 void deleteReplay(int replayId);
-void sendDataToServer();
 
 void frameScreenAdmin();
 

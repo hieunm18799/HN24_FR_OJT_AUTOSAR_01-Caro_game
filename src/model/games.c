@@ -93,7 +93,7 @@ int findGame(char *player_name, User **matchedUser) {
     if (bestMatch != NULL) {
         *matchedUser = bestMatch; // Gán người chơi tìm thấy vào con trỏ
         printf("Tìm thấy người chơi có trình độ tương đương: %s\n", bestMatch->username);
-        return GAME_FOUND; // Trả về mã thành công nếu tìm thấy
+        return 1; // Trả về mã thành công nếu tìm thấy
     } else {
         printf("Không tìm thấy người chơi có trình độ tương đương.\n");
         return GAME_NOT_FOUND; // Không tìm thấy, trả về mã lỗi
