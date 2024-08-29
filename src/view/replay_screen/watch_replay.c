@@ -23,12 +23,12 @@ int console_width, console_height;
 int replay_active = 0; // Flag to track replay state
 int current_move_index = 0;
 
-void gotoxy(int x, int y) {
-    COORD coord;
-    coord.X = x;
-    coord.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
+// void gotoxy(int x, int y) {
+//     COORD coord;
+//     coord.X = x;
+//     coord.Y = y;
+//     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+// }
 
 void handleStartStop() {
     replay_active = !replay_active;  // Toggle replay state
@@ -45,7 +45,7 @@ void set_console_size(int width, int height) {
 
 COORD MousePos;
 int Click_flag;
-int current_screen;
+int currentScreen;
 
 // Hàm xử lý sự kiện click chuột
 void handleMouseClick() {
@@ -70,7 +70,8 @@ void handleMouseClick() {
 }
 
 void DrawReplayBoard() {
-    current_screen = 11;
+    system("cls");
+    currentScreen = VIEW_WATCH_REPLAY;
 
     console_width = board_width * 4 + 5;
     console_height = board_height * 2 + 10;
@@ -122,7 +123,8 @@ void handleClickOnWatchReplayScreen() {
         } else if (MousePos.Y == STOP_POSITION_Y && MousePos.X >= STOP_POSITION_X && MousePos.X <= (STOP_POSITION_X + BUTTON_WIDTH)) {
             replay_active = 0; // Dừng replay
         } else if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
-            current_screen = 10; // Trở về màn hình trước
+            currentScreen = VIEW_REPLAY_LIST; // Trở về màn hình trước
+            system("cls");    
         }
     }
 }
