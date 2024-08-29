@@ -34,7 +34,7 @@ void drawPlayCaroBoard();
 int MovePlayCaro();
 void DisplayCountdown();
 void handleRedoRequest();
-int CheckWin(int last_x, int last_y);
+// int CheckWin(int last_x, int last_y);
 
 // Global variables
 static COORD CursorPosition;
@@ -201,7 +201,7 @@ int MovePlayCaro() {  // Change return type to int
             CloseHandle(hThread); // Clean up the thread handle
 
             //Redirect to TOP (LOGINED)
-            frameDashbroadUser();
+            dashboard();
             return 0;  // Indicate that no move was made due to quitting
         }
 
@@ -236,7 +236,8 @@ int MovePlayCaro() {  // Change return type to int
                 last_move_x = cell_x;
                 last_move_y = cell_y;
 
-                if (CheckWin(cell_x, cell_y)) {
+                if (0) {
+                // if (CheckWin(cell_x, cell_y)) {
                     CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY;
                     CursorPosition.Y = PLAYER_1_POSITION_Y;
                     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
@@ -245,7 +246,7 @@ int MovePlayCaro() {  // Change return type to int
                     getchar();
 
                     //Direct to TOP (LOGINED)
-                    frameDashbroadUser();
+                    dashboard();
                 }
 
                 countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn

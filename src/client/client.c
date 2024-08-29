@@ -92,10 +92,6 @@ void handle_sigint(int sig) {
 
 void startGUI(int sockfd) {
     drawInitialUI();
-    struct timeval timeout;
-    int result;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 100000;  // 0.1 seconds
 
     while (1) {
         handleMouseClick(); // Gọi hàm để xử lý sự kiện chuột
@@ -103,20 +99,25 @@ void startGUI(int sockfd) {
         if (Click_flag) { // Nếu có sự kiện click
             Click_flag = 0; // Reset cờ click
 
-            if (currentScreen == VIEW_TOP_NOT_SIGN_IN) { // Nếu đang ở màn hình ban đầu
-                handleClickOnInitialScreen();
-            } else if (currentScreen == VIEW_SIGN_IN) { // Nếu đang ở màn hình đăng nhập
-                handleClickOnSigninScreen();
-            } else if (currentScreen == VIEW_SIGN_UP) { // Nếu đang ở màn hình đăng ký
-                handleClickOnSignupScreen();
-            } else if (currentScreen == VIEW_TOP_SIGNED_IN_ADMIN) {
-                openAdmin();
-            } else if (currentScreen == VIEW_TOP_SIGNED_IN_USER) {
-                openUser();
-            } else {
-
+            switch (currentScreen) {
+                case VIEW_TOP_NOT_SIGN_IN:
+                    handleClickOnInitialScreen();
+                    break;
+                case VIEW_SIGN_IN:
+                    handleClickOnSigninScreen();
+                    break;
+                case VIEW_SIGN_UP:
+                    handleClickOnSignupScreen();
+                    break;
+                case VIEW_TOP_SIGNED_IN_ADMIN:
+                    openAdmin();
+                    break;
+                case VIEW_TOP_SIGNED_IN_USER:
+                    openUser();
+                    break;
+                default:
+                    break;
             }
-            
         }
     }
 }
@@ -131,7 +132,7 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
             switch (res->code) {
             case SIGN_IN_SUCCESS:
                 readSigninSuccess(res->data, signed_in_username, signed_in_role);
-                dashbroad();
+                dashboard();
                 break;
             case USERNAME_NOT_EXISTED:
                 // Show error
@@ -150,6 +151,12 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
                 break;
             case SIGN_UP_INPUT_WRONG:
                 // Show error
+                break;
+            case SIGN_OUT_FAIL:
+                // Show error
+                break;
+            case SIGN_OUT_SUCCESS:
+                drawInitialUI();
                 break;
             default:
                 break;

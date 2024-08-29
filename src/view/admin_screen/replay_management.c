@@ -146,9 +146,3 @@ void deleteReplay(int replayId) {
         sendDataToServer();
     }
 }
-
-// Function to send data back to the server after deletion
-void sendDataToServer() {
-    // Simulate sending updated data to the server
-    printf("Data sent back to the server.\n");
-}

@@ -24,7 +24,7 @@ int deleteMatchById(unsigned int id) {
         if (current->id == id) {
             if (previous == NULL) {
                 // Nếu trận đấu cần xóa là trận đầu tiên trong danh sách
-                setGames(current->next); // Giả sử setGames() để cập nhật con trỏ đầu của danh sách
+                // setGames(current->next); // Giả sử setGames() để cập nhật con trỏ đầu của danh sách
             } else {
                 previous->next = current->next;
             }

@@ -6,6 +6,7 @@ Request *createRequest() {
     Request *ret = (Request *)malloc(sizeof(Request));
     if (ret == NULL)
         printf("MEMORY LEAKED!\n");
+    else strcpy(ret->message, "\0");
     return ret;
 }
 
@@ -13,6 +14,10 @@ Response *createResponse() {
     Response *ret = (Response *)malloc(sizeof(Response));
     if (ret == NULL)
         printf("MEMORY LEAKED!\n");
+    else {
+        strcpy(ret->message, "\0");
+        strcpy(ret->data, "\0");
+    }
     return ret;
 }
 
