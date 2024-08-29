@@ -37,19 +37,14 @@ void handleMouseClick() {
 
 void drawFindPlayer() {
     current_screen = 8;
-    CursorPosition.X = CARO_GAME_STRING_POSITION_X;
-    CursorPosition.Y = CARO_GAME_STRING_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    system("cls");
+    gotoxy(CARO_GAME_STRING_POSITION_X,CARO_GAME_STRING_POSITION_Y);
     printf("CARO GAME");
 
-    CursorPosition.X = FINDING_GAME_POSITION_X;
-    CursorPosition.Y = FINDING_GAME_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(FINDING_GAME_POSITION_X,FINDING_GAME_POSITION_Y);
     printf("FINDING GAME");
 
-    CursorPosition.X = BACK_POSITION_X;
-    CursorPosition.Y = BACK_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(BACK_POSITION_X,BACK_POSITION_Y);
     printf("[ BACK ]");
 }
 

@@ -71,6 +71,9 @@ void SetConsoleSize(int width, int height) {
 
 // Function to draw the board and initialize board state
 void drawPlayCaroBoard() {
+
+    system("cls");
+
     current_screen = 9;
     // Input board size from the user
     // printf("Enter board width (number of cells): ");
@@ -94,27 +97,19 @@ void drawPlayCaroBoard() {
     SetConsoleSize(console_width, console_height);
 
     // Set up game title position
-    CursorPosition.X = CARO_GAME_STRING_POSITION_X;
-    CursorPosition.Y = CARO_GAME_STRING_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(CARO_GAME_STRING_POSITION_X,CARO_GAME_STRING_POSITION_Y);
     printf("CARO GAME");
 
     // Set up player 1 label position
-    CursorPosition.X = PLAYER_1_POSITION_X;
-    CursorPosition.Y = PLAYER_1_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(PLAYER_1_POSITION_X,PLAYER_1_POSITION_Y);
     printf("<X> PLAYER 1");
 
     // Set up player 2 label position
-    CursorPosition.X = PLAYER_2_POSITION_X;
-    CursorPosition.Y = PLAYER_2_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(PLAYER_2_POSITION_X,PLAYER_2_POSITION_Y);
     printf("<O> PLAYER 2");
 
     // Set up board drawing position
-    CursorPosition.X = CARO_BOARD_POSITION_X;
-    CursorPosition.Y = CARO_BOARD_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
 
     // Draw the board
     for (int i = 0; i < board_height * 2 + 1; i++) {
@@ -133,24 +128,16 @@ void drawPlayCaroBoard() {
     }
 
     // Draw buttons
-    CursorPosition.X = REDO_POSITION_X;
-    CursorPosition.Y = REDO_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(REDO_POSITION_X,REDO_POSITION_Y);
     printf("REDO");
 
-    CursorPosition.X = COUNT_DOWN_POSITION_X;
-    CursorPosition.Y = COUNT_DOWN_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
     printf("COUNTDOWN:");
 
-    CursorPosition.X = AGREE_POSITION_X;
-    CursorPosition.Y = AGREE_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(AGREE_POSITION_X,AGREE_POSITION_Y);
     printf("AGREE");
 
-    CursorPosition.X = QUIT_POSITION_X;
-    CursorPosition.Y = QUIT_POSITION_Y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(QUIT_POSITION_X,QUIT_POSITION_Y);
     printf("QUIT");
 
     hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
@@ -163,17 +150,13 @@ void drawPlayCaroBoard() {
 void DisplayCountdown() {
     while (End_flag == 1) {
         if (countdown_active) {
-            CursorPosition.X = COUNT_DOWN_POSITION_X;
-            CursorPosition.Y = COUNT_DOWN_POSITION_Y;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
 
             if (Player1_turn) {
-                CursorPosition.X = COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN;
-                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                gotoxy(COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN,COUNT_DOWN_POSITION_Y);
                 printf("Player 1's turn: %2d", countdown_time);
             } else {
-                CursorPosition.X = COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN;
-                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                gotoxy(COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN,COUNT_DOWN_POSITION_Y);
                 printf("Player 2's turn: %2d", countdown_time);
             }
 
@@ -200,9 +183,7 @@ void MovePlayCaro() {
         if (MousePos.Y == REDO_POSITION_Y && MousePos.X >= REDO_POSITION_X && MousePos.X <= REDO_POSITION_X + BUTTON_WIDTH) {
             redo_requested = 1; // Set redo requested flag
             HandleRedo();
-            CursorPosition.X = 0;
-            CursorPosition.Y = AGREE_POSITION_Y - 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(0, AGREE_POSITION_Y - 1);
             // Xóa dòng bằng cách ghi đè bằng khoảng trắng
             DWORD written;
             CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -234,10 +215,7 @@ void MovePlayCaro() {
         // Ensure the click is within the board boundaries
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
             // Redraw the specific cell
-            CursorPosition.X = CARO_BOARD_POSITION_X + cell_x * cell_width + 2;
-            CursorPosition.Y = CARO_BOARD_POSITION_Y + cell_y * cell_height + 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
-
+            gotoxy(CARO_BOARD_POSITION_X + cell_x * cell_width + 2, CARO_BOARD_POSITION_Y + cell_y * cell_height + 1 );
             if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
                 if (Player1_turn) {
                     printf("X");
@@ -253,10 +231,9 @@ void MovePlayCaro() {
                 last_move_y = cell_y;
 
                  if (CheckWin(cell_x, cell_y)) {
-                    CursorPosition.X = PLAYER_1_POSITION_X + WIN_NOTIFY ;
-                    CursorPosition.Y = PLAYER_1_POSITION_Y ;
-                    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+                    gotoxy( PLAYER_1_POSITION_X + WIN_NOTIFY,PLAYER_1_POSITION_Y);
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
+                    CloseHandle(hThread); // Clean up the thread handle
                     End_flag = 0; // End the game
                 }
             }
@@ -297,9 +274,7 @@ int CheckWin(int last_x, int last_y) {
 }
 
 void HandleRedo() {
-    CursorPosition.X = CARO_BOARD_POSITION_X;
-    CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 1;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y + board_height * 2 + 1);
     printf("Requested a redo.");
 
     // Wait for Player 2's response
@@ -315,9 +290,7 @@ void HandleRedo() {
     if (redo_agreed) {
         // Undo the last move
         if (last_move_x >= 0 && last_move_y >= 0) {
-            CursorPosition.X = CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2;
-            CursorPosition.Y = CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1);
             printf(" "); // Clear the last move from the board
             board[last_move_y][last_move_x] = ' '; // Reset the board state
 
