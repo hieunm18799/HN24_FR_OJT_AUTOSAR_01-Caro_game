@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <conio.h>
+#include "protocol.h"
 #include <windows.h>
-#include <top_screen.h>
+#include "top_screen.h"
+
 
 
 void drawSignUpUI() {
@@ -36,7 +38,7 @@ void drawSignUpUI() {
     gotoxy(38, 19);
     printf("Back");
 
-    currentScreen = 2; // Đặt màn hình hiện tại là màn hình đăng ký
+    currentScreen = VIEW_SIGN_UP; // Đặt màn hình hiện tại là màn hình đăng ký
 }
 
 void handleClickOnSignupScreen(){
@@ -50,8 +52,23 @@ void handleClickOnSignupScreen(){
     }
     // Khi nhấn Sign Up ở giao diện đăng ký
     else if (MousePos.Y == 17 && MousePos.X >= 30 && MousePos.X <= 40){
-        // Hàm check đăng ký ở đây
-
-        drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
+        signup(sockfd, signup_username, signup_password, signup_reenterPassword);
+        Response *res = (Response *)malloc(sizeof(Response));
+        int rcvBytes = recvRes(sockfd, res, sizeof(res), 0);
+        if (rcvBytes != -1) {
+            switch (res->code) {
+            case SIGN_UP_SUCCESS:
+                drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
+                break;
+            case USERNAME_EXISTED:
+                // Show error
+                break;
+            case SIGN_UP_INPUT_WRONG:
+                // Show error
+                break;
+            default:
+                break;
+            }
+        }
     }
 }

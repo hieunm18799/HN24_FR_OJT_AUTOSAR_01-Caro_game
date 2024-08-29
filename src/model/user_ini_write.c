@@ -5,7 +5,7 @@
 void writeUsersIni(const char* filename) {
     FILE *file = fopen(filename, "w");
     if (!file) {
-        perror("Failed to open Users.ini");
+        printf("Failed to open Users.ini");
         return;
     }
 

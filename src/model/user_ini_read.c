@@ -8,7 +8,7 @@
 void readUsersIni(const char* filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
-        perror("Failed to open Users.ini");
+        printf("Failed to open Users.ini");
         return;
     }
 
