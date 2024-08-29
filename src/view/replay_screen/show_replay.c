@@ -50,6 +50,7 @@ void drawReplayInfoUI() {
     
     gotoxy(40, tableStartY + numReplays * rowHeight + 2);
     printf("[ Back ]");
+    currentScreen = VIEW_REPLAY_LIST;
 }
 
 void fetchReplayInfoData() {
