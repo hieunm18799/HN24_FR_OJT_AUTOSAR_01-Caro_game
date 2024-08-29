@@ -175,8 +175,8 @@ int MovePlayCaro() {  // Change return type to int
     int cell_width = CELL_WIDTH;
     int cell_height = CELL_HEIGHT;
 
-    if (Click_flag == 1) {  // Process click if the flag is set
-        Click_flag = 0;  // Reset flag to prevent continuous detection
+    // if (Click_flag == 1) {  // Process click if the flag is set
+    //     Click_flag = 0;  // Reset flag to prevent continuous detection
         countdown_active = 0; // Pause the countdown
 
         // Check if click is within "REDO" button
@@ -250,7 +250,7 @@ int MovePlayCaro() {  // Change return type to int
                 return 1;  // Indicate that a move was successfully made
             }
         }
-    }
+    //}
 
     return 0;  // Indicate that no move was made
 }
@@ -313,37 +313,5 @@ void handleRedoRequest() {
         redo_requested = 0;  // Reset redo request flag
         redo_agreed = 0;     // Reset redo agreed flag
     }
-}
-
-// Hàm kiểm tra điều kiện thắng bằng xem trạng thái của bảng đã vẽ 
-int CheckWin(int last_x, int last_y) {
-    char player = board[last_y][last_x];
-    int count;
-
-    // Check horizontal
-    count = 1;
-    for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
-    for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;   //return 1: win 
-
-    // Check vertical
-    count = 1;
-    for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
-    for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
-
-    // Check diagonal from top-left to bottom-right
-    count = 1;
-    for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
-    for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
-
-    // Check diagonal from bottom-left to top-right
-    count = 1;
-    for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
-    for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
-
-    return 0; // No win condition met
 }
 
