@@ -175,8 +175,8 @@ int MovePlayCaro() {  // Change return type to int
     int cell_width = CELL_WIDTH;
     int cell_height = CELL_HEIGHT;
 
-    if (Click_flag == 1) {  // Process click if the flag is set
-        Click_flag = 0;  // Reset flag to prevent continuous detection
+    // if (Click_flag == 1) {  // Process click if the flag is set
+    //     Click_flag = 0;  // Reset flag to prevent continuous detection
         countdown_active = 0; // Pause the countdown
 
         // Check if click is within "REDO" button
@@ -184,9 +184,7 @@ int MovePlayCaro() {  // Change return type to int
             redo_requested = 1; // Set redo requested flag
             handleRedoRequest();
             // Clear the previous message
-            CursorPosition.X = 0;
-            CursorPosition.Y = AGREE_POSITION_Y - 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(0,AGREE_POSITION_Y - 1 );
             DWORD written;
             CONSOLE_SCREEN_BUFFER_INFO csbi;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -218,9 +216,7 @@ int MovePlayCaro() {  // Change return type to int
         // Ensure the click is within the board boundaries
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
             // Redraw the specific cell
-            CursorPosition.X = CARO_BOARD_POSITION_X + cell_x * cell_width + 2;
-            CursorPosition.Y = CARO_BOARD_POSITION_Y + cell_y * cell_height + 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(CARO_BOARD_POSITION_X + cell_x * cell_width + 2, CARO_BOARD_POSITION_Y + cell_y * cell_height + 1);
 
             if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
                 if (Player1_turn) {
@@ -254,16 +250,14 @@ int MovePlayCaro() {  // Change return type to int
                 return 1;  // Indicate that a move was successfully made
             }
         }
-    }
+    //}
 
     return 0;  // Indicate that no move was made
 }
 
 void handleRedoRequest() {
     // Display a message requesting a redo
-    CursorPosition.X = CARO_BOARD_POSITION_X;
-    CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 1;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 1);
     printf("Requested a redo. Waiting for approval...");
 
     // Wait for Player 2's response or a new move
@@ -285,12 +279,12 @@ void handleRedoRequest() {
         }
     }
 
+    // Đồng ý undo
     if (redo_agreed) {
         // Undo the last move
         if (last_move_x >= 0 && last_move_y >= 0) {
-            CursorPosition.X = CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2;
-            CursorPosition.Y = CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+            gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1 );
+
             printf(" "); // Clear the last move from the board
             board[last_move_y][last_move_x] = ' '; // Reset the board state
 
@@ -303,20 +297,18 @@ void handleRedoRequest() {
         }
     } else if (move_made) {
         // If a move was made, treat it as a rejection of the redo request
-        CursorPosition.X = CARO_BOARD_POSITION_X;
-        CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y + board_height * 2 + 2);
         //printf("Redo request was denied due to new move.");
 
         redo_requested = 0;  // Reset redo request flag
     } else {
         // If the redo is not agreed upon, just reset the request
-        CursorPosition.X = CARO_BOARD_POSITION_X;
-        CursorPosition.Y = CARO_BOARD_POSITION_Y + board_height * 2 + 2;
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+        gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 2 );
         //printf("Redo request was denied.");
 
         redo_requested = 0;  // Reset redo request flag
         redo_agreed = 0;     // Reset redo agreed flag
     }
 }
+
+
