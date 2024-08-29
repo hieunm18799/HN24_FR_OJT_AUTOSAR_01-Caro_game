@@ -106,8 +106,7 @@ void handleOnScreenReplayManagement(){
     }
     else if (MousePos.Y == (tableStartY + numReplays * rowHeight + 2) && MousePos.X >= 40 && MousePos.X <= 46){
         // Gọi hàm frameScreenAdmin ở đây
-        // Button Back
-        frameScreenAdmin();
+        // frameScreenAdmin();
     }
 }
 

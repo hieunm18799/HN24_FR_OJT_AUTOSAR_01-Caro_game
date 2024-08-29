@@ -95,14 +95,14 @@ typedef enum RES_OPCODE {
 #define STRING_OTHER_PLAYER_WIN "OTHER_PLAYER_WIN"
 #define STRING_QUIT_SUCCESS "QUIT_SUCCESS"
 typedef struct Request {
-    REQ_OPCODE code;
     char message[MAX_LENGTH];
+    REQ_OPCODE code;
 } Request;
 
 typedef struct Response {
-    RES_OPCODE code;
     char message[MAX_LENGTH];
     char data[MAX_LENGTH];
+    RES_OPCODE code;
 } Response;
 
 Request *createRequest();
@@ -115,7 +115,6 @@ int sendRes(int socket, Response *msg, int size, int flags);
 int recvRes(int socket, Response *msg, int size, int flags);
 
 void setMessageResponse(Response *msg);
-void readMessageResponse(Response *msg);
 
 void setOpcodeRequest(Request *request, char *input);
 
