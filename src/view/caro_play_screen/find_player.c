@@ -57,9 +57,7 @@ void handleClickOnFindPlayerScreen() {
             dashbroad();
         }
     }
-
-    currentScreen = VIEW_PLAY_GAME;
-    system("cls"); 
+    drawPlayCaroBoard();
 }
 
 

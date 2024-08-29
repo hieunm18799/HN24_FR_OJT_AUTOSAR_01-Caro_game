@@ -124,8 +124,9 @@ void handleClickOnWatchReplayScreen() {
         } else if (MousePos.Y == STOP_POSITION_Y && MousePos.X >= STOP_POSITION_X && MousePos.X <= (STOP_POSITION_X + BUTTON_WIDTH)) {
             replay_active = 0; // Dừng replay
         } else if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
-            currentScreen = VIEW_REPLAY_LIST; // Trở về màn hình trước
-            system("cls");    
+         // Trở về màn hình SHOW REPLAY
+        
+
         }
     }
 }
