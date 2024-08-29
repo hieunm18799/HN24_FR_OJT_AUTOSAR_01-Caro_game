@@ -8,7 +8,7 @@
 
 #define USERS_FILE "Users.ini"
 
-RES_OPCODE sign_out(char *username) {
+RES_OPCODE control_sign_out(char *username) {
     // Cập nhật trạng thái người dùng
     if (setUserStatus(username, "NOT_SIGN_IN")) {
         writeUsersIni(USERS_FILE);

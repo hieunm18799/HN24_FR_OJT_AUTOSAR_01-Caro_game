@@ -48,17 +48,66 @@ int main(int argc, char const *argv[]) {
         printf("Failed to create socket.\n");
         exit(0);
     }
-    //Step 2: Specify server address
+    u_long mode = 1;
+    if (ioctlsocket(sockfd, FIONBIO, &mode) == SOCKET_ERROR) {
+        printf("ioctlsocket failed. Error: %d\n", WSAGetLastError());
+        closesocket(sockfd);
+        WSACleanup();
+        return 1;
+    }
+    // Specify server address
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(atoi(argv[2]));
     servaddr.sin_addr.s_addr = inet_addr(argv[1]);
-    int len = sizeof(struct sockaddr_in);
 
-    int check = connect(sockfd, (struct sockaddr *)&servaddr, len);
+    int check = connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    #ifdef _WIN32
+    if (check == SOCKET_ERROR) {
+        int error = WSAGetLastError();
+        if (error == WSAEWOULDBLOCK) {
+            // Connection is in progress, we need to use select to check when it's done
+            printf("Connection in progress...\n");
+
+            fd_set writefds;
+            FD_ZERO(&writefds);
+            FD_SET(sockfd, &writefds);
+
+            struct timeval timeout;
+            timeout.tv_sec = 0;
+            timeout.tv_usec = 100000;  // 0.1 seconds
+
+            check = select(0, NULL, &writefds, NULL, &timeout);
+
+            if (check > 0 && FD_ISSET(sockfd, &writefds)) {
+                printf("Connected successfully!\n");
+            } else if (check == 0) {
+                printf("Connection timed out.\n");
+                closesocket(sockfd);
+                WSACleanup();
+                return 1;
+            } else {
+                printf("select failed or connection error. Error: %d\n", WSAGetLastError());
+                closesocket(sockfd);
+                WSACleanup();
+                return 1;
+            }
+        } else {
+            // Some other error occurred during connect
+            printf("Connection failed immediately. Error: %d\n", error);
+            closesocket(sockfd);
+            WSACleanup();
+            return 1;
+        }
+    } else {
+        printf("Connected immediately!\n");
+    }
+    #endif
+    #ifdef linux
     if (check == -1) {
         printf("Failed to connect to server\n");
         exit(0);
     }
+    #endif
     startGUI(sockfd);
 
     #ifdef _WIN32
@@ -75,8 +124,46 @@ void handle_sigint(int sig) {
 
 void startGUI(int sockfd) {
     drawInitialUI();
+    struct timeval timeout;
+    int result;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 100000;  // 0.1 seconds
 
     while (1) {
+        fd_set readfds;
+        FD_ZERO(&readfds);
+        FD_SET(sockfd, &readfds);
+        result = select(0, &readfds, NULL, NULL, &timeout);
+
+        if (result > 0) {
+            if (FD_ISSET(sockfd, &readfds)) {
+                Response *res = (Response *)malloc(sizeof(Response));
+                int rcvBytes = recvRes(sockfd, res, sizeof(res), 0);
+                if (rcvBytes != -1) {
+                    switch (res->code) {
+                    case SIGN_IN_SUCCESS:
+                        drawPlayCaroBoard();
+                        break;
+                    case USERNAME_NOT_EXISTED:
+                        // Show error
+                        break;
+                    case WRONG_PASSWORD:
+                        // Show error
+                        break;
+                    case ACCOUNT_BUSY:
+                        // Show error
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        } else if (result == 0) {
+        } else {
+            printf("select failed. Error: %d\n", WSAGetLastError());
+            break;
+        }
+
         handleMouseClick(); // Gọi hàm để xử lý sự kiện chuột
 
         if (Click_flag) { // Nếu có sự kiện click
@@ -89,6 +176,7 @@ void startGUI(int sockfd) {
             } else if (currentScreen == VIEW_SIGN_UP) { // Nếu đang ở màn hình đăng ký
                 handleClickOnSignupScreen();
             }
+            
         }
     }
 }
