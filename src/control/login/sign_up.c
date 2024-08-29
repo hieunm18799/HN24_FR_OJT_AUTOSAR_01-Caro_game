@@ -1,44 +1,37 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <winsock2.h>
-#include <windows.h>
 #include "users.h"
-
-#define USERS_FILE "Users.ini"
+#include "protocol.h"
 
 void sign_up(SOCKET clientSocket) {
-    char username[50];
-    char password[50];
-    char response[100];
-    char role[50] = "default";
-
-    // Nhận dữ liệu từ client
-    int recvResult = recv(clientSocket, username, sizeof(username) - 1, 0);
-    if (recvResult == SOCKET_ERROR) {
-        printf("Failed to receive username.\n");
-        return;
-    }
-    username[recvResult] = '\0'; // Null-terminate the string
-
-    recvResult = recv(clientSocket, password, sizeof(password) - 1, 0);
-    if (recvResult == SOCKET_ERROR) {
-        printf("Failed to receive password.\n");
-        return;
-    }
-    password[recvResult] = '\0'; // Null-terminate the string
-
-    // Kiểm tra xem tài khoản đã tồn tại chưa
-    if (validateUser(username, "")) {
-        snprintf(response, sizeof(response), "Username already exists.");
-        send(clientSocket, response, strlen(response), 0);
+    Request req;
+    Response res;
+    
+    // Nhận yêu cầu từ client
+    if (recvReq(clientSocket, &req, sizeof(Request), 0) <= 0) {
+        printf("Failed to receive sign up request.\n");
         return;
     }
 
-    // Tạo tài khoản mới
-    newUser(username, password, role);
-    writeUsersIni(USERS_FILE);
+    char username[MAX_LENGTH], password[MAX_LENGTH];
+    sscanf(req.message, "%s %s", username, password);
 
-    snprintf(response, sizeof(response), "Account created successfully.");
-    send(clientSocket, response, strlen(response), 0);
+    // Kiểm tra xem username đã tồn tại chưa
+    User* user = userList;
+    while (user) {
+        if (strcmp(user->username, username) == 0) {
+            res.code = USERNAME_EXISTED;
+            setMessageResponse(&res);
+            sendRes(clientSocket, &res, sizeof(Response), 0);
+            return;
+        }
+        user = user->next;
+    }
+
+    // Tạo người dùng mới
+    newUser(username, password, "default");
+    writeUsersIni("Users.ini");
+
+    // Gửi phản hồi thành công
+    res.code = SIGN_UP_SUCCESS;
+    setMessageResponse(&res);
+    sendRes(clientSocket, &res, sizeof(Response), 0);
 }
