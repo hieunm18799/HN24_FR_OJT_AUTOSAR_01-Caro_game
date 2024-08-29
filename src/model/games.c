@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "games.h"
-#include <math.h>  // Để sử dụng hàm fabs()
 #include "users.h"
 
 #define MAX_GAMES 100
