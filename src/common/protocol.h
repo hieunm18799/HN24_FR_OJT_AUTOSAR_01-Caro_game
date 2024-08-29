@@ -21,10 +21,11 @@
 
 #define MAX_LENGTH 256
 #define BOARD_LENGTH 10
+
 typedef enum REQ_OPCODE {
     // close terminal event
     CLOSE,
-    //login
+    // login
     SIGN_UP,
     SIGN_IN,
     SIGN_OUT,
@@ -62,10 +63,10 @@ typedef enum RES_OPCODE {
     YOU_WIN,
     OTHER_PLAYER_WIN,
     QUIT_SUCCESS,
-    // Additional opcodes for game search
-    GAME_NOT_FOUND,     // Không tìm thấy trò chơi phù hợp
-    GAME_FOUND,         // Tìm thấy trò chơi phù hợp
-
+    // game management
+    GAME_NOT_FOUND,
+    GAME_UPDATE_SUCCESS,
+    GAME_UPDATE_FAIL,
 } RES_OPCODE;
 
 // Request string
@@ -79,6 +80,7 @@ typedef enum RES_OPCODE {
 #define STRING_GET_REPLAYS "GET_REPLAYS"
 #define STRING_GET_USERS "GET_USERS"
 #define STRING_GET_GAMES "GET_GAMES"
+
 // Response string
 #define STRING_SYNTAX_ERROR "SYNTAX_ERROR"
 #define STRING_SIGN_UP_INPUT_WRONG "SIGN_UP_INPUT_WRONG"
@@ -98,6 +100,10 @@ typedef enum RES_OPCODE {
 #define STRING_YOU_WIN "YOU_WIN"
 #define STRING_OTHER_PLAYER_WIN "OTHER_PLAYER_WIN"
 #define STRING_QUIT_SUCCESS "QUIT_SUCCESS"
+#define STRING_GAME_NOT_FOUND "GAME_NOT_FOUND"
+#define STRING_GAME_UPDATE_SUCCESS "GAME_UPDATE_SUCCESS"
+#define STRING_GAME_UPDATE_FAIL "GAME_UPDATE_FAIL"
+
 typedef struct Request {
     char message[MAX_LENGTH];
     REQ_OPCODE code;
