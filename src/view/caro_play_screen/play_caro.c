@@ -77,7 +77,7 @@ void drawPlayCaroBoard() {
     // scanf("%d", &board_width);
     // printf("Enter board height (number of cells): ");
     // scanf("%d", &board_height);
-    // system("cls");
+    system("cls");
 
     // Initialize the board state
     for (int i = 0; i < board_height; i++) {
