@@ -72,6 +72,9 @@ void SetConsoleSize(int width, int height) {
 
 // Function to draw the board and initialize board state
 void drawPlayCaroBoard() {
+
+    system("cls");
+
     current_screen = 9;
     // Input board size from the user
     printf("Enter board width (number of cells): ");
