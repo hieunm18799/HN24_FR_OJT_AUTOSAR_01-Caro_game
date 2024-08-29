@@ -38,4 +38,13 @@ void handleClickOnInitialScreen();
 void handleClickOnSigninScreen();
 void handleClickOnSignupScreen();
 
+void gotoxy(int x, int y);
+void handleMouseClick();
+void dashboard(char* role, char *username);
+
+void openAdmin(char* role, char* username);
+void openUser(char* role, char* username);
+void frameAdminScreen();
+void openAdminScreen(char *role, char* username);
+
 #endif
