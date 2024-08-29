@@ -62,6 +62,10 @@ typedef enum RES_OPCODE {
     YOU_WIN,
     OTHER_PLAYER_WIN,
     QUIT_SUCCESS,
+    // Additional opcodes for game search
+    GAME_NOT_FOUND,     // Không tìm thấy trò chơi phù hợp
+    GAME_FOUND,         // Tìm thấy trò chơi phù hợp
+
 } RES_OPCODE;
 
 // Request string
