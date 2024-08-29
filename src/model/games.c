@@ -74,7 +74,7 @@ int findGame(char *player_name, User **matchedUser) {
 
     double targetWinRate = calculateWinRate(targetUser);
     User *bestMatch = NULL;
-    double smallestDifference = INFINITY;
+    double smallestDifference = 1;
     int matchingPlayers = 0;
 
     current = userList;
