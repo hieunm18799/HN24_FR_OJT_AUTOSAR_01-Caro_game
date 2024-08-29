@@ -60,10 +60,8 @@ void handleMouseClick() {
 void handleClickOnInitialScreen() {
     if (MousePos.Y == 10 && MousePos.X >= 35 && MousePos.X <= 45) {
         drawSignInUI(); // Mở giao diện đăng nhập
-        //enterSigninCredentials(signin_username, signin_password);   // Hàm nhập dữ liệu trong giao diện đăng nhập
     } else if (MousePos.Y == 12 && MousePos.X >= 35 && MousePos.X <= 45) {
         drawSignUpUI(); // Mở giao diện đăng ký
-        //enterSignupCredentials(signup_username, signup_password, signup_reenterPassword);   // Hàm nhập dữ liệu trong giao diện đăng ký
     }
 }
 
