@@ -11,7 +11,7 @@
 
 COORD MousePos;
 int Click_flag = 0;
-int current_screen;
+int currentScreen;
 COORD CursorPosition;
 
 void handleMouseClick() {
@@ -36,7 +36,7 @@ void handleMouseClick() {
 }
 
 void drawFindPlayer() {
-    current_screen = 8;
+    currentScreen = VIEW_FIND_GAME;
     system("cls");
     gotoxy(CARO_GAME_STRING_POSITION_X,CARO_GAME_STRING_POSITION_Y);
     printf("CARO GAME");
@@ -45,6 +45,7 @@ void drawFindPlayer() {
     printf("FINDING GAME");
 
     gotoxy(BACK_POSITION_X,BACK_POSITION_Y);
+
     printf("[ BACK ]");
 }
 
@@ -54,10 +55,15 @@ void handleClickOnFindPlayerScreen() {
         Click_flag = 0;
         // Check if the "BACK" button was clicked
         if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
-            current_screen = 2; // Set current_screen to 2 when "BACK" is clicked
+            currentScreen =  VIEW_TOP_SIGNED_IN; // Set current_screen to 2 when "BACK" is clicked
+            system("cls");    
         }
     }
+
+    currentScreen = VIEW_PLAY_GAME;
+    system("cls"); 
 }
+
 
 // int main () {
 //     drawFindPlayer(); 

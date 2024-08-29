@@ -47,7 +47,7 @@ static int countdown_active = 1;
 static int redo_requested = 0; // Flag to indicate if redo is requested
 static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 
-int current_screen;
+int currentScreen;
 int board_width, board_height;
 int console_width, console_height; // Console dimensions
 char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
@@ -75,7 +75,7 @@ void drawPlayCaroBoard() {
 
     system("cls");
 
-    current_screen = 9;
+    currentScreen = VIEW_PLAY_GAME;
     // Input board size from the user
     printf("Enter board width (number of cells): ");
     scanf("%d", &board_width);
@@ -221,6 +221,8 @@ void MovePlayCaro() {
         // Check if click is within "QUIT" button
         if (MousePos.Y == QUIT_POSITION_Y && MousePos.X >= QUIT_POSITION_X && MousePos.X <= QUIT_POSITION_X + BUTTON_WIDTH) {
             End_flag = 0; // Exit the loop to quit the game
+            system("cls");
+            currentScreen = VIEW_TOP_SIGNED_IN;
             CloseHandle(hThread); // Clean up the thread handle
             return;
         }
@@ -258,6 +260,9 @@ void MovePlayCaro() {
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
                     CloseHandle(hThread); // Clean up the thread handle
                     End_flag = 0; // End the game
+                    Sleep(5000);
+                    system("cls");
+                    currentScreen = VIEW_TOP_SIGNED_IN;
                 }
             }
         }
