@@ -1,11 +1,17 @@
-// Network libraries
-#include <sys/types.h>
+#ifdef linux
+#include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <sys/select.h>
 #include <sys/time.h> 
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
+#endif
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <windows.h>
+#endif
 // For ..
 #include <string.h>
 #include <stdlib.h>
@@ -13,19 +19,22 @@
 #include "users.h"
 #include "protocol.h"
 
-#define MAX_CLIENT 20
-
 User *global_users = NULL;
-
-fd_set masterfds; // tập readfds để check các socket, 1 tập để lưu lại nhưng thay đổi của tập readfds.
-fd_set readfds;
 
 int main(int argc, char *argv[]) {
     initializeUser();
 
+    #ifdef _WIN32
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        printf("Failed to initialize Winsock.\n");
+        exit(EXIT_FAILURE);
+    }
+    #endif
+
     // input: Port
 	if(argc != 2) {
-		printf("Please input port number\n");
+		printf("Please input port number!\n");
 		return 0;
 	}
 
@@ -36,30 +45,29 @@ int main(int argc, char *argv[]) {
     // Tao server socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
-        perror("CREATE SOCKET");
+        printf("Failed to create socket!");
         exit(0);
     }
     // Set reuse option
     int tempfd = 1;
-    int check = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &tempfd, sizeof(int));
+    int check = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char*)&tempfd, sizeof(int));
     if (check == -1)
-        perror("Set reuse");
+        printf("Failed to set re-use address!");
 
     //Step 2: Bind address to socket
-    bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(port_number);
 
     if ((bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr))) != 0) {
-        perror("BLIND");
+        printf("Failed to set-up server!");
         exit(0);
     }
     
     // Step 3: listen to sockfd
     check = listen(sockfd, 10);
     if (check == -1) {
-        perror("Listen");
+        printf("Failed to set-up server!");
         exit(1);
     }
     // Mỗi client kết nối đến server, nếu được chấp nhận thì server sẽ tạo ra một socket để giao tiếp với client đó đến khi 1 trong 2 bên đóng.
@@ -70,10 +78,12 @@ int main(int argc, char *argv[]) {
     // Có 3 loại sự kiện trên 1 file desciptor mà ta có xem xét là : ready to read, ready to write, exception.
     // Ở đây ta chỉ quan tâm đến ready to read, sự kiện có 1 kết nối đến server coi như là ột /sự kiện ready to read trên server Socket
     // ta cần có 1 tập chứa các socket
-    socklen_t len = sizeof(struct sockaddr_in);
+    int len = sizeof(struct sockaddr_in);
     struct timeval timeout;
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
+    fd_set masterfds; // tập readfds để check các socket, 1 tập để lưu lại nhưng thay đổi của tập readfds.
+    fd_set readfds;
     FD_ZERO(&masterfds);
     FD_ZERO(&readfds);
     FD_SET(sockfd, &masterfds); // add serverSock vào tập masterfds.
@@ -85,7 +95,7 @@ int main(int argc, char *argv[]) {
         n_select = select(max_fd + 1, &readfds, NULL, NULL, &timeout);
         // Hàm này sẽ block chương trình đến khi có 1 sự kiên ready to read xảy ra
         if (n_select < 0) {
-            perror("SELECT_ERROR");
+            printf("Server failed to select!");
             exit(0);
         }
         else if (n_select == 0) {
@@ -108,16 +118,44 @@ int main(int argc, char *argv[]) {
                         Response *res = createResponse();
                         
                         printf("Receive data in socket %d\n", tempfd);
-                        int nrecv = recv(tempfd, req, sizeof(Request), 0);
+                        int nrecv = recvReq(tempfd, req, sizeof(Request), 0);
                         if (nrecv == -1) {
-                            printf("In socket %d\n", tempfd);
-                            perror("RECEIVE");
+                            printf("Error on socket %d!\nClosing clientfd!\n", tempfd);
                             close_fd = 1;
                         }
                         else {
-                            switch (req->code)
-                            {
-                            default:
+                            switch (req->code) {
+                                case SIGN_IN:
+                                handleSignin(tempfd, req, res);
+                                break;
+                                case CLOSE:
+                                // Close command promp/terminal
+                                break;
+                                case SIGN_UP:
+                                handleSignup(tempfd, req, res);
+                                break;
+                                case SIGN_OUT:
+                                handleSignout(tempfd, req, res);
+                                break;
+                                case FIND_GAME:
+                                handleFindGame(tempfd, req, res);
+                                break;
+                                case PICK:
+                                handlePick(tempfd, req, res);
+                                break;
+                                case QUIT:
+                                handleQuit(tempfd, req, res);
+                                break;
+                                case GET_REPLAYS:
+                                //
+                                break;
+                                case GET_USERS:
+                                //
+                                break;
+                                case GET_GAMES:
+                                //
+                                break;
+                                default:
                                 break;
                             }
                         }
@@ -126,12 +164,20 @@ int main(int argc, char *argv[]) {
                     }
                     if (close_fd == 1) {
                         FD_CLR(tempfd, &masterfds);
+                        #ifdef linux
                         close(tempfd);
+                        #endif
+                        #ifdef _WIN32
+                        closesocket(tempfd);
+                        #endif
                     }
                 }
             }
         }
     } while (1);
 
+    #ifdef _WIN32
+    WSACleanup();
+    #endif
     return 0;
 }

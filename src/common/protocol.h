@@ -4,7 +4,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
+#ifdef linux
+#include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <sys/time.h> 
+#include <netinet/in.h>
+#include <unistd.h>
+#endif
 
 #define MAX_LENGTH 256
 #define BOARD_LENGTH 10
@@ -35,10 +48,10 @@ typedef enum RES_OPCODE {
     WRONG_PASSWORD,
     USERNAME_EXISTED,
     ACCOUNT_BUSY,
+    SIGN_OUT_FAIL,
     SIGN_IN_SUCCESS,
     SIGN_UP_SUCCESS,
     SIGN_OUT_SUCCESS,
-    DISCONNECTED,
     // caro play
     WAITING_PLAYER,
     GAME_START,
@@ -48,6 +61,7 @@ typedef enum RES_OPCODE {
     PICK_SUCCESS,
     YOU_WIN,
     OTHER_PLAYER_WIN,
+    QUIT_SUCCESS,
 } RES_OPCODE;
 
 // Request string
@@ -71,7 +85,6 @@ typedef enum RES_OPCODE {
 #define STRING_SIGN_IN_SUCCESS "SIGN_IN_SUCCESS"
 #define STRING_SIGN_UP_SUCCESS "SIGN_UP_SUCCESS"
 #define STRING_SIGN_OUT_SUCCESS "SIGN_OUT_SUCCESS"
-#define STRING_DISCONNECTED "DISCONNECTED"
 #define STRING_WAITING_PLAYER "WAITING_PLAYER"
 #define STRING_GAME_START "GAME_START"
 #define STRING_YOUR_TURN "YOUR_TURN"
@@ -80,15 +93,16 @@ typedef enum RES_OPCODE {
 #define STRING_PICK_SUCCESS "PICK_SUCCESS"
 #define STRING_YOU_WIN "YOU_WIN"
 #define STRING_OTHER_PLAYER_WIN "OTHER_PLAYER_WIN"
+#define STRING_QUIT_SUCCESS "QUIT_SUCCESS"
 typedef struct Request {
-    char message[MAX_LENGTH];
     REQ_OPCODE code;
+    char message[MAX_LENGTH];
 } Request;
 
 typedef struct Response {
+    RES_OPCODE code;
     char message[MAX_LENGTH];
     char data[MAX_LENGTH];
-    RES_OPCODE code;
 } Response;
 
 Request *createRequest();

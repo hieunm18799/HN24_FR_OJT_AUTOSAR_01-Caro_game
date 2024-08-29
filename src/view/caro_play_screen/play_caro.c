@@ -31,7 +31,6 @@
 void SetConsoleSize(int width, int height);
 void drawPlayCaroBoard();
 void MovePlayCaro();
-void handleMouseClick();
 void DisplayCountdown();
 void HandleRedo();
 int CheckWin(int last_x, int last_y);
@@ -77,10 +76,10 @@ void drawPlayCaroBoard() {
 
     currentScreen = VIEW_PLAY_GAME;
     // Input board size from the user
-    printf("Enter board width (number of cells): ");
-    scanf("%d", &board_width);
-    printf("Enter board height (number of cells): ");
-    scanf("%d", &board_height);
+    // printf("Enter board width (number of cells): ");
+    // scanf("%d", &board_width);
+    // printf("Enter board height (number of cells): ");
+    // scanf("%d", &board_height);
     system("cls");
 
     // Initialize the board state
@@ -144,29 +143,7 @@ void drawPlayCaroBoard() {
     hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
     if (hThread == NULL) {
         printf("Error creating thread\n");
-        return 1;
-    }
-}
-
-// Function to handle a single mouse click
-void handleMouseClick() {
-    HANDLE hInput;
-    DWORD events;
-    INPUT_RECORD inputRecord;
-
-    hInput = GetStdHandle(STD_INPUT_HANDLE);
-    SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-
-    // Read mouse input
-    if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
-        if (inputRecord.EventType == MOUSE_EVENT) {
-            MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
-            if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                MousePos = mouseEvent.dwMousePosition; // Save the mouse position
-                Click_flag = 1;  // Set the click flag to indicate a click occurred
-                Sleep(100); // Debounce delay to avoid multiple captures of the same click
-            }
-        }
+        return;
     }
 }
 
