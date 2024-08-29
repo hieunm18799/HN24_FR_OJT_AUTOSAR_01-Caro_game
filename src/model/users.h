@@ -34,6 +34,11 @@ void sign_in(SOCKET clientSocket);
 void sign_up(SOCKET clientSocket);
 void sign_out(SOCKET clientSocket);
 
+// Các hàm quản lý người dùng
+void listUsers();
+void deleteUserByAdmin(const char* username);
+void updateUserStatus(const char* username, const char* status);
+
 // Hàm đọc file Users.ini
 void readUsersIni(const char* filename);
 
