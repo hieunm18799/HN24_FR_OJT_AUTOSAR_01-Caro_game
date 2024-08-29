@@ -109,6 +109,9 @@ void startGUI(int sockfd) {
                 case VIEW_SIGN_UP:
                     handleClickOnSignupScreen();
                     break;
+                case VIEW_PLAY_GAME:
+                    MovePlayCaro();
+                    break;
                 case VIEW_TOP_SIGNED_IN_ADMIN:
                     openAdmin();
                     break;

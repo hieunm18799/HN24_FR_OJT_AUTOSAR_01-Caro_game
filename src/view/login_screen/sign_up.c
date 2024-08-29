@@ -43,7 +43,10 @@ void drawSignUpUI() {
 
 void handleClickOnSignupScreen(){
     // Khi nhấn Sign In ở giao diện đăng ký
-    if (MousePos.Y == 2 && MousePos.X >= 60 && MousePos.X <= 70) {
+    if(MousePos.Y >= 10 && MousePos.Y <= 14 && MousePos.X >= 32 && MousePos.X <= 45){
+        enterSignupCredentials(signup_username, signup_password, signup_reenterPassword); 
+    }
+    else if (MousePos.Y == 2 && MousePos.X >= 60 && MousePos.X <= 70) {
         drawSignInUI(); // Mở giao diện đăng nhập từ màn hình đăng ký
     }
     // Khi nhấn Back ở giao diện đăng ký
