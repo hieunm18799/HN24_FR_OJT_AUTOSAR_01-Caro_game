@@ -34,7 +34,7 @@ void drawPlayCaroBoard();
 int MovePlayCaro();
 void DisplayCountdown();
 void handleRedoRequest();
-// int CheckWin(int last_x, int last_y);
+int CheckWin(int last_x, int last_y);
 
 // Global variables
 static COORD CursorPosition;
@@ -234,8 +234,8 @@ int MovePlayCaro() {  // Change return type to int
                 last_move_x = cell_x;
                 last_move_y = cell_y;
 
-                if (0) {
-                // if (CheckWin(cell_x, cell_y)) {
+                //if (0) {
+                 if (CheckWin(cell_x, cell_y)) {
                     gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
                     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
                     End_flag = 0; // End the game
@@ -312,3 +312,35 @@ void handleRedoRequest() {
 }
 
 
+
+
+int CheckWin(int last_x, int last_y) {
+    char player = board[last_y][last_x];
+    int count;
+
+    // Check horizontal
+    count = 1;
+    for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
+    for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check vertical
+    count = 1;
+    for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
+    for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check diagonal from top-left to bottom-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    // Check diagonal from bottom-left to top-right
+    count = 1;
+    for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
+    for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
+    if (count >= WIN_CONDITION) return 1;
+
+    return 0; // No win condition met
+}
