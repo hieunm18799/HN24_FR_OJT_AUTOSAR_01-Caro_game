@@ -28,6 +28,17 @@ extern char signup_password[50];
 extern char signup_reenterPassword[50];
 extern sockfd;
 
+typedef struct {
+    int id;
+    char player1[50];
+    char player2[50];
+    char result[10];
+    char move[50];
+} ReplayData;
+
+// Dynamic array of replays
+ReplayData *replayDataArray;
+
 void gotoxy(int x, int y);
 
 void drawInitialUI();
@@ -57,8 +68,6 @@ void fetchReplayData();
 void drawReplayManagementUI();
 void handleOnScreenReplayManagement();
 void deleteReplay(int replayId);
-
-void frameScreenAdmin();
 
 
 void drawReplayInfoUI();

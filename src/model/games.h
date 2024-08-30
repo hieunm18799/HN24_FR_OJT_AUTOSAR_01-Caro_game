@@ -20,6 +20,8 @@ typedef struct Game {
     struct Game *next;
 } Game;
 
+int MAX_REPLAYS;
+
 int initializeGame();
 
 
