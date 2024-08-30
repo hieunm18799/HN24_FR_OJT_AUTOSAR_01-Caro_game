@@ -85,10 +85,6 @@ void setMessageResponse(Response *msg) {
         case PICK_FAIL:
             strcpy(msg->message, "Wrong number. Please pick another!");
             break;
-        case PICK_SUCCESS:
-            strcpy(msg->message, msg->data);
-            strcat(msg->message, " is picked");
-            break;
         case YOU_WIN:
             strcpy(msg->message, "You won!");
             break;
@@ -100,6 +96,7 @@ void setMessageResponse(Response *msg) {
             strcpy(msg->message, "You have been quited!");
             break;
         default:
+            strcpy(msg->message, "No Message!");
             break;
         }
     }

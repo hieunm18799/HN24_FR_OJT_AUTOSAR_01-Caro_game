@@ -14,3 +14,17 @@ void readSigninSuccess(char *input, char *username, char *role){
     // }
     // role[roleLength] = '\0';
 }
+
+void readWaitingGame(char *input, unsigned int *game_id){
+    *game_id = atoi(strtok(input, "\0"));
+}
+
+void readGameStart(char *input, unsigned int *game_id, char* player1_username, int *player1_win, int* player1_lose, char* player2_username, int *player2_win, int* player2_lose){
+    *game_id = atoi(strtok(input, "@"));
+    strcpy(player1_username, strtok(NULL, "-"));
+    *player1_win = atoi(strtok(input, "-"));
+    *player1_lose = atoi(strtok(input, "@"));
+    strcpy(player2_username, strtok(NULL, "-"));
+    *player2_win = atoi(strtok(input, "-"));
+    *player2_lose = atoi(strtok(input, "\0"));
+}
