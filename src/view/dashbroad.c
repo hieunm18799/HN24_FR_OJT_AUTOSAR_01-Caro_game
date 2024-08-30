@@ -50,7 +50,7 @@ void frameDashboardAdmin(char* role, char* username) {
  void openAdmin() {
 	 if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //man hinh playgame
-		 drawPlayCaroBoard();
+		 startGame(sockfd, signed_in_username);
 	 }
 	else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay 
@@ -67,7 +67,7 @@ void frameDashboardAdmin(char* role, char* username) {
  void openUser() {
 	 if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hình playgame
-		 drawPlayCaroBoard();
+		 startGame(sockfd, signed_in_username);
 	 }
 	 else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay
