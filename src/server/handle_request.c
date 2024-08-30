@@ -18,7 +18,7 @@ bool handleRedoAgree(int clientfd, Request *req, Response *res);
 bool handleSignup(int clientfd, Request *req, Response *res) {
     char *username, *password, *confirmPassword;
 
-    printf("%s\n", req->message);
+    printf("Message: %s\n", req->message);
     username = strtok(req->message, "@");
     password = strtok(NULL, "@");
     confirmPassword = strtok(NULL, "\0");
@@ -33,7 +33,7 @@ bool handleSignin(int clientfd, Request *req, Response *res) {
     char *username, *password;
     char role[MAX_LENGTH];
     
-    printf("%s\n", req->message);
+    printf("Message: %s\n", req->message);
     username = strtok(req->message, "@");
     password = strtok(NULL, "\0");
 
@@ -55,7 +55,7 @@ bool handleSignin(int clientfd, Request *req, Response *res) {
 bool handleSignout(int clientfd, Request *req, Response *res) {
     char *username;
     
-    printf("%s\n", req->message);
+    printf("Message: %s\n", req->message);
     username = strtok(req->message, "\0");
     res->code = sign_out(clientfd, username);
     setMessageResponse(res);
@@ -66,35 +66,25 @@ bool handleSignout(int clientfd, Request *req, Response *res) {
 bool handleFindGame(int clientfd, Request *req, Response *res) {
     char *username;
     unsigned int game_id;
+    printf("Message: %s\n", req->message);
+    username = strtok(req->message, "\0");
     User *hostPlayer = createUser("", "", "");
     User *curUser = findUserByName(username);
-
-    printf("%s\n", req->message);
-    username = strtok(req->message, "\0");
     res->code = findGame(curUser, &game_id, hostPlayer);
+
 
     if(res->code == WAITING_PLAYER) {
         setMessageResponse(res);
+        snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c", game_id, '\0');
+        printf("Data: %s\n", res->data);
         sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
+        return true;
     }
 
     res->code = GAME_START;
     setMessageResponse(res);
-    sprintf(res->data, "%d", game_id);
-    sprintf(res->data, "%c", '@');
-    sprintf(res->data, "%s", hostPlayer->username);
-    sprintf(res->data, "%c", '-');
-    sprintf(res->data, "%d", hostPlayer->wins);
-    sprintf(res->data, "%c", '-');
-    sprintf(res->data, "%d", hostPlayer->losses);
-    sprintf(res->data, "%c", '@');
-    sprintf(res->data, "%s", username);
-    sprintf(res->data, "%c", '-');
-    sprintf(res->data, "%d", curUser->wins);
-    sprintf(res->data, "%c", '-');
-    sprintf(res->data, "%d", curUser->losses);
-    sprintf(res->data, "%c", '\0');
+    snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c%s%c%d%c%d%c%s%c%d%c%d%c", game_id, '@', hostPlayer->username, '-', hostPlayer->wins, '-', hostPlayer->losses, '@', username, '-', curUser->wins, '-',  curUser->losses, '\0');
+    printf("Data: %s\n", res->data);
     sendRes(hostPlayer->clientfd, res, sizeof(Response), 0);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;

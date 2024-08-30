@@ -14,7 +14,6 @@ RES_OPCODE findGame(User *curUser, unsigned int *game_id, User *opositePlayer) {
     // Tìm kiếm người chơi có cùng trình độ với người đang tìm trận
     while (current != NULL) {
         if (current->status == NOT_PLAY) {
-            current = current->next;
             User *tempUser = findUserByName(current->player1_name);
             double currentWinRate = calculateWinRate(tempUser);
             double difference = fabs(currentWinRate - targetWinRate);
@@ -28,8 +27,8 @@ RES_OPCODE findGame(User *curUser, unsigned int *game_id, User *opositePlayer) {
     }
 
     if (smallestDifference == THRESHOLD) {
-        printf("Không tìm thấy người chơi có trình độ tương đương, đang chờ người chơi khác...\n");
-        addGame(curUser->username, "");
+        printf("Need to wait for game/match player!\n");
+        *game_id = addGame(curUser->username, "");
         return WAITING_PLAYER; // Trả về mã đợi nếu không tìm thấy người chơi
     }
 

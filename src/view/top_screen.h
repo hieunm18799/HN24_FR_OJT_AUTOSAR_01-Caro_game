@@ -19,6 +19,7 @@ enum SCREEN {
 extern COORD MousePos; // Biến lưu trữ vị trí chuột
 extern int Click_flag; // Cờ để xác định xem đã click chuột hay chưa
 extern int currentScreen;
+extern unsigned int game_id;
 extern char signed_in_role[50];
 extern char signed_in_username[50];
 extern char signin_username[50];
