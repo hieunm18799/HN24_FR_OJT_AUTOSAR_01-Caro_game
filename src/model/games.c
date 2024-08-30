@@ -14,6 +14,7 @@ int initializeGame() {
     return 1;
 }
 
+int MAX_REPLAYS = 0;
 
 // Thêm một trận đấu mới vào danh sách
 unsigned int addGame(char *player1_name, char *player2_name) {
@@ -37,6 +38,7 @@ unsigned int addGame(char *player1_name, char *player2_name) {
     newGame->next = global_games;  // Thêm vào đầu danh sách
     global_games = newGame;
     gameCount++;
+    MAX_REPLAYS = gameCount;
     
     return newGame->id; // Trả về mã thành công nếu thêm thành công
 }
@@ -108,6 +110,7 @@ int deleteGame(unsigned int id) {
             }
             free(current);
             gameCount--;
+            MAX_REPLAYS = gameCount;
             return 0;
         }
         prev = current;

@@ -12,8 +12,12 @@ bool handleSignout(int clientfd, Request *req, Response *res);
 bool handleFindGame(int clientfd, Request *req, Response *res);
 bool handlePick(int clientfd, Request *req, Response *res);
 bool handleQuit(int clientfd, Request *req, Response *res);
+
+
+
 bool handleRedoAsk(int clientfd, Request *req, Response *res);
 bool handleRedoAgree(int clientfd, Request *req, Response *res);
+
 
 bool handleSignup(int clientfd, Request *req, Response *res) {
     char *username, *password, *confirmPassword;
@@ -164,4 +168,21 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
         return true;
     }
     return true;
+}
+
+bool handleshowReplay(int clientfd, Request *req, Response *res)
+{
+    char *username;
+    strcpy(username, strtok(req->message, "@"));
+    MatchHistory *history;
+    ReplayData *replayDataArray;
+    int *numReplays;
+    res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
+ 
+    if (res->code == GET_REPLAYS)
+    {      
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return true;
+    }
 }
