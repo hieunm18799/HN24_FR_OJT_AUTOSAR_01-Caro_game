@@ -91,7 +91,7 @@ User *findUserByName(const char* username) {
     return res;
 }
 
-void freeGames() {
+void freeUsers() {
     while (userList != NULL) {
         User *temp = userList;
         userList = userList->next;

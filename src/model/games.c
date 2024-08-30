@@ -6,11 +6,12 @@
 
 #define MAX_GAMES 100
 
-static Game *global_games = NULL;  // Danh sách liên kết của các trận đấu
+Game *global_games = NULL;  // Danh sách liên kết của các trận đấu
 static unsigned int gameCount = 0;  // Đếm số lượng trận đấu hiện có
 
 // Khởi tạo danh sách các trận đấu
 int initializeGame() {
+    return 1;
 }
 
 
@@ -41,12 +42,13 @@ int addGame(char *player1_name, char *player2_name) {
 }
 
 // Thay đổi thông tin của một trận đấu
-int changeGame(unsigned int id, char *player1_name, char *player2_name) {
+int changeGame(unsigned int id, char *player1_name, char *player2_name, GAME_STATUS status) {
     Game *current = global_games;
     while (current != NULL) {
         if (current->id == id) {
-            strncpy(current->player1_name, player1_name, MAX_LENGTH);
-            strncpy(current->player2_name, player2_name, MAX_LENGTH);
+            if (player1_name != "\0") strncpy(current->player1_name, player1_name, MAX_LENGTH);
+            if (player2_name != "\0")  strncpy(current->player2_name, player2_name, MAX_LENGTH);
+            current->status = status;
             return 1;
         }
         current = current->next;
@@ -83,18 +85,13 @@ int addMove(unsigned int id, unsigned char x, unsigned char y) {
 
 
 // Hoàn tác một nước đi trong trận đấu (redo)
-int changeMove(unsigned int id, unsigned char x, unsigned char y) {
-    Game *current = global_games;
-    while (current != NULL) {
-        if (current->id == id) {
-            if (current->moves == NULL) return 0;
-            Move *curMove = current->moves;
-            while (curMove->next != NULL) curMove = curMove->next;
-            free(curMove);
-        }
-        current = current->next;
-    }
-    return 0;
+int redoMove(Game *current) {
+    if (current->moves == NULL) return 0;
+    Move *curMove = current->moves;
+    while (curMove->next != NULL) curMove = curMove->next;
+    free(curMove);
+    current->status = current->status == PLAYER1 ? PLAYER2 : PLAYER1;
+    return 1;
 }
 
 

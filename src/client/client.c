@@ -118,9 +118,6 @@ void startGUI(int sockfd) {
                 case VIEW_TOP_SIGNED_IN_USER:
                     openUser();
                     break;
-                case VIEW_PLAY_GAME:
-                    MovePlayCaro();
-                    break;
                 case VIEW_ADMIN_MANAGE:
                     openAdminScreen();
                     break;
