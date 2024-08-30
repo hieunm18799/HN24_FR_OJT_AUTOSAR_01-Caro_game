@@ -96,6 +96,7 @@ void setMessageResponse(Response *msg) {
             strcpy(msg->message, "You have been quited!");
             break;
         default:
+            strcpy(msg->message, "No Message!");
             break;
         }
     }

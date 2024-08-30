@@ -109,6 +109,9 @@ void startGUI(int sockfd) {
                 case VIEW_SIGN_UP:
                     handleClickOnSignupScreen();
                     break;
+                case VIEW_FIND_GAME:
+                    handleClickOnFindPlayerScreen();
+                    break;
                 case VIEW_PLAY_GAME:
                     MovePlayCaro();
                     break;
@@ -173,6 +176,14 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
                 break;
             case SIGN_OUT_SUCCESS:
                 drawInitialUI();
+                break;
+            case WAITING_PLAYER:
+                readWaitingGame(res->data, &game_id);
+                drawFindPlayer();
+                break;
+            case GAME_START:
+                // readGameStart(res->data, &game_id, );
+                drawPlayCaroBoard();
                 break;
             default:
                 break;
