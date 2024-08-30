@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <conio.h>
-#include "protocol.h"
-#include <windows.h>
 #include "top_screen.h"
+#include "protocol.h"
 
 
 
