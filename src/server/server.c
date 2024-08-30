@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
                                 handleQuit(tempfd, req, res);
                                 break;
                                 case GET_REPLAYS:
-                                //
+                                handleshowReplay(tempfd, req, res);
                                 break;
                                 case GET_USERS:
                                 //

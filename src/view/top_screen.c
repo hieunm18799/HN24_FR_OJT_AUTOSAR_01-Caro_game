@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <conio.h>
-#include <windows.h>
 #include "top_screen.h"
 
 // Macro definitions for UI elements
@@ -17,6 +14,7 @@
 COORD MousePos; // Stores mouse position
 int Click_flag = 0; // Flag to detect mouse click
 int currentScreen = VIEW_TOP_NOT_SIGN_IN;
+unsigned int game_id;
 char signed_in_role[50];
 char signed_in_username[50];
 char signin_username[50];
@@ -24,6 +22,10 @@ char signin_password[50];
 char signup_username[50];
 char signup_password[50];
 char signup_reenterPassword[50];
+int replayId = 0;
+// Constants for table layout
+int rowHeight = 2; // Height of each row (in console lines)
+int tableStartY = 8; // Starting Y coordinate of the table
 
 void gotoxy(int x, int y) {
     COORD coord;

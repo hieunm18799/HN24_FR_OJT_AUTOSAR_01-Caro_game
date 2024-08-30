@@ -9,20 +9,25 @@
 bool handleSignup(int clientfd, Request *req, Response* res);
 bool handleSignin(int clientfd, Request *req, Response *res);
 bool handleSignout(int clientfd, Request *req, Response *res);
-bool handleFindGame(int sockfd, int clientfd, Request *req, Response *res);
+bool handleFindGame(int clientfd, Request *req, Response *res);
 bool handlePick(int clientfd, Request *req, Response *res);
 bool handleQuit(int clientfd, Request *req, Response *res);
+
+
+
+bool handleRedoAsk(int clientfd, Request *req, Response *res);
+bool handleRedoAgree(int clientfd, Request *req, Response *res);
+
 
 bool handleSignup(int clientfd, Request *req, Response *res) {
     char *username, *password, *confirmPassword;
 
-    printf("%s\n", req->message);
+    printf("Message: %s\n", req->message);
     username = strtok(req->message, "@");
     password = strtok(NULL, "@");
     confirmPassword = strtok(NULL, "\0");
 
-    RES_OPCODE ret = sign_up(username, password, confirmPassword);
-    res->code = ret;
+    res->code = sign_up(username, password, confirmPassword);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
@@ -32,16 +37,15 @@ bool handleSignin(int clientfd, Request *req, Response *res) {
     char *username, *password;
     char role[MAX_LENGTH];
     
-    printf("%s\n", req->message);
+    printf("Message: %s\n", req->message);
     username = strtok(req->message, "@");
     password = strtok(NULL, "\0");
 
-    RES_OPCODE ret = sign_in(clientfd, username, password, role);
-    res->code = ret;
+    res->code = sign_in(clientfd, username, password, role);
     setMessageResponse(res);
 
     // User not existed
-    if (ret == SIGN_IN_SUCCESS) {
+    if (res->code == SIGN_IN_SUCCESS) {
         strcpy(res->data, username);
         strcat(res->data, "@");
         strcat(res->data, role);
@@ -55,84 +59,103 @@ bool handleSignin(int clientfd, Request *req, Response *res) {
 bool handleSignout(int clientfd, Request *req, Response *res) {
     char *username;
     
-    printf("%s\n", req->message);
+    printf("Message: %s\n", req->message);
     username = strtok(req->message, "\0");
-    RES_OPCODE ret = sign_out(clientfd, username);
-    res->code = ret;
+    res->code = sign_out(clientfd, username);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
 }
 
-bool handleFindGame(int sockfd, int clientfd, Request *req, Response *res) {
-    // Find game not play yet
-    // if no game than create a game (user = player1) and wait for user to join with 
-    if(0) {
-        res->code = WAITING_PLAYER;
+bool handleFindGame(int clientfd, Request *req, Response *res) {
+    char *username;
+    unsigned int game_id;
+    printf("Message: %s\n", req->message);
+    username = strtok(req->message, "\0");
+    User *hostPlayer = createUser("", "", "");
+    User *curUser = findUserByName(username);
+    res->code = findGame(curUser, &game_id, hostPlayer);
+
+
+    if(res->code == WAITING_PLAYER) {
         setMessageResponse(res);
+        snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c", game_id, '\0');
+        printf("Data: %s\n", res->data);
         sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
+        return true;
     }
-    // The previous should return the player1's clientfd and game id
-    // Need response to the orther waitinng player
-    unsigned int gameid;
-    int client2fd;
 
     res->code = GAME_START;
     setMessageResponse(res);
-    sprintf(res->data, "%d", gameid);
+    snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c%s%c%d%c%d%c%s%c%d%c%d%c", game_id, '@', hostPlayer->username, '-', hostPlayer->wins, '-', hostPlayer->losses, '@', username, '-', curUser->wins, '-',  curUser->losses, '\0');
+    printf("Data: %s\n", res->data);
+    sendRes(hostPlayer->clientfd, res, sizeof(Response), 0);
     sendRes(clientfd, res, sizeof(Response), 0);
-    sendRes(client2fd, res, sizeof(Response), 0);
     return true;
 }
 
 bool handlePick(int clientfd, Request *req, Response *res) {
     char *username;
+    SOCKET opofd;
     strcpy(username, strtok(req->message, "@"));
-    unsigned int gameid = atoi(strtok(NULL, "@"));
+    unsigned int game_id = atoi(strtok(NULL, "@"));
     unsigned char x = atoi(strtok(NULL, "@")), y = atoi(strtok(NULL, "\0"));
 
-    // Check current turn
-    if (0) {
-        res->code = OTHER_PLAYER_TURN;
-        setMessageResponse(res);
+    res->code = pickCaro(username, game_id, x, y, &opofd);
+    setMessageResponse(res);
+
+    if (res->code == PICK_FAIL || res->code == OTHER_PLAYER_TURN) {
         sendRes(clientfd, res, sizeof(Response), 0);
-        return false;
+        return true;
     }
 
-    // save (x,y)
+    setMessageResponse(res);
+    sprintf(res->data, "%d", x);
+    sprintf(res->data, "%c", '@');
+    sprintf(res->data, "%d", y);
+    sprintf(res->data, "%c", '\0');
+    sendRes(opofd, res, sizeof(Response), 0);
     
-    // Event if pick fail ?
-    // if (0) {
-    //     res->code = PICK_FAIL;
-    //     setMessageResponse(res);
-    //     sendRes(clientfd, res, sizeof(Response), 0);
-    //     return false;
-    // }
-
-    res->code = PICK_SUCCESS;
-    sprintf(res->data, "%s", req->message);
-    setMessageResponse(res);
-
-    int client2fd; // get player2 clientfd
-    // Send pick success
-    sendRes(clientfd, res, sizeof(Response), 0);
-    sendRes(client2fd, res, sizeof(Response), 0);
-
-    // Change player turn
-    res->code = YOUR_TURN;
-    setMessageResponse(res);
-    sendRes(client2fd, res, sizeof(Response), 0);
     res->code = OTHER_PLAYER_TURN;
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);  
     return true;
 }
 
+bool handleRedoAsk(int clientfd, Request *req, Response *res) {
+    char *username;
+    User *opoUser;
+    strcpy(username, strtok(req->message, "@"));
+    unsigned int game_id = atoi(strtok(NULL, "\0"));
+    res->code = redoAsk(username, game_id, opoUser);
+    setMessageResponse(res);
+    sendRes(opoUser->clientfd, res, sizeof(Response), 0); 
+    return true;
+}
+
+bool handleRedoAgree(int clientfd, Request *req, Response *res) {
+    char *username;
+    User *opoUser;
+    strcpy(username, strtok(req->message, "@"));
+    unsigned int game_id = atoi(strtok(NULL, "\0"));
+
+    res->code = redoAgree(username, game_id, opoUser);
+    setMessageResponse(res);
+    sendRes(opoUser->clientfd, res, sizeof(Response), 0);
+    if (res->code == REDO_FAIL) {
+        return true;
+    }
+    res->code = OTHER_PLAYER_TURN;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
 bool handleQuit(int clientfd, Request *req, Response *res) {
     char *username;
     strcpy(username, strtok(req->message, "@"));
-    unsigned int gameid = atoi(strtok(NULL, "\0"));
+    unsigned int game_id = atoi(strtok(NULL, "\0"));
+    
     bool endGame = false;
     int client2fd;
     // Check if game is end or not
@@ -145,4 +168,21 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
         return true;
     }
     return true;
+}
+
+bool handleshowReplay(int clientfd, Request *req, Response *res)
+{
+    char *username;
+    strcpy(username, strtok(req->message, "@"));
+    MatchHistory *history;
+    ReplayData *replayDataArray;
+    int *numReplays;
+    res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
+ 
+    if (res->code == GET_REPLAYS)
+    {      
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return true;
+    }
 }

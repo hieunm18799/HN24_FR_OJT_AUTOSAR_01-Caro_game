@@ -1,5 +1,3 @@
-#include <stdio.h> 
-#include <windows.h>
 #include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10
@@ -54,10 +52,9 @@ void handleClickOnFindPlayerScreen() {
         // Check if the "BACK" button was clicked
         if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
             system("cls");
-            dashboard();
+            
         }
     }
-    drawPlayCaroBoard();
 }
 
 

@@ -21,18 +21,15 @@ extern User* userList;
 
 // Hàm quản lý người dùng
 void initializeUser();                        // Khởi tạo danh sách người dùng từ Users.ini
-bool validateUser(const char* username, const char* password);  // Xác thực người dùng
+User *createUser(const char* username, const char* password, const char* role);
 void newUser(const char* username, const char* password, const char* role);  // Tạo người dùng mới
 bool setUserStatus(const char* username, const char* status);  // Cập nhật trạng thái người dùng
+User *findUserByName(const char* username);
 void writeUsersIni(const char* filename);    // Ghi danh sách người dùng vào tệp INI
 void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
 User* getUsers();                            // Lấy danh sách người dùng
 char* getUserRole(const char* username);      // Lấy role người dùng
-
-// // Các hàm sign_in, sign_up, sign_out
-// void sign_in(SOCKET clientSocket);
-// void sign_up(SOCKET clientSocket);
-// void sign_out(SOCKET clientSocket);
+void freeUsers();
 
 // // Các hàm quản lý người dùng
 // void listUsers();

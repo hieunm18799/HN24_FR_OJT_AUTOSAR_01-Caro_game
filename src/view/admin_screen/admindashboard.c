@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <windows.h>
 #include "top_screen.h"
 #include "games.h"
 
@@ -23,7 +21,7 @@ void frameAdminScreen() {
 	currentScreen = VIEW_ADMIN_MANAGE;
 }
 
-void openAdminScreen(char* role, char* username) {
+void openAdminScreen() {
 	if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
 		// chuyen sang user management
 	}
@@ -33,7 +31,7 @@ void openAdminScreen(char* role, char* username) {
 		replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
 		if (replayDataArray == NULL) {
 			printf("Không thể cấp phát bộ nhớ\n");
-			return 1;
+			return;
 		}
 		// Data fetching from server
 
@@ -45,6 +43,6 @@ void openAdminScreen(char* role, char* username) {
 		displayReplayData();
 	}
 	else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
-		dashboard(role, username);
+		dashboard();
 	}
 }
