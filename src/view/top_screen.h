@@ -19,6 +19,7 @@ enum SCREEN {
 extern COORD MousePos; // Biến lưu trữ vị trí chuột
 extern int Click_flag; // Cờ để xác định xem đã click chuột hay chưa
 extern int currentScreen;
+extern unsigned int game_id;
 extern char signed_in_role[50];
 extern char signed_in_username[50];
 extern char signin_username[50];
@@ -27,6 +28,17 @@ extern char signup_username[50];
 extern char signup_password[50];
 extern char signup_reenterPassword[50];
 extern sockfd;
+
+typedef struct {
+    int id;
+    char player1[50];
+    char player2[50];
+    char result[10];
+    char move[50];
+} ReplayData;
+
+// Dynamic array of replays
+ReplayData *replayDataArray;
 
 void gotoxy(int x, int y);
 
@@ -57,8 +69,6 @@ void fetchReplayData();
 void drawReplayManagementUI();
 void handleOnScreenReplayManagement();
 void deleteReplay(int replayId);
-
-void frameScreenAdmin();
 
 
 void drawReplayInfoUI();

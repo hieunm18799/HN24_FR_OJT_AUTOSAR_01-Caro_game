@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include "top_screen.h"
+#include "games.h"
 
 #define MAX_USERS 9
 int userId = 0;
@@ -104,10 +105,6 @@ int handleUserRowClick() {
 
         if (clickedRow < numUsers) {
             userId = userDataArray[clickedRow].id;
-            printf("Clicked on row %d with User ID: %d\n", clickedRow + 1, userId);
-        }
-        else {
-            printf("Clicked outside the valid rows.\n");
         }
     }
     return clickedRow;

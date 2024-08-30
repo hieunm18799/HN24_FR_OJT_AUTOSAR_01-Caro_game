@@ -17,7 +17,7 @@ int initializeGame() {
 int MAX_REPLAYS = 0;
 
 // Thêm một trận đấu mới vào danh sách
-int addGame(char *player1_name, char *player2_name) {
+unsigned int addGame(char *player1_name, char *player2_name) {
     if (gameCount >= MAX_GAMES) {
         printf("Không thể thêm trận đấu mới, danh sách đã đầy.\n");
         return 0;
@@ -30,16 +30,17 @@ int addGame(char *player1_name, char *player2_name) {
     }
 
     newGame->id = gameCount + 1;  // ID cho trận đấu mới
-    strncpy(newGame->player1_name, player1_name, MAX_LENGTH);
-    strncpy(newGame->player2_name, player2_name, MAX_LENGTH);
+    strcpy(newGame->player1_name, player1_name);
+    strcpy(newGame->player2_name, player2_name);
     newGame->status = NOT_PLAY;  // Trạng thái ban đầu
-    strncpy(newGame->result, "", MAX_LENGTH);
+    strcpy(newGame->result, "");
     newGame->moves = NULL;
     newGame->next = global_games;  // Thêm vào đầu danh sách
     global_games = newGame;
     gameCount++;
     MAX_REPLAYS = gameCount;
-    return 1; // Trả về mã thành công nếu thêm thành công
+    
+    return newGame->id; // Trả về mã thành công nếu thêm thành công
 }
 
 // Thay đổi thông tin của một trận đấu
