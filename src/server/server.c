@@ -143,6 +143,12 @@ int main(int argc, char *argv[]) {
                                 case PICK:
                                 handlePick(tempfd, req, res);
                                 break;
+                                case REDO_ASK:
+                                handleRedoAsk(tempfd, req, res);
+                                break;
+                                case REDO_AGREE:
+                                handleRedoAgree(tempfd, req, res);
+                                break;
                                 case QUIT:
                                 handleQuit(tempfd, req, res);
                                 break;

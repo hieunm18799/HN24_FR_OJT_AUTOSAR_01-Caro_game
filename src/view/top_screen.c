@@ -55,7 +55,7 @@ void handleMouseClick() {
             if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
                 MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
                 Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
-                Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
+                Sleep(200); // Tránh đọc nhiều lần cùng một sự kiện click
             }
         }
     }

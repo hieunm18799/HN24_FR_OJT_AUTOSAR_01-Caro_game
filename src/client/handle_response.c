@@ -28,3 +28,9 @@ void readGameStart(char *input, unsigned int *game_id, char* player1_username, i
     *player2_win = atoi(strtok(NULL, "-"));
     *player2_lose = atoi(strtok(NULL, "\0"));
 }
+
+void readPickSucccess(char *input, char *username, unsigned char *x, unsigned char *y){
+    strcpy(username, strtok(input, "@"));
+    *x = atoi(strtok(NULL, "@"));
+    *y = atoi(strtok(NULL, "\0"));
+}

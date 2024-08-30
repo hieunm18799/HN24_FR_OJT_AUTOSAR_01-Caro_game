@@ -111,17 +111,18 @@ bool handlePick(int clientfd, Request *req, Response *res) {
     }
 
     setMessageResponse(res);
-    sprintf(res->data, "%d", x);
-    sprintf(res->data, "%c", '@');
-    sprintf(res->data, "%d", y);
-    sprintf(res->data, "%c", '\0');
+    snprintf(res->data, sizeof(char) * MAX_LENGTH, "%s%c%d%c%d%c", username, '@', x, '@', y, '\0');
+    // sprintf(res->data, "%d", x);
+    // sprintf(res->data, "%c", '@');
+    // sprintf(res->data, "%d", y);
+    // sprintf(res->data, "%c", '\0');
     sendRes(clientfd, res, sizeof(Response), 0);
     sendRes(opofd, res, sizeof(Response), 0);
     
     res->code = OTHER_PLAYER_TURN;
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);  
-    res->code = OTHER_PLAYER_TURN;
+    res->code = YOUR_TURN;
     setMessageResponse(res);
     sendRes(opofd, res, sizeof(Response), 0);  
     return true;
@@ -129,30 +130,42 @@ bool handlePick(int clientfd, Request *req, Response *res) {
 
 bool handleRedoAsk(int clientfd, Request *req, Response *res) {
     char username[MAX_LENGTH];
-    User *opoUser;
+    SOCKET opofd;
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "\0"));
-    res->code = redoAsk(username, game_id, opoUser);
+    res->code = redoAsk(username, game_id, &opofd);
+    if (res->code == REDO_FAIL){
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return true;
+    }
     setMessageResponse(res);
-    sendRes(opoUser->clientfd, res, sizeof(Response), 0); 
+    sendRes(opofd, res, sizeof(Response), 0);
     return true;
 }
 
 bool handleRedoAgree(int clientfd, Request *req, Response *res) {
     char username[MAX_LENGTH];
-    User *opoUser;
+    SOCKET opofd;
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "\0"));
 
-    res->code = redoAgree(username, game_id, opoUser);
-    setMessageResponse(res);
-    sendRes(opoUser->clientfd, res, sizeof(Response), 0);
+    res->code = redoAgree(username, game_id, &opofd);
     if (res->code == REDO_FAIL) {
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
         return true;
     }
-    res->code = OTHER_PLAYER_TURN;
+    setMessageResponse(res);
+    sendRes(opofd, res, sizeof(Response), 0);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
+    res->code = OTHER_PLAYER_TURN;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);  
+    res->code = YOUR_TURN;
+    setMessageResponse(res);
+    sendRes(opofd, res, sizeof(Response), 0);  
     return true;
 }
 

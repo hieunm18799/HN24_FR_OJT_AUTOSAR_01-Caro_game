@@ -11,13 +11,15 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
 
     if (strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER2 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER1) return OTHER_PLAYER_TURN;
 
+    printf("addMove\n");
     int res = addMove(game_id, x, y);
+    printf("addMove\n");
     if (res == 0) return PICK_FAIL;
     *opofd = findUserByName(strcmp(username, curGame->player1_name) == 0 ? curGame->player2_name : curGame->player1_name)->clientfd;
     return PICK_SUCCESS;
 }
 
-RES_OPCODE redoAsk(char* username, unsigned int game_id, User *opoUser) {
+RES_OPCODE redoAsk(char* username, unsigned int game_id, SOCKET *opofd) {
     Game *curGame = global_games;
 
     while (curGame != NULL) {
@@ -25,14 +27,15 @@ RES_OPCODE redoAsk(char* username, unsigned int game_id, User *opoUser) {
         else break;
     }
 
-    char *opoUserName;
+    if (strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER1 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER2) return REDO_FAIL;
+    char opoUserName[MAX_LENGTH];
     strcpy(opoUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
 
-    opoUser = findUserByName(opoUserName);
+    *opofd = findUserByName(opoUserName)->clientfd;
     return REDO_ASK;
 }
 
-RES_OPCODE redoAgree(char* username, unsigned int game_id, User *opoUser) {
+RES_OPCODE redoAgree(char* username, unsigned int game_id, SOCKET *opofd) {
     Game *curGame = global_games;
 
     while (curGame != NULL) {
@@ -40,14 +43,14 @@ RES_OPCODE redoAgree(char* username, unsigned int game_id, User *opoUser) {
         else break;
     }
 
-    if ((strcmp(curGame->player1_name, username) == 0 && curGame->status == PLAYER2) || (strcmp(curGame->player2_name, username) == 0 && curGame->status == PLAYER2)) return REDO_FAIL;
+    if (strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER2 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER1) return REDO_FAIL;
     
-    char *opoUserName;
+    char opoUserName[MAX_LENGTH];
     strcpy(opoUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
-    opoUser = findUserByName(opoUserName);
+    *opofd = findUserByName(opoUserName)->clientfd;
 
     redoMove(curGame);
-    return YOUR_TURN;
+    return REDO_SUCCESS;
 }
 
 RES_OPCODE quitLogic(char* username, unsigned int game_id, User *opoUser) {
