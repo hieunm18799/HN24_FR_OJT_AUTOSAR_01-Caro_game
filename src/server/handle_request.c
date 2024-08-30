@@ -9,9 +9,11 @@
 bool handleSignup(int clientfd, Request *req, Response* res);
 bool handleSignin(int clientfd, Request *req, Response *res);
 bool handleSignout(int clientfd, Request *req, Response *res);
-bool handleFindGame(int sockfd, int clientfd, Request *req, Response *res);
+bool handleFindGame(int clientfd, Request *req, Response *res);
 bool handlePick(int clientfd, Request *req, Response *res);
 bool handleQuit(int clientfd, Request *req, Response *res);
+bool handleRedoAsk(int clientfd, Request *req, Response *res);
+bool handleRedoAgree(int clientfd, Request *req, Response *res);
 
 bool handleSignup(int clientfd, Request *req, Response *res) {
     char *username, *password, *confirmPassword;
@@ -126,10 +128,40 @@ bool handlePick(int clientfd, Request *req, Response *res) {
     return true;
 }
 
+bool handleRedoAsk(int clientfd, Request *req, Response *res) {
+    char *username;
+    User *opoUser;
+    strcpy(username, strtok(req->message, "@"));
+    unsigned int game_id = atoi(strtok(NULL, "\0"));
+    res->code = redoAsk(username, game_id, opoUser);
+    setMessageResponse(res);
+    sendRes(opoUser->clientfd, res, sizeof(Response), 0); 
+    return true;
+}
+
+bool handleRedoAgree(int clientfd, Request *req, Response *res) {
+    char *username;
+    User *opoUser;
+    strcpy(username, strtok(req->message, "@"));
+    unsigned int game_id = atoi(strtok(NULL, "\0"));
+
+    res->code = redoAgree(username, game_id, opoUser);
+    setMessageResponse(res);
+    sendRes(opoUser->clientfd, res, sizeof(Response), 0);
+    if (res->code == REDO_FAIL) {
+        return true;
+    }
+    res->code = OTHER_PLAYER_TURN;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
 bool handleQuit(int clientfd, Request *req, Response *res) {
     char *username;
     strcpy(username, strtok(req->message, "@"));
-    unsigned int gameid = atoi(strtok(NULL, "\0"));
+    unsigned int game_id = atoi(strtok(NULL, "\0"));
+    
     bool endGame = false;
     int client2fd;
     // Check if game is end or not

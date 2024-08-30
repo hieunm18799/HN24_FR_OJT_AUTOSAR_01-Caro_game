@@ -21,6 +21,7 @@ extern User* userList;
 
 // Hàm quản lý người dùng
 void initializeUser();                        // Khởi tạo danh sách người dùng từ Users.ini
+User *createUser(const char* username, const char* password, const char* role);
 void newUser(const char* username, const char* password, const char* role);  // Tạo người dùng mới
 bool setUserStatus(const char* username, const char* status);  // Cập nhật trạng thái người dùng
 User *findUserByName(const char* username);

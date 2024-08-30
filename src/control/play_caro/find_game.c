@@ -29,14 +29,11 @@ RES_OPCODE findGame(User *curUser, unsigned int *game_id, User *opositePlayer) {
 
     if (smallestDifference == THRESHOLD) {
         printf("Không tìm thấy người chơi có trình độ tương đương, đang chờ người chơi khác...\n");
-        addGame(curUser->username, "", "");
+        addGame(curUser->username, "");
         return WAITING_PLAYER; // Trả về mã đợi nếu không tìm thấy người chơi
     }
 
-    // Cập nhật trạng thái của người chơi
-    // strcpy(curUser->status, "playing");
-    // strcpy(bestMatch->status, "playing");
-    // printf("Tìm thấy người chơi có trình độ tương đương: %s\n", bestMatch->username);
     *game_id = bestGame->id;
+    changeGame(bestGame->id, opositePlayer->username, curUser->username, PLAYER1);
     return GAME_START; // Trả về mã thành công nếu tìm thấy
 }
