@@ -83,6 +83,8 @@ typedef enum RES_OPCODE {
     DELETE_USER_FAIL,
     DELETE_GAME_SUCCESS,
     DELETE_GAME_FAIL,
+    //replay
+    GET_REPLAY_SUCCESS;
 } RES_OPCODE;
 
 // Request string
