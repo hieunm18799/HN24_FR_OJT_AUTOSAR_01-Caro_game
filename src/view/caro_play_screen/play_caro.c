@@ -43,6 +43,7 @@ static int End_flag = 1;      // Flag to control the display loop
 static int redo_requested = 0; // Flag to indicate if redo is requested
 static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 
+char move_sig;
 int currentScreen;
 int board_width = 10, board_height = 10;
 int console_width, console_height; // Console dimensions
@@ -68,6 +69,8 @@ HANDLE hThread;
 
 // Function to draw the board and initialize board state
 void drawPlayCaroBoard() {
+    if (strcmp(signed_in_username, player1_username) == 0) move_sig = 'X';
+    else move_sig = 'O';
 
     End_flag = 1;
     Player1_turn = 1;
@@ -189,16 +192,10 @@ int MovePlayCaro() {  // Change return type to int
         // Check if click is within "REDO" button
         if (MousePos.Y == REDO_POSITION_Y && MousePos.X >= REDO_POSITION_X && MousePos.X <= REDO_POSITION_X + BUTTON_WIDTH) {
             redo_requested = 1; // Set redo requested flag
-            handleRedoRequest();
-            // Clear the previous message
-            CursorPosition.X = 0;
-            CursorPosition.Y = AGREE_POSITION_Y - 1;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
-            DWORD written;
-            CONSOLE_SCREEN_BUFFER_INFO csbi;
-            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-            int console_width = csbi.dwSize.X;
-            FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', console_width, CursorPosition, &written);
+            gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 1);
+            printf("Requested a redo. Waiting for approval...");
+            redoAsk(sockfd, signin_username, game_id);
+
             return 0;  // Indicate that no move was made during the redo request
         }
 
@@ -214,7 +211,7 @@ int MovePlayCaro() {  // Change return type to int
 
         // Check if click is within "AGREE" button
         if (MousePos.Y == AGREE_POSITION_Y && MousePos.X >= AGREE_POSITION_X && MousePos.X <= AGREE_POSITION_X + BUTTON_WIDTH) {
-            redo_agreed = 1; // Set redo agreed flag
+            redoAgree(sockfd, signin_username, game_id);
             return 0;  // Indicate that no move was made
         }
 
@@ -225,32 +222,32 @@ int MovePlayCaro() {  // Change return type to int
         // Ensure the click is within the board boundaries
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
             // Redraw the specific cell
-            gotoxy(CARO_BOARD_POSITION_X + cell_x * cell_width + 2, CARO_BOARD_POSITION_Y + cell_y * cell_height + 1);
 
             if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
-                if (Player1_turn) {
-                    printf("X");
-                    board[cell_y][cell_x] = 'X'; // Update the board state
-                    Player1_turn = 0;
-                } else {
-                    printf("O");
-                    board[cell_y][cell_x] = 'O'; // Update the board state
-                    Player1_turn = 1;
-                }
+                // if (Player1_turn) {
+                //     printf("X");
+                //     board[cell_y][cell_x] = 'X'; // Update the board state
+                //     Player1_turn = 0;
+                // } else {
+                //     printf("O");
+                //     board[cell_y][cell_x] = 'O'; // Update the board state
+                //     Player1_turn = 1;
+                // }
                 // Save the last move position
-                last_move_x = cell_x;
-                last_move_y = cell_y;
+                // last_move_x = cell_x;
+                // last_move_y = cell_y;
 
                 //if (0) {
-                 if (CheckWin(cell_x, cell_y)) {
-                    gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
-                    printf("Player %s wins!\n", Player1_turn ? "2" : "1");
-                    End_flag = 0; // End the game
-                    getchar();
+                //  if (CheckWin(cell_x, cell_y)) {
+                //     gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
+                //     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
+                //     End_flag = 0; // End the game
+                //     getchar();
 
-                    //Direct to TOP (LOGINED)
-                    dashboard();
-                }
+                //     //Direct to TOP (LOGINED)
+                //     dashboard();
+                // } else 
+                pick(sockfd, game_id, signed_in_username, cell_x, cell_y);
 
                 // countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
                 // countdown_active = 1;
@@ -262,64 +259,44 @@ int MovePlayCaro() {  // Change return type to int
     return 0;  // Indicate that no move was made
 }
 
-void handleRedoRequest() {
-    // Display a message requesting a redo
-    gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 1);
-    printf("Requested a redo. Waiting for approval...");
+void addPicked(char *username, unsigned char cell_x, unsigned char cell_y) {
+    char temp = strcmp(username, signed_in_username) == 0 ? move_sig : (move_sig == 'X' ? 'O' : 'X');
+    gotoxy(CARO_BOARD_POSITION_X + cell_x * CELL_WIDTH + 2, CARO_BOARD_POSITION_Y + cell_y * CELL_HEIGHT + 1);
+    printf("%c", temp);
+    last_move_x = cell_x;
+    last_move_y = cell_y;
+    board[cell_y][cell_x] = temp; // Update the board state
+    if (CheckWin(cell_x, cell_y)) {
+        gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
+        printf("Player %s wins!\n", username);
+        End_flag = 0; // End the game
+        getchar();
 
-    // Wait for Player 2's response or a new move
-    redo_agreed = 0;  // Reset the redo agreed flag
-    int move_made = 0; // Flag to check if a move is made
-
-    while (!redo_agreed && !move_made && End_flag) {
-        handleMouseClick(); // Capture Player 2's response
-
-        // Check if click is within the "AGREE" button
-        if (MousePos.Y == AGREE_POSITION_Y && MousePos.X >= AGREE_POSITION_X && MousePos.X <= AGREE_POSITION_X + BUTTON_WIDTH) {
-            redo_agreed = 1; // Set redo agreed flag
-        } else {
-            move_made = MovePlayCaro(); // Allow other moves to be processed while waiting for approval
-            if (move_made) {
-                redo_requested = 0;  // Reset redo request flag if a move is made
-                break; // Exit the loop if a move is made
-            }
-        }
-    }
-
-    // Đồng ý undo
-    if (redo_agreed) {
-        // Undo the last move
-        if (last_move_x >= 0 && last_move_y >= 0) {
-            gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1 );
-
-            printf(" "); // Clear the last move from the board
-            board[last_move_y][last_move_x] = ' '; // Reset the board state
-
-            // Switch back the turn to the player who made the last move
-            Player1_turn = !Player1_turn;
-
-            // Reset redo flags
-            redo_requested = 0;
-            redo_agreed = 0;
-        }
-    } else if (move_made) {
-        // If a move was made, treat it as a rejection of the redo request
-        gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y + board_height * 2 + 2);
-        //printf("Redo request was denied due to new move.");
-
-        redo_requested = 0;  // Reset redo request flag
-    } else {
-        // If the redo is not agreed upon, just reset the request
-        gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 2 );
-        //printf("Redo request was denied.");
-
-        redo_requested = 0;  // Reset redo request flag
-        redo_agreed = 0;     // Reset redo agreed flag
+        //Direct to TOP (LOGINED)
+        dashboard();
     }
 }
 
+void agreeMess() {
+    gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 1);
+    printf("A re-do request! Agree if you want");
+}
 
-
+void redoLastPicked() {
+    gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1 );
+    printf(" "); // Clear the last move from the board
+    board[last_move_y][last_move_x] = ' '; // Reset the board state
+    gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 2 );
+    // Clear the previous message
+    CursorPosition.X = 0;
+    CursorPosition.Y = AGREE_POSITION_Y - 1;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
+    DWORD written;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    int console_width = csbi.dwSize.X;
+    FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', console_width, CursorPosition, &written);
+}
 
 int CheckWin(int last_x, int last_y) {
     char player = board[last_y][last_x];

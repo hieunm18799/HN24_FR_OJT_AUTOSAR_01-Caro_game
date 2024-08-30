@@ -15,6 +15,8 @@ COORD MousePos; // Stores mouse position
 int Click_flag = 0; // Flag to detect mouse click
 int currentScreen = VIEW_TOP_NOT_SIGN_IN;
 unsigned int game_id;
+char player1_username[50], player2_username[50];
+int player1_win, player1_lose, player2_win, player2_lose;
 char signed_in_role[50];
 char signed_in_username[50];
 char signin_username[50];
@@ -62,9 +64,9 @@ void handleMouseClick() {
         if (inputRecord.EventType == MOUSE_EVENT) {
             MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
             if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                MousePos = mouseEvent.dwMousePosition; // Store mouse position
-                Click_flag = 1;  // Set click flag to indicate a mouse click event
-                Sleep(100); // Avoid multiple reads of the same click event
+                MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
+                Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
+                Sleep(200); // Tránh đọc nhiều lần cùng một sự kiện click
             }
         }
     }

@@ -22,9 +22,15 @@ void readWaitingGame(char *input, unsigned int *game_id){
 void readGameStart(char *input, unsigned int *game_id, char* player1_username, int *player1_win, int* player1_lose, char* player2_username, int *player2_win, int* player2_lose){
     *game_id = atoi(strtok(input, "@"));
     strcpy(player1_username, strtok(NULL, "-"));
-    *player1_win = atoi(strtok(input, "-"));
-    *player1_lose = atoi(strtok(input, "@"));
+    *player1_win = atoi(strtok(NULL, "-"));
+    *player1_lose = atoi(strtok(NULL, "@"));
     strcpy(player2_username, strtok(NULL, "-"));
-    *player2_win = atoi(strtok(input, "-"));
-    *player2_lose = atoi(strtok(input, "\0"));
+    *player2_win = atoi(strtok(NULL, "-"));
+    *player2_lose = atoi(strtok(NULL, "\0"));
+}
+
+void readPickSucccess(char *input, char *username, unsigned char *x, unsigned char *y){
+    strcpy(username, strtok(input, "@"));
+    *x = atoi(strtok(NULL, "@"));
+    *y = atoi(strtok(NULL, "\0"));
 }
