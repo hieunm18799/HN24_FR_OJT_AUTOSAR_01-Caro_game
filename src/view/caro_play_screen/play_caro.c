@@ -30,7 +30,7 @@
 // void SetConsoleSize(int width, int height);
 void drawPlayCaroBoard();
 int MovePlayCaro();
-void DisplayCountdown();
+// void DisplayCountdown();
 void handleRedoRequest();
 int CheckWin(int last_x, int last_y);
 
@@ -38,8 +38,8 @@ int CheckWin(int last_x, int last_y);
 static COORD CursorPosition;
 static int Player1_turn = 1;  // Player 1 starts first
 static int End_flag = 1;      // Flag to control the display loop
-static int countdown_time = COUNT_DOWN_TIME;
-static int countdown_active = 1;
+// static int countdown_time = COUNT_DOWN_TIME;
+// static int countdown_active = 1;
 static int redo_requested = 0; // Flag to indicate if redo is requested
 static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 
@@ -50,10 +50,10 @@ char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
 int last_move_x = -1;
 int last_move_y = -1;
 
-DWORD WINAPI CountdownThread(LPVOID lpParam) {
-    DisplayCountdown();
-    return 0;
-}
+// DWORD WINAPI CountdownThread(LPVOID lpParam) {
+//     DisplayCountdown();
+//     return 0;
+// }
 
 HANDLE hThread;
 
@@ -71,8 +71,8 @@ void drawPlayCaroBoard() {
 
     End_flag = 1;
     Player1_turn = 1;
-    countdown_time = COUNT_DOWN_TIME;
-    countdown_active = 1;
+    // countdown_time = COUNT_DOWN_TIME;
+    // countdown_active = 1;
     redo_requested = 0;
     redo_agreed = 0;
     last_move_x = -1;
@@ -137,8 +137,8 @@ void drawPlayCaroBoard() {
     gotoxy(REDO_POSITION_X,REDO_POSITION_Y);
     printf("REDO");
 
-    gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
-    printf("COUNTDOWN:");
+    // gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
+    // printf("COUNTDOWN:");
 
     gotoxy(AGREE_POSITION_X,AGREE_POSITION_Y);
     printf("AGREE");
@@ -146,37 +146,37 @@ void drawPlayCaroBoard() {
     gotoxy(QUIT_POSITION_X,QUIT_POSITION_Y);
     printf("QUIT");
 
-    hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
-    if (hThread == NULL) {
-        printf("Error creating thread\n");
-        return;
-    }
+    // hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
+    // if (hThread == NULL) {
+    //     printf("Error creating thread\n");
+    //     return;
+    // }
 }
 
-void DisplayCountdown() {
-    while (End_flag == 1) {
-        if (countdown_active) {
-            gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
-            printf("COUNTDOWN:");
-            if (Player1_turn) {
-                gotoxy(COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN,COUNT_DOWN_POSITION_Y);
-                printf("Player 1's turn: %2d", countdown_time);
-            } else {
-                gotoxy(COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN,COUNT_DOWN_POSITION_Y);
-                printf("Player 2's turn: %2d", countdown_time);
-            }
+// void DisplayCountdown() {
+//     while (End_flag == 1) {
+//         if (countdown_active) {
+//             gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
+//             printf("COUNTDOWN:");
+//             if (Player1_turn) {
+//                 gotoxy(COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN,COUNT_DOWN_POSITION_Y);
+//                 printf("Player 1's turn: %2d", countdown_time);
+//             } else {
+//                 gotoxy(COUNT_DOWN_POSITION_X + COUNT_DOWN_PRINT_TURN,COUNT_DOWN_POSITION_Y);
+//                 printf("Player 2's turn: %2d", countdown_time);
+//             }
 
-            Sleep(1000); // Wait for 1 second
-            countdown_time--;
+//             Sleep(1000); // Wait for 1 second
+//             countdown_time--;
 
-            // Reset the countdown when it reaches 0
-            if (countdown_time < 0) {
-                countdown_time = COUNT_DOWN_TIME;
-                Player1_turn = !Player1_turn; // Switch turns
-            }
-        }
-    }
-}
+//             // Reset the countdown when it reaches 0
+//             if (countdown_time < 0) {
+//                 countdown_time = COUNT_DOWN_TIME;
+//                 Player1_turn = !Player1_turn; // Switch turns
+//             }
+//         }
+//     }
+// }
 
 int MovePlayCaro() {  // Change return type to int
     int cell_width = CELL_WIDTH;
@@ -184,7 +184,7 @@ int MovePlayCaro() {  // Change return type to int
 
     // if (Click_flag == 1) {  // Process click if the flag is set
     //     Click_flag = 0;  // Reset flag to prevent continuous detection
-        countdown_active = 0; // Pause the countdown
+        // countdown_active = 0; // Pause the countdown
 
         // Check if click is within "REDO" button
         if (MousePos.Y == REDO_POSITION_Y && MousePos.X >= REDO_POSITION_X && MousePos.X <= REDO_POSITION_X + BUTTON_WIDTH) {
@@ -252,8 +252,8 @@ int MovePlayCaro() {  // Change return type to int
                     dashboard();
                 }
 
-                countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
-                countdown_active = 1;
+                // countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
+                // countdown_active = 1;
                 return 1;  // Indicate that a move was successfully made
             }
         }
