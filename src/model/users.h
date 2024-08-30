@@ -24,6 +24,8 @@ void initializeUser();                        // Khởi tạo danh sách ngườ
 User *createUser(const char* username, const char* password, const char* role);
 void newUser(const char* username, const char* password, const char* role);  // Tạo người dùng mới
 bool setUserStatus(const char* username, const char* status);  // Cập nhật trạng thái người dùng
+void increasedWins(User *user);
+void increasedLosses(User *user);
 User *findUserByName(const char* username);
 void writeUsersIni(const char* filename);    // Ghi danh sách người dùng vào tệp INI
 void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI

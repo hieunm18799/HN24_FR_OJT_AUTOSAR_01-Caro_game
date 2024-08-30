@@ -53,7 +53,7 @@ RES_OPCODE redoAgree(char* username, unsigned int game_id, SOCKET *opofd) {
     return REDO_SUCCESS;
 }
 
-RES_OPCODE quitLogic(char* username, unsigned int game_id, User *opoUser) {
+RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *opofd) {
     Game *curGame = global_games;
 
     while (curGame != NULL) {
@@ -63,10 +63,12 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, User *opoUser) {
 
     if (curGame->status == NOT_PLAY || curGame->status == END) return QUIT_SUCCESS;
 
-    char *opoUserName;
+    char opoUserName[MAX_LENGTH];
     strcpy(opoUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
-    opoUser = findUserByName(opoUserName);
+    *opofd = findUserByName(opoUserName)->clientfd;
 
-    changeGame(game_id, "\0", "\0", END);
-    return OTHER_PLAYER_WIN;
+    changeGame(game_id, "\0", "\0", opoUserName, END);
+    increasedWins(findUserByName(opoUserName));
+    increasedLosses(findUserByName(username));
+    return QUIT_SUCCESS;
 }
