@@ -131,8 +131,8 @@ void startGUI(int sockfd) {
                     handleOnScreenReplayManagement();
                     break;
                 case VIEW_REPLAY_LIST:
-                    // handleRowClick();
-                    // handleOnScreenReplayInfo();
+                    handleRowClick();
+                    handleOnScreenReplayInfo();
                     break;
                 default:
                     break;
