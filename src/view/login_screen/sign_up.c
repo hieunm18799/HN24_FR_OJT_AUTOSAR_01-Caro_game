@@ -4,57 +4,68 @@
 #include <windows.h>
 #include "top_screen.h"
 
-
+// Macro definitions for UI elements
+#define SIGNIN_X 60
+#define SIGNIN_Y 2
+#define USERNAME_X 30
+#define USERNAME_Y 10
+#define PASSWORD_X 30
+#define PASSWORD_Y 12
+#define REENTER_PASSWORD_X 30
+#define REENTER_PASSWORD_Y 14
+#define BUTTON_X 35
+#define SIGNUP_Y 17
+#define BACK_Y 19
 
 void drawSignUpUI() {
     system("cls");
-    gotoxy(60, 2);
+    gotoxy(SIGNIN_X, SIGNIN_Y);
     printf("[ Sign in ]");
 
     gotoxy(38, 8);
     printf("Caro Game");
 
-    gotoxy(20, 10);
+    gotoxy(20, USERNAME_Y);
     printf("Username");
 
-    gotoxy(30, 10);
+    gotoxy(USERNAME_X, USERNAME_Y);
     printf("[                    ]");
 
-    gotoxy(20, 12);
+    gotoxy(20, PASSWORD_Y);
     printf("Password");
 
-    gotoxy(30, 12);
+    gotoxy(PASSWORD_X, PASSWORD_Y);
     printf("[                    ]");
 
-    gotoxy(20, 14);
+    gotoxy(20, REENTER_PASSWORD_Y);
     printf("Re-enter password");
 
-    gotoxy(30, 14);
+    gotoxy(REENTER_PASSWORD_X, REENTER_PASSWORD_Y);
     printf("[                    ]");
 
-    gotoxy(35, 17);
+    gotoxy(BUTTON_X, SIGNUP_Y);
     printf("[ Sign up ]");
 
-    gotoxy(38, 19);
+    gotoxy(BUTTON_X + 3, BACK_Y);
     printf("Back");
 
-    currentScreen = VIEW_SIGN_UP; // Đặt màn hình hiện tại là màn hình đăng ký
+    currentScreen = VIEW_SIGN_UP; // Set the current screen to the signup screen
 }
 
-void handleClickOnSignupScreen(){
-    if (MousePos.Y >= 10 && MousePos.Y <= 14 && MousePos.X >= 32 && MousePos.X <= 45){
+void handleClickOnSignupScreen() {
+    if (MousePos.Y >= USERNAME_Y && MousePos.Y <= REENTER_PASSWORD_Y && MousePos.X >= (USERNAME_X + 2) && MousePos.X <= (USERNAME_X + 21)) {
         enterSignupCredentials(signup_username, signup_password, signup_reenterPassword);
     }
-    // Khi nhấn Sign In ở giao diện đăng ký
-    else if (MousePos.Y == 2 && MousePos.X >= 60 && MousePos.X <= 70) {
-        drawSignInUI(); // Mở giao diện đăng nhập từ màn hình đăng ký
+    // When clicking Sign In on the signup screen
+    else if (MousePos.Y == SIGNIN_Y && MousePos.X >= SIGNIN_X && MousePos.X <= (SIGNIN_X + 10)) {
+        drawSignInUI(); // Open the sign-in screen from the signup screen
     }
-    // Khi nhấn Back ở giao diện đăng ký
-    else if (MousePos.Y == 19 && MousePos.X >= 35 && MousePos.X <= 40){
-        drawInitialUI(); // Button Back mở giao diện ban đầu
+    // When clicking Back on the signup screen
+    else if (MousePos.Y == BACK_Y && MousePos.X >= BUTTON_X && MousePos.X <= (BUTTON_X + 5)) {
+        drawInitialUI(); // Back button opens the initial screen
     }
-    // Khi nhấn Sign Up ở giao diện đăng ký
-    else if (MousePos.Y == 17 && MousePos.X >= 30 && MousePos.X <= 40){
+    // When clicking Sign Up on the signup screen
+    else if (MousePos.Y == SIGNUP_Y && MousePos.X >= BUTTON_X && MousePos.X <= (BUTTON_X + 5)) {
         signup(sockfd, signup_username, signup_password, signup_reenterPassword);
     }
 }
