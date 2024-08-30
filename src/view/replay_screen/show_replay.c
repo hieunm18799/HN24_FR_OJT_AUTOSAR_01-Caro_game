@@ -1,13 +1,5 @@
-#include <stdio.h>
-#include <windows.h>
 #include "top_screen.h"
 #include "games.h"
-
-int replayId = 0;
-
-// Constants for table layout
-int rowHeight = 2; // Height of each row (in console lines)
-int tableStartY = 8; // Starting Y coordinate of the table
 
 void drawReplayInfoUI() {
     system("cls");
@@ -65,8 +57,8 @@ void displayReplayInfoData() {
         gotoxy(43, tableStartY + i * rowHeight);
         printf("%-7s", replayDataArray[i].result);
         
-        gotoxy(55, tableStartY + i * rowHeight);
-        printf("%-14s", replayDataArray[i].move);
+        // gotoxy(55, tableStartY + i * rowHeight);
+        // printf("%-14s", replayDataArray[i].move);
     }
 }
 

@@ -1,5 +1,3 @@
-#include <stdio.h> 
-#include <windows.h>
 #include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10

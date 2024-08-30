@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <conio.h>
-#include <windows.h>
 #include "top_screen.h"
 
 COORD MousePos; // Biến lưu trữ vị trí chuột
@@ -14,6 +11,10 @@ char signin_password[50];
 char signup_username[50];
 char signup_password[50];
 char signup_reenterPassword[50];
+int replayId = 0;
+// Constants for table layout
+int rowHeight = 2; // Height of each row (in console lines)
+int tableStartY = 8; // Starting Y coordinate of the table
 
 void gotoxy(int x, int y) {
     COORD coord;
