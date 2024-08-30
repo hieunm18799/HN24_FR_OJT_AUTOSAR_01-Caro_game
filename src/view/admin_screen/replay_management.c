@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <conio.h>
-#include <windows.h>
 #include "top_screen.h"
 #include "games.h"
-
-int replayId = 0;
 
 static rowHeight = 2; // Height of each row (in console lines)
 static int tableStartY = 8; // Starting Y coordinate of the table

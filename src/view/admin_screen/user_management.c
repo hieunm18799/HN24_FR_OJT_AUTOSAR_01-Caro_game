@@ -1,7 +1,7 @@
 #include <stdio.h>
+#include "games.h"
 #include <windows.h>
 #include "top_screen.h"
-#include "games.h"
 
 #define MAX_USERS 9
 int userId = 0;
@@ -21,8 +21,6 @@ typedef struct {
 // Example array and number of users
 userData userDataArray[MAX_USERS]; 
 int numUsers = 5; // Number of users
-int rowHeight = 2; // Height of each row (in console lines)
-int tableStartY = 10; // Starting Y coordinate of the table
 
 void frameUserManagement();
 void fetchUserData();
