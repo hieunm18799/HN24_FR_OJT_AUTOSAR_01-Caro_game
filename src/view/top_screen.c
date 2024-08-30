@@ -4,6 +4,8 @@ COORD MousePos; // Biến lưu trữ vị trí chuột
 int Click_flag = 0; // Cờ để xác định xem đã click chuột hay chưa
 int currentScreen = VIEW_TOP_NOT_SIGN_IN;
 unsigned int game_id;
+char player1_username[50], player2_username[50];
+int player1_win, player1_lose, player2_win, player2_lose;
 char signed_in_role[50];
 char signed_in_username[50];
 char signin_username[50];

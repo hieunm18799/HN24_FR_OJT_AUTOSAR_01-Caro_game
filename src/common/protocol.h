@@ -65,6 +65,7 @@ typedef enum RES_OPCODE {
     YOUR_TURN,
     OTHER_PLAYER_TURN,
     PICK_FAIL,
+    PICK_SUCCESS,
     REDO_FAIL,
     REDO_ASK,
     YOU_WIN,

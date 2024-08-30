@@ -57,10 +57,10 @@ bool handleSignin(int clientfd, Request *req, Response *res) {
 }
 
 bool handleSignout(int clientfd, Request *req, Response *res) {
-    char *username;
+    char username[MAX_LENGTH];
     
     printf("Message: %s\n", req->message);
-    username = strtok(req->message, "\0");
+    strcpy(username, strtok(req->message, "\0"));
     res->code = sign_out(clientfd, username);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
@@ -68,10 +68,10 @@ bool handleSignout(int clientfd, Request *req, Response *res) {
 }
 
 bool handleFindGame(int clientfd, Request *req, Response *res) {
-    char *username;
+    char username[MAX_LENGTH];
     unsigned int game_id;
     printf("Message: %s\n", req->message);
-    username = strtok(req->message, "\0");
+    strcpy(username, strtok(req->message, "\0"));
     User *hostPlayer = createUser("", "", "");
     User *curUser = findUserByName(username);
     res->code = findGame(curUser, &game_id, hostPlayer);
@@ -95,7 +95,8 @@ bool handleFindGame(int clientfd, Request *req, Response *res) {
 }
 
 bool handlePick(int clientfd, Request *req, Response *res) {
-    char *username;
+    printf("Message: %s\n", req->message);
+    char username[MAX_LENGTH];
     SOCKET opofd;
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "@"));
@@ -114,16 +115,20 @@ bool handlePick(int clientfd, Request *req, Response *res) {
     sprintf(res->data, "%c", '@');
     sprintf(res->data, "%d", y);
     sprintf(res->data, "%c", '\0');
+    sendRes(clientfd, res, sizeof(Response), 0);
     sendRes(opofd, res, sizeof(Response), 0);
     
     res->code = OTHER_PLAYER_TURN;
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);  
+    res->code = OTHER_PLAYER_TURN;
+    setMessageResponse(res);
+    sendRes(opofd, res, sizeof(Response), 0);  
     return true;
 }
 
 bool handleRedoAsk(int clientfd, Request *req, Response *res) {
-    char *username;
+    char username[MAX_LENGTH];
     User *opoUser;
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "\0"));
@@ -134,7 +139,7 @@ bool handleRedoAsk(int clientfd, Request *req, Response *res) {
 }
 
 bool handleRedoAgree(int clientfd, Request *req, Response *res) {
-    char *username;
+    char username[MAX_LENGTH];
     User *opoUser;
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "\0"));
@@ -152,7 +157,7 @@ bool handleRedoAgree(int clientfd, Request *req, Response *res) {
 }
 
 bool handleQuit(int clientfd, Request *req, Response *res) {
-    char *username;
+    char username[MAX_LENGTH];
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "\0"));
     
@@ -172,7 +177,7 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
 
 bool handleshowReplay(int clientfd, Request *req, Response *res)
 {
-    char *username;
+    char username[MAX_LENGTH];
     strcpy(username, strtok(req->message, "@"));
     MatchHistory *history;
     ReplayData *replayDataArray;

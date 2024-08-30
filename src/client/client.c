@@ -182,7 +182,7 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
                 drawFindPlayer();
                 break;
             case GAME_START:
-                // readGameStart(res->data, &game_id, );
+                readGameStart(res->data, &game_id, &player1_username[0], &player1_win, &player1_lose, &player2_username[0], &player2_win, &player2_lose);
                 drawPlayCaroBoard();
                 break;
             default:

@@ -228,29 +228,29 @@ int MovePlayCaro() {  // Change return type to int
             gotoxy(CARO_BOARD_POSITION_X + cell_x * cell_width + 2, CARO_BOARD_POSITION_Y + cell_y * cell_height + 1);
 
             if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
-                if (Player1_turn) {
-                    printf("X");
-                    board[cell_y][cell_x] = 'X'; // Update the board state
-                    Player1_turn = 0;
-                } else {
-                    printf("O");
-                    board[cell_y][cell_x] = 'O'; // Update the board state
-                    Player1_turn = 1;
-                }
+                // if (Player1_turn) {
+                //     printf("X");
+                //     board[cell_y][cell_x] = 'X'; // Update the board state
+                //     Player1_turn = 0;
+                // } else {
+                //     printf("O");
+                //     board[cell_y][cell_x] = 'O'; // Update the board state
+                //     Player1_turn = 1;
+                // }
                 // Save the last move position
-                last_move_x = cell_x;
-                last_move_y = cell_y;
+                // last_move_x = cell_x;
+                // last_move_y = cell_y;
 
                 //if (0) {
-                 if (CheckWin(cell_x, cell_y)) {
-                    gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
-                    printf("Player %s wins!\n", Player1_turn ? "2" : "1");
-                    End_flag = 0; // End the game
-                    getchar();
+                //  if (CheckWin(cell_x, cell_y)) {
+                //     gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
+                //     printf("Player %s wins!\n", Player1_turn ? "2" : "1");
+                //     End_flag = 0; // End the game
+                //     getchar();
 
-                    //Direct to TOP (LOGINED)
-                    dashboard();
-                }
+                //     //Direct to TOP (LOGINED)
+                //     dashboard();
+                // } else pick(sockfd, game_id, signed_in_username, cell_x, cell_y);
 
                 countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
                 countdown_active = 1;
