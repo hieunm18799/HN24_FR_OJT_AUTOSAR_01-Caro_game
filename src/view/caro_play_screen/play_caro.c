@@ -14,9 +14,9 @@
 #define REDO_POSITION_X 5
 #define REDO_POSITION_Y (CARO_BOARD_POSITION_Y + board_height * 2 + 2)
 #define COUNT_DOWN_POSITION_X 5
-#define COUNT_DOWN_POSITION_Y (console_height - 2)
+#define COUNT_DOWN_POSITION_Y (board_height * 2 + 8)
 #define QUIT_POSITION_X 5
-#define QUIT_POSITION_Y (console_height - 1) 
+#define QUIT_POSITION_Y (board_height * 2 + 9) 
 #define BUTTON_WIDTH 5  // Approximate width of the buttons
 #define BUTTON_HEIGHT 1  // Height of the buttons
 #define CELL_WIDTH 4
@@ -24,12 +24,12 @@
 #define COUNT_DOWN_TIME 10
 #define COUNT_DOWN_PRINT_TURN 13
 #define AGREE_POSITION_X 15
-#define AGREE_POSITION_Y (console_height - 3)
+#define AGREE_POSITION_Y (board_height * 2 + 7)
 #define WIN_CONDITION 4
 #define WIN_NOTIFY 15
 
 // Function prototypes
-void SetConsoleSize(int width, int height);
+// void SetConsoleSize(int width, int height);
 void drawPlayCaroBoard();
 int MovePlayCaro();
 void DisplayCountdown();
@@ -60,17 +60,26 @@ DWORD WINAPI CountdownThread(LPVOID lpParam) {
 HANDLE hThread;
 
 // Function to set the console size
-void SetConsoleSize(int width, int height) {
-    COORD buffer_size = { width, height };
-    SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
+// void SetConsoleSize(int width, int height) {
+//     COORD buffer_size = { width, height };
+//     SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
     
-    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), buffer_size);
-    SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &window_size);
-}
+//     SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), buffer_size);
+//     SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &window_size);
+// }
 
 // Function to draw the board and initialize board state
 void drawPlayCaroBoard() {
 
+    End_flag = 1;
+    Player1_turn = 1;
+    countdown_time = COUNT_DOWN_TIME;
+    countdown_active = 1;
+    redo_requested = 0;
+    redo_agreed = 0;
+    last_move_x = -1;
+    last_move_y = -1;
+    
     system("cls");
 
     currentScreen = VIEW_PLAY_GAME;
@@ -89,11 +98,11 @@ void drawPlayCaroBoard() {
     }
 
     // Calculate console size based on board dimensions
-    console_width = board_width * 4 + 5;
-    console_height = board_height * 2 + 10;
+    // console_width = board_width * 4 + 5;
+    // console_height = board_height * 2 + 10;
 
     // Set the console size
-    SetConsoleSize(console_width, console_height);
+    //SetConsoleSize(console_width, console_height);
 
     // Set up game title position
     gotoxy(CARO_GAME_STRING_POSITION_X,CARO_GAME_STRING_POSITION_Y);
