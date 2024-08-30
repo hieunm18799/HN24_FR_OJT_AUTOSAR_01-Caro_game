@@ -28,7 +28,7 @@ typedef struct Game {
     struct Game *next;
 } Game;
 
-int MAX_REPLAYS;
+
 extern Game *global_games;
 
 
@@ -60,5 +60,7 @@ int getGamesByUsername(char *username);
 Game *getGames();
 void freeGames();
 void freeMoves(Game *game);
+int move_data[];
+int move_data_count;
 
 #endif

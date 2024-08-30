@@ -10,11 +10,11 @@
 #define CARO_BOARD_POSITION_Y 5
 #define MAXIMUM_SIZE 100
 #define START_POSITION_X 5
-#define START_POSITION_Y (console_height - 3)
+#define START_POSITION_Y (board_height * 2 + 7)
 #define STOP_POSITION_X 20
-#define STOP_POSITION_Y (console_height - 3)
+#define STOP_POSITION_Y (board_height * 2 + 7)
 #define BACK_POSITION_X 5
-#define BACK_POSITION_Y (console_height - 1) 
+#define BACK_POSITION_Y (board_height * 2 + 9) 
 #define board_width 10
 #define board_height 10
 #define BUTTON_WIDTH 10
@@ -33,13 +33,13 @@ void handleStartStop() {
     replay_active = !replay_active;  // Toggle replay state
 }
 
-void set_console_size(int width, int height) {
-    COORD buffer_size = { width, height };
-    SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
+// void set_console_size(int width, int height) {
+//     COORD buffer_size = { width, height };
+//     SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
     
-    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), buffer_size);
-    SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &window_size);
-}
+//     SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), buffer_size);
+//     SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &window_size);
+// }
 
 
 // COORD MousePos;
@@ -76,7 +76,7 @@ void DrawReplayBoard() {
     console_height = board_height * 2 + 10;
 
     // Set the console size
-    set_console_size(console_width, console_height);
+    // set_console_size(console_width, console_height);
 
     gotoxy(CARO_GAME_STRING_POSITION_X, CARO_GAME_STRING_POSITION_Y);
     printf("CARO GAME");
@@ -115,18 +115,30 @@ void DrawReplayBoard() {
 
 
 void handleClickOnWatchReplayScreen() {
-    if (Click_flag == 1) {
-        Click_flag = 0;
+    // if (Click_flag == 1) {
+    //     Click_flag = 0;
         if (MousePos.Y == START_POSITION_Y && MousePos.X >= START_POSITION_X && MousePos.X <= (START_POSITION_X + BUTTON_WIDTH)) {
             replay_active = 1; // Bắt đầu replay
         } else if (MousePos.Y == STOP_POSITION_Y && MousePos.X >= STOP_POSITION_X && MousePos.X <= (STOP_POSITION_X + BUTTON_WIDTH)) {
             replay_active = 0; // Dừng replay
         } else if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
          // Trở về màn hình SHOW REPLAY
-        
+         replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
+		if (replayDataArray == NULL) {
+			printf("Không thể cấp phát bộ nhớ\n");
+			return;
+		}
 
+        handleReplayButton(move_data[14], move_data_count);
+		// Data fetching from server
+        
+		// Draw the initial UI
+		drawReplayInfoUI();
+
+		// Display the fetched data
+		displayReplayInfoData();
         }
-    }
+    // }
 }
 
 void ReplayGameInfo(int move[], int move_count) {
@@ -159,7 +171,10 @@ void ReplayGameInfo(int move[], int move_count) {
     }
 }
 
+int move_data[] = {0,0,1,1,1,0,2,1,2,0,3,1,3,0};
+int move_data_count = sizeof(move_data) / sizeof(int);
 
+ 
 void handleReplayButton(int move[], int move_count) {
     if (replay_active) {
         ReplayGameInfo(move, move_count);
