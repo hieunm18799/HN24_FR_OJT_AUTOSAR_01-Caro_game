@@ -60,7 +60,5 @@ int getGamesByUsername(char *username);
 Game *getGames();
 void freeGames();
 void freeMoves(Game *game);
-int move_data[];
-int move_data_count;
 
 #endif

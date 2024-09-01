@@ -129,7 +129,7 @@ void handleClickOnWatchReplayScreen() {
 			return;
 		}
 
-        handleReplayButton(move_data[14], move_data_count);
+        // handleReplayButton(move_data[14], move_data_count);
 		// Data fetching from server
         
 		// Draw the initial UI
@@ -145,7 +145,7 @@ void ReplayGameInfo(int move[], int move_count) {
     if (current_move_index >= move_count) {
         replay_active = 0;
         current_move_index = 0;
-        return;
+        //return;
     }
 
     int move_x = move[current_move_index];
@@ -170,9 +170,6 @@ void ReplayGameInfo(int move[], int move_count) {
         handleMouseClick();  // Đảm bảo có thể bấm nút trong lúc chờ
     }
 }
-
-int move_data[] = {0,0,1,1,1,0,2,1,2,0,3,1,3,0};
-int move_data_count = sizeof(move_data) / sizeof(int);
 
  
 void handleReplayButton(int move[], int move_count) {
