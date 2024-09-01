@@ -137,7 +137,7 @@ void startGUI(int sockfd) {
                     break;
                 case VIEW_WATCH_REPLAY:
                     handleClickOnWatchReplayScreen();
-
+                    
                     break;
                 default:
                     break;
