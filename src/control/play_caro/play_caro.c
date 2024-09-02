@@ -27,12 +27,12 @@ RES_OPCODE redoAsk(char* username, unsigned int game_id, SOCKET *opofd) {
         else break;
     }
 
-    if (strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER1 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER2) return REDO_FAIL;
+    if (curGame->status == END || strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER1 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER2) return REDO_FAIL;
     char opoUserName[MAX_LENGTH];
     strcpy(opoUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
 
     *opofd = findUserByName(opoUserName)->clientfd;
-    return REDO_ASK;
+    return REDO_ASK_SUCCESS;
 }
 
 RES_OPCODE redoAgree(char* username, unsigned int game_id, SOCKET *opofd) {
@@ -43,7 +43,7 @@ RES_OPCODE redoAgree(char* username, unsigned int game_id, SOCKET *opofd) {
         else break;
     }
 
-    if (strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER2 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER1) return REDO_FAIL;
+    if (curGame->status == END || strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER2 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER1) return REDO_FAIL;
     
     char opoUserName[MAX_LENGTH];
     strcpy(opoUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
@@ -61,13 +61,21 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *opofd) {
         else break;
     }
 
-    if (curGame->status == NOT_PLAY || curGame->status == END) return QUIT_SUCCESS;
+    switch (curGame->status) {
+        case NOT_PLAY:
+            deleteGame(game_id);
+        case END:
+            return QUIT_SUCCESS;
+            break;
+        default:
+            break;
+    }
 
     char opoUserName[MAX_LENGTH];
     strcpy(opoUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
     *opofd = findUserByName(opoUserName)->clientfd;
 
-    changeGame(game_id, "\0", "\0", "\0", END);
+    changeGame(game_id, "\0", "\0", opoUserName, END);
     increasedWins(findUserByName(opoUserName));
     increasedLosses(findUserByName(username));
     return QUIT_SUCCESS;
