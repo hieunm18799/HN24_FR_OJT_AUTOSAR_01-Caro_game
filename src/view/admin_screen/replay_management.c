@@ -15,6 +15,7 @@
 #define PLAYER2_COLUMN 28
 #define RESULT_COLUMN 43
 
+int MAX_REPLAYS = 10;
 // Function to draw the replay management UI
 void drawReplayManagementUI() {
     system("cls");
@@ -56,16 +57,16 @@ void drawReplayManagementUI() {
 // Function to display replay data in the table
 void displayReplayData() {
     for (int i = 0; i < MAX_REPLAYS; i++) {
-        gotoxy(ID_COLUMN, TABLE_START_Y + i * ROW_HEIGHT);
+        gotoxy(ID_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%02d", replayDataArray[i].id);
 
-        gotoxy(PLAYER1_COLUMN, TABLE_START_Y + i * ROW_HEIGHT);
+        gotoxy(PLAYER1_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-9s", replayDataArray[i].player1);
 
-        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + i * ROW_HEIGHT);
+        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-9s", replayDataArray[i].player2);
 
-        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + i * ROW_HEIGHT);
+        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-7s", replayDataArray[i].result);
     }
 }
@@ -81,13 +82,13 @@ void handleRowClick() {
 }
 
 void handleOnScreenReplayManagement() {
-    if (MousePos.Y == (TABLE_START_Y + MAX_REPLAYS * ROW_HEIGHT + 2) && MousePos.X >= 16 && MousePos.X <= 22) {
+    if (MousePos.Y == (TABLE_START_Y + 3 + MAX_REPLAYS * ROW_HEIGHT + BUTTON_Y_OFFSET) && MousePos.X >= 16 && MousePos.X <= 22) {
         // Example: Call delete function (You can change to other operations)
         deleteReplay(replayId);
-    } else if (MousePos.Y == (TABLE_START_Y + MAX_REPLAYS * ROW_HEIGHT + 2) && MousePos.X >= 30 && MousePos.X <= 36) {
+    } else if (MousePos.Y == (TABLE_START_Y + 3 + MAX_REPLAYS * ROW_HEIGHT + BUTTON_Y_OFFSET) && MousePos.X >= 30 && MousePos.X <= 36) {
         // Free memory when no longer needed
         free(replayDataArray);
-        openAdminScreen();
+        frameAdminScreen();
     }
 }
 

@@ -118,7 +118,7 @@ void handleOnScreenUserManagement() {
     else if (MousePos.Y == 4 && MousePos.X >= 30 && MousePos.X <= 39) {
         editUser();
     }
-    else if (MousePos.Y == 6 && MousePos.X >= 40 && MousePos.X <= 41) {
+    else if (MousePos.Y == 6 && MousePos.X >= 30 && MousePos.X <= 41) {
         frameAdminScreen(); // Back
     }
 }

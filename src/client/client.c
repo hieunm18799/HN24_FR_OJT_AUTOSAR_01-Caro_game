@@ -125,6 +125,7 @@ void startGUI(int sockfd) {
                     openAdminScreen();
                     break;
                 case VIEW_ADMIN_USER_MANAGE:
+                    handleOnScreenUserManagement();
                     break;
                 case VIEW_ADMIN_REPLAY_MANAGE:
                     handleRowClick();
@@ -134,12 +135,18 @@ void startGUI(int sockfd) {
                     handleRowClick();
                     handleOnScreenReplayInfo();
                     break;
+                case VIEW_WATCH_REPLAY:
+                    handleClickOnWatchReplayScreen();
+                    
+                    break;
                 default:
                     break;
             }
         }
     }
 }
+
+
 
 DWORD WINAPI ReceiveHandler(void *socket_desc) {
     SOCKET sock = *(SOCKET *)socket_desc;

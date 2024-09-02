@@ -85,3 +85,14 @@ void handleOnScreenReplayInfo() {
         dashboard();
     }
 }
+
+
+void fetchReplayInfoData() {
+    // Simulate fetching replay data (example data)
+    for (int i = 0; i < MAX_REPLAYS; i++) {
+        replayDataArray[i].id = i + 1;
+        sprintf(replayDataArray[i].player1, "Player %d", i + 1);
+        sprintf(replayDataArray[i].player2, "Player %d", MAX_REPLAYS - i);
+        sprintf(replayDataArray[i].result, i % 2 == 0 ? "Win" : "Loss");
+    }
+}
