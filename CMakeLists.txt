@@ -25,13 +25,13 @@ add_executable(client_app ${CLIENT_SOURCE_FILES})
 add_executable(server_app ${SERVER_SOURCE_FILES})
 
 # Specify compile options
-if(MSVC)
+if(WIN32)
     # Link Winsock library
     target_link_libraries(client_app ws2_32)
     target_link_libraries(server_app ws2_32)
     target_compile_options(client_app PRIVATE -Wall -W1)
     target_compile_options(server_app PRIVATE -Wall -W1)
-else()
+elseif(UNIX)
     target_compile_options(client_app PRIVATE -Wall -Wextra -pthread)
     target_compile_options(server_app PRIVATE -Wall -Wextra -pthread)
 endif()
