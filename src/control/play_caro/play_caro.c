@@ -67,7 +67,7 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *opofd) {
     strcpy(opoUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
     *opofd = findUserByName(opoUserName)->clientfd;
 
-    changeGame(game_id, "\0", "\0", opoUserName, END);
+    changeGame(game_id, "\0", "\0", "\0", END);
     increasedWins(findUserByName(opoUserName));
     increasedLosses(findUserByName(username));
     return QUIT_SUCCESS;

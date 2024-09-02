@@ -33,6 +33,6 @@ RES_OPCODE findGame(User *curUser, unsigned int *game_id, User *opositePlayer) {
     }
 
     *game_id = bestGame->id;
-    changeGame(bestGame->id, opositePlayer->username, curUser->username, PLAYER1);
+    changeGame(bestGame->id, opositePlayer->username, curUser->username, "\0", PLAYER1);
     return GAME_START; // Trả về mã thành công nếu tìm thấy
 }

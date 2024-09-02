@@ -98,7 +98,7 @@ int redoMove(Game *current) {
         // List has only one element
         free(current->moves);
         current->moves = NULL;
-        return;
+        return 1;
     }
 
     // Traverse the list to find the second-to-last node
