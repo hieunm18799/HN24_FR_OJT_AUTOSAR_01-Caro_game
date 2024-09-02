@@ -134,13 +134,12 @@ bool handleRedoAsk(int clientfd, Request *req, Response *res) {
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "\0"));
     res->code = redoAsk(username, game_id, &opofd);
-    if (res->code == REDO_FAIL){
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return true;
-    }
     setMessageResponse(res);
-    sendRes(opofd, res, sizeof(Response), 0);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    if (res->code == REDO_ASK_SUCCESS){
+        setMessageResponse(res);
+        sendRes(opofd, res, sizeof(Response), 0);
+    }
     return true;
 }
 
@@ -171,19 +170,18 @@ bool handleRedoAgree(int clientfd, Request *req, Response *res) {
 
 bool handleQuit(int clientfd, Request *req, Response *res) {
     char username[MAX_LENGTH];
+    SOCKET opofd = SOCKET_ERROR;
     strcpy(username, strtok(req->message, "@"));
     unsigned int game_id = atoi(strtok(NULL, "\0"));
+
+    res->code = quitLogic(username, game_id, &opofd);
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);  
     
-    bool endGame = false;
-    int client2fd;
-    // Check if game is end or not
-    // If not
-    // Set game to end, other player won and this player lost, return client2fd
-    if (endGame) {
+    if (opofd != SOCKET_ERROR) {
         res->code = YOU_WIN;
         setMessageResponse(res);
-        sendRes(client2fd, res, sizeof(Response), 0);  
-        return true;
+        sendRes(opofd, res, sizeof(Response), 0);  
     }
     return true;
 }

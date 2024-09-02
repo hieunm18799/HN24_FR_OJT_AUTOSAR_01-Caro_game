@@ -22,7 +22,7 @@
 
 void handle_sigint(int sig);
 void startGUI(int sockfd);
-DWORD WINAPI ReceiveHandler(void *socket_desc);
+DWORD WINAPI ReceiveHandler(LPVOID lpParameter);
 
 int sockfd;
 
@@ -69,9 +69,9 @@ int main(int argc, char const *argv[]) {
         exit(0);
     }
     #endif
-    HANDLE recvThread = CreateThread(NULL, 0, ReceiveHandler, (void *)&sockfd, 0, NULL);
+    HANDLE recvThread = CreateThread(NULL, 0, ReceiveHandler, NULL, 0, NULL);
     if (recvThread == NULL) {
-        printf("Could not create receive thread. Error: %d\n", GetLastError());
+        printf("Could not create receive thread. Error: %ld\n", GetLastError());
         closesocket(sockfd);
         WSACleanup();
         return 1;
@@ -80,8 +80,11 @@ int main(int argc, char const *argv[]) {
 
     #ifdef _WIN32
     WSACleanup();
+    closesocket(sockfd);
     #endif
+    #ifdef UNIX
     close(sockfd);
+    #endif
     return 0;
 }
 
@@ -148,17 +151,16 @@ void startGUI(int sockfd) {
 
 
 
-DWORD WINAPI ReceiveHandler(void *socket_desc) {
-    SOCKET sock = *(SOCKET *)socket_desc;
-
+DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
     while (1) {
         Response *res = (Response *)malloc(sizeof(Response));
         int rcvBytes = recvRes(sockfd, res, sizeof(Response), 0);
         if (rcvBytes != -1) {
             switch (res->code) {
-            case SIGN_IN_SUCCESS:
-                readSigninSuccess(res->data, signed_in_username, signed_in_role);
-                dashboard();
+            case SYNTAX_ERROR:
+                break;
+            case SIGN_UP_INPUT_WRONG:
+                // Show error
                 break;
             case USERNAME_NOT_EXISTED:
                 // Show error
@@ -166,20 +168,21 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
             case WRONG_PASSWORD:
                 // Show error
                 break;
-            case ACCOUNT_BUSY:
-                // Show error
-                break;
-            case SIGN_UP_SUCCESS:
-                drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
-                break;
             case USERNAME_EXISTED:
                 // Show error
                 break;
-            case SIGN_UP_INPUT_WRONG:
+            case ACCOUNT_BUSY:
                 // Show error
                 break;
             case SIGN_OUT_FAIL:
                 // Show error
+                break;
+            case SIGN_IN_SUCCESS:
+                readSigninSuccess(res->data, signed_in_username, signed_in_role);
+                dashboard();
+                break;
+            case SIGN_UP_SUCCESS:
+                drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
                 break;
             case SIGN_OUT_SUCCESS:
                 drawInitialUI();
@@ -192,17 +195,33 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
                 readGameStart(res->data, &game_id, &player1_username[0], &player1_win, &player1_lose, &player2_username[0], &player2_win, &player2_lose);
                 drawPlayCaroBoard();
                 break;
+            case YOUR_TURN:
+                break;
+            case OTHER_PLAYER_TURN:
+                break;
+            case PICK_FAIL:
+                break;
             case PICK_SUCCESS:
                 unsigned char x, y;
                 char username[50];
                 readPickSucccess(res->data, username, &x, &y);
                 addPicked(username, x, y);
                 break;
-            case REDO_ASK:
-                agreeMess();
+            case REDO_FAIL:
                 break;
             case REDO_SUCCESS:
                 redoLastPicked();
+                break;
+            case REDO_ASK_SUCCESS:
+                printMessagePlayCaro(res->message);
+                break;
+            case YOU_WIN:
+                printMessagePlayCaro("Player %s won!", signed_in_username);
+                break;
+            case OTHER_PLAYER_WIN:
+                break;
+            case QUIT_SUCCESS:
+                dashboard();
                 break;
             default:
                 break;

@@ -52,12 +52,13 @@ unsigned int addGame(char *player1_name, char *player2_name) {
 }
 
 // Thay đổi thông tin của một trận đấu
-int changeGame(unsigned int id, char *player1_name, char *player2_name, GAME_STATUS status) {
+int changeGame(unsigned int id, char *player1_name, char *player2_name, char *result, GAME_STATUS status) {
     Game *current = global_games;
     while (current != NULL) {
         if (current->id == id) {
             if (player1_name != "\0") strncpy(current->player1_name, player1_name, MAX_LENGTH);
             if (player2_name != "\0")  strncpy(current->player2_name, player2_name, MAX_LENGTH);
+            if (result != "\0")  strncpy(current->result, result, MAX_LENGTH);
             current->status = status;
             return 1;
         }

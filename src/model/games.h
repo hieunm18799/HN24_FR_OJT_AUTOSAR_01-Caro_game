@@ -52,7 +52,7 @@ typedef struct {
 
 int initializeGame();
 unsigned int addGame(char *player1_name, char *player2_name);
-int changeGame(unsigned int id, char *player1_name, char *player2_name, GAME_STATUS status);
+int changeGame(unsigned int id, char *player1_name, char *player2_name, char *result, GAME_STATUS status);
 int addMove(unsigned int id, unsigned char x, unsigned char y);
 int redoMove(Game *current); //redo
 int deleteGame(unsigned int id);
