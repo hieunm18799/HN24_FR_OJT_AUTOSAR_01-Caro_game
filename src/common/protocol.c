@@ -122,6 +122,10 @@ void setOpcodeRequest(Request *req, char *input) {
         req->code = PICK;
     else if (strcmp(code, STRING_QUIT) == 0)
         req->code = QUIT;
+    else if (strcmp(code, STRING_REDO_ASK) == 0)
+        req->code = REDO_ASK;
+    else if (strcmp(code, STRING_REDO_AGREE) == 0)
+        req->code = REDO_AGREE;
     else{
         req->code = -1;
     }

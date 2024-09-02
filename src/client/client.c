@@ -125,14 +125,19 @@ void startGUI(int sockfd) {
                     openAdminScreen();
                     break;
                 case VIEW_ADMIN_USER_MANAGE:
+                    handleOnScreenUserManagement();
                     break;
                 case VIEW_ADMIN_REPLAY_MANAGE:
                     handleRowClick();
                     handleOnScreenReplayManagement();
                     break;
                 case VIEW_REPLAY_LIST:
-                    // handleRowClick();
-                    // handleOnScreenReplayInfo();
+                    handleRowClick();
+                    handleOnScreenReplayInfo();
+                    break;
+                case VIEW_WATCH_REPLAY:
+                    handleClickOnWatchReplayScreen();
+                    
                     break;
                 default:
                     break;
@@ -140,6 +145,8 @@ void startGUI(int sockfd) {
         }
     }
 }
+
+
 
 DWORD WINAPI ReceiveHandler(void *socket_desc) {
     SOCKET sock = *(SOCKET *)socket_desc;
@@ -182,8 +189,20 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
                 drawFindPlayer();
                 break;
             case GAME_START:
-                // readGameStart(res->data, &game_id, );
+                readGameStart(res->data, &game_id, &player1_username[0], &player1_win, &player1_lose, &player2_username[0], &player2_win, &player2_lose);
                 drawPlayCaroBoard();
+                break;
+            case PICK_SUCCESS:
+                unsigned char x, y;
+                char username[50];
+                readPickSucccess(res->data, username, &x, &y);
+                addPicked(username, x, y);
+                break;
+            case REDO_ASK:
+                agreeMess();
+                break;
+            case REDO_SUCCESS:
+                redoLastPicked();
                 break;
             default:
                 break;

@@ -24,6 +24,7 @@ void frameAdminScreen() {
 void openAdminScreen() {
 	if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
 		// chuyen sang user management
+		frameUserManagement();
 	}
 	else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		//chuyen sang man hinh replay
@@ -34,7 +35,7 @@ void openAdminScreen() {
 			return;
 		}
 		// Data fetching from server
-
+		fetchReplayInfoData();
 
 		// Draw the initial UI
 		drawReplayManagementUI();

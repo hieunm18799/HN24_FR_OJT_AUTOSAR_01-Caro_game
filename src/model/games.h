@@ -28,7 +28,7 @@ typedef struct Game {
     struct Game *next;
 } Game;
 
-int MAX_REPLAYS;
+
 extern Game *global_games;
 
 

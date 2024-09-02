@@ -16,6 +16,14 @@ int initializeGame() {
 
 int MAX_REPLAYS = 0;
 
+Move *createMoves(unsigned char x, unsigned char y) {
+    Move *ret = (Move*)malloc(sizeof(Move));
+    if (ret == NULL) return NULL;
+    ret->x = x;
+    ret->y = y;
+    ret->next = NULL;
+    return ret;
+}
 // Thêm một trận đấu mới vào danh sách
 unsigned int addGame(char *player1_name, char *player2_name) {
     if (gameCount >= MAX_GAMES) {
@@ -66,18 +74,12 @@ int addMove(unsigned int id, unsigned char x, unsigned char y) {
         if (current->id == id) {
             current->status = current->status == PLAYER1 ? PLAYER2 : PLAYER1;
             if (current->moves == NULL) {
-                current->moves = (Move*)malloc(sizeof(Move));
-                current->moves->x = x;
-                current->moves->y = y;
-                current->moves->next = NULL;
+                current->moves = createMoves(x, y);
                 return 1;
             }
             Move *curMove = current->moves;
             while (curMove->next != NULL) curMove = curMove->next;
-            curMove = (Move*)malloc(sizeof(Move));
-            curMove->x = x;
-            curMove->y = y;
-            curMove->next = NULL;
+            curMove->next = createMoves(x,y);
             return 1;
         }
         current = current->next;
@@ -89,9 +91,26 @@ int addMove(unsigned int id, unsigned char x, unsigned char y) {
 // Hoàn tác một nước đi trong trận đấu (redo)
 int redoMove(Game *current) {
     if (current->moves == NULL) return 0;
-    Move *curMove = current->moves;
-    while (curMove->next != NULL) curMove = curMove->next;
-    free(curMove);
+    
+    if (current->moves->next == NULL) {
+        printf("%d %d\n", current->moves->x, current->moves->y);
+        // List has only one element
+        free(current->moves);
+        current->moves = NULL;
+        return;
+    }
+
+    // Traverse the list to find the second-to-last node
+    Move *temp = current->moves;
+    while (temp->next->next != NULL) {
+        printf("%d %d\n", temp->x, temp->y);
+        temp = temp->next;
+    }
+
+    // Free the last node
+    free(temp->next);
+    temp->next = NULL;
+
     current->status = current->status == PLAYER1 ? PLAYER2 : PLAYER1;
     return 1;
 }
