@@ -112,8 +112,8 @@ void ReplayGameInfo(int board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
     int moves_replayed = 0;
 
     // Iterate over the board to replay the moves
-    for (int cell_x = 0; cell_x < board_width; ++cell_x) {
-        for (int cell_y = 0; cell_y < board_height; ++cell_y) {
+    for (int cell_x = 0; cell_x < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_x) {
+        for (int cell_y = 0; cell_y < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_y) {
             if (board[cell_x][cell_y] != 0) {  // A move has been made at this position
                 // Move cursor to the drawing position
                 gotoxy(CARO_BOARD_POSITION_X + cell_x * 4 + 2, CARO_BOARD_POSITION_Y + cell_y * 2 + 1);

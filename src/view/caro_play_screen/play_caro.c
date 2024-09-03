@@ -115,11 +115,11 @@ void drawPlayCaroBoard() {
 
     // Set up player 1 label position
     gotoxy(PLAYER_1_POSITION_X,PLAYER_1_POSITION_Y);
-    printf("<X> PLAYER 1");
+    printf("<X> Player: %s %d Win %d Lose",player1_username, player1_win, player1_lose);
 
     // Set up player 2 label position
     gotoxy(PLAYER_2_POSITION_X,PLAYER_2_POSITION_Y);
-    printf("<O> PLAYER 2");
+    printf("<X> Player: %s %d Win %d Lose",player2_username, player2_win, player2_lose);
 
     // Set up board drawing position
     gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
@@ -342,21 +342,7 @@ void RedrawPlayCaroBoard () {
     board_height = (new_console_height - 10) / 2;
 
     //Redraw the board
-    gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
-    for (int i = 0; i < board_height * 2 + 1; i++) {
-        if (i % 2 == 0) {
-            for (int j = 0; j < board_width * 4 + 1; j++) {
-                if (j % 4 == 0) printf("+");
-                else printf("-");
-            }
-        } else {
-            for (int j = 0; j < board_width * 4 + 1; j++) {
-                if (j % 4 == 0) printf("|");
-                else printf(" ");
-            }
-        }
-        printf("\n");
-    }
+    drawPlayCaroBoard();
 
     //Redraw the moves
     for (int cell_y = 0; cell_y < board_height; cell_y++) {
