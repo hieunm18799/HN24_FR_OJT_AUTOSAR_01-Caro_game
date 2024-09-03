@@ -22,8 +22,9 @@
 
 void handle_sigint(int sig);
 void startGUI(int sockfd);
-DWORD WINAPI ReceiveHandler(void *socket_desc);
+DWORD WINAPI ReceiveHandler(LPVOID lpParameter);
 
+static int rcvBytes = 0;
 int sockfd;
 
 int main(int argc, char const *argv[]) {
@@ -69,9 +70,9 @@ int main(int argc, char const *argv[]) {
         exit(0);
     }
     #endif
-    HANDLE recvThread = CreateThread(NULL, 0, ReceiveHandler, (void *)&sockfd, 0, NULL);
+    HANDLE recvThread = CreateThread(NULL, 0, ReceiveHandler, NULL, 0, NULL);
     if (recvThread == NULL) {
-        printf("Could not create receive thread. Error: %d\n", GetLastError());
+        printf("Could not create receive thread. Error: %ld\n", GetLastError());
         closesocket(sockfd);
         WSACleanup();
         return 1;
@@ -80,20 +81,29 @@ int main(int argc, char const *argv[]) {
 
     #ifdef _WIN32
     WSACleanup();
+    closesocket(sockfd);
     #endif
+    #ifdef UNIX
     close(sockfd);
+    #endif
     return 0;
 }
 
 void handle_sigint(int sig) {
-    printf("\nCaught signal %d (SIGINT), exiting...\n", sig);
+    #ifdef _WIN32
+    WSACleanup();
+    closesocket(sockfd);
+    #endif
+    #ifdef UNIX
+    close(sockfd);
+    #endif
     exit(0);
 }
 
 void startGUI(int sockfd) {
     drawInitialUI();
 
-    while (1) {
+    while (rcvBytes != -1) {
         handleMouseClick(); // Gọi hàm để xử lý sự kiện chuột
 
         if (Click_flag) { // Nếu có sự kiện click
@@ -125,14 +135,19 @@ void startGUI(int sockfd) {
                     openAdminScreen();
                     break;
                 case VIEW_ADMIN_USER_MANAGE:
+                    handleOnScreenUserManagement();
                     break;
                 case VIEW_ADMIN_REPLAY_MANAGE:
                     handleRowClick();
                     handleOnScreenReplayManagement();
                     break;
                 case VIEW_REPLAY_LIST:
-                    // handleRowClick();
-                    // handleOnScreenReplayInfo();
+                    handleRowClick();
+                    handleOnScreenReplayInfo();
+                    break;
+                case VIEW_WATCH_REPLAY:
+                    handleClickOnWatchReplayScreen();
+                    
                     break;
                 default:
                     break;
@@ -141,38 +156,52 @@ void startGUI(int sockfd) {
     }
 }
 
-DWORD WINAPI ReceiveHandler(void *socket_desc) {
-    SOCKET sock = *(SOCKET *)socket_desc;
 
-    while (1) {
+
+DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
+    while (rcvBytes != -1) {
         Response *res = (Response *)malloc(sizeof(Response));
-        int rcvBytes = recvRes(sockfd, res, sizeof(Response), 0);
+        rcvBytes = recvRes(sockfd, res, sizeof(Response), 0);
         if (rcvBytes != -1) {
+            unsigned char x, y;
+            char username[50];
             switch (res->code) {
+            case SYNTAX_ERROR:
+                break;
+            case SIGN_UP_INPUT_WRONG:
+                // Show error
+                showErrorNotification("Sign-up input is wrong!");
+                break;
+            case SIGN_IN_INPUT_WRONG:
+                // Show error
+                showErrorNotification("Sign-up input is wrong!");
+                break;
+            case USERNAME_NOT_EXISTED:
+                // Show error
+                showErrorNotification("This account is not registered!");
+                break;
+            case WRONG_PASSWORD:
+                // Show error
+                showErrorNotification("Wrong password!");
+                break;
+            case USERNAME_EXISTED:
+                // Show error
+                showErrorNotification("Username already exists! Please choose another.");
+                break;
+            case ACCOUNT_BUSY:
+                // Show error
+                showErrorNotification("This account is being used by another player!");
+                break;
+            case SIGN_OUT_FAIL:
+                // Show error
+                showErrorNotification("Sign-out encountered an error!");
+                break;
             case SIGN_IN_SUCCESS:
                 readSigninSuccess(res->data, signed_in_username, signed_in_role);
                 dashboard();
                 break;
-            case USERNAME_NOT_EXISTED:
-                // Show error
-                break;
-            case WRONG_PASSWORD:
-                // Show error
-                break;
-            case ACCOUNT_BUSY:
-                // Show error
-                break;
             case SIGN_UP_SUCCESS:
                 drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
-                break;
-            case USERNAME_EXISTED:
-                // Show error
-                break;
-            case SIGN_UP_INPUT_WRONG:
-                // Show error
-                break;
-            case SIGN_OUT_FAIL:
-                // Show error
                 break;
             case SIGN_OUT_SUCCESS:
                 drawInitialUI();
@@ -182,8 +211,39 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
                 drawFindPlayer();
                 break;
             case GAME_START:
-                // readGameStart(res->data, &game_id, );
+                readGameStart(res->data, &game_id, &player1_username[0], &player1_win, &player1_lose, &player2_username[0], &player2_win, &player2_lose);
                 drawPlayCaroBoard();
+                break;
+            case YOUR_TURN:
+                printMessagePlayCaro(res->message);
+                break;
+            case OTHER_PLAYER_TURN:
+                printMessagePlayCaro(res->message);
+                break;
+            case PICK_FAIL:
+                printMessagePlayCaro(res->message);
+                break;
+            case PICK_SUCCESS:
+                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
+                break;
+            case REDO_FAIL:
+                break;
+            case REDO_SUCCESS:
+                if (readPickSuccess(res->data, username, &x, &y)) redoLastPicked(x, y);
+                break;
+            case REDO_ASK_SUCCESS:
+                printMessagePlayCaro(res->message);
+                break;
+            case YOU_WIN:
+                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
+                printMessagePlayCaro(res->message);
+                break;
+            case OTHER_PLAYER_WIN:
+                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
+                printMessagePlayCaro(res->message);
+                break;
+            case QUIT_SUCCESS:
+                dashboard();
                 break;
             default:
                 break;

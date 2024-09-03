@@ -3,7 +3,7 @@
 
 RES_OPCODE sign_up(char* username, char* password, char* confirmPassword) {
     // Kiểm tra xem username đã tồn tại chưa
-    if (strcmp(username, "") == 0 || strcmp(password, "") == 0 || strcmp(confirmPassword, "") == 0 || strcmp(password, confirmPassword) != 0)
+    if (username == NULL || password == NULL || confirmPassword == NULL || strcmp(password, confirmPassword) != 0)
         return SIGN_UP_INPUT_WRONG;
     User* user = userList;
     while (user) {

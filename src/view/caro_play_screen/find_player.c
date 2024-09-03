@@ -1,5 +1,3 @@
-#include <stdio.h> 
-#include <windows.h>
 #include "top_screen.h"
 
 #define CARO_GAME_STRING_POSITION_X 10
@@ -49,13 +47,11 @@ void drawFindPlayer() {
 
 
 void handleClickOnFindPlayerScreen() {
-    if (Click_flag == 1) {
-        Click_flag = 0;
-        // Check if the "BACK" button was clicked
-        if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
-            system("cls");
-            
-        }
+    // Check if the "BACK" button was clicked
+    if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
+        // dashboard();
+        quit(sockfd, game_id, signed_in_username);
+        return;
     }
 }
 

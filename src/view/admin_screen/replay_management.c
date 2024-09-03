@@ -1,100 +1,94 @@
-#include <stdio.h>
-#include <conio.h>
-#include <windows.h>
 #include "top_screen.h"
 #include "games.h"
 
-int replayId = 0;
+#define TITLE_X 27
+#define TITLE_Y 3
+#define ROW_HEIGHT 2 // Height of each row (in console lines)
+#define TABLE_START_Y 8 // Starting Y coordinate of the table
+#define TABLE_START_X 0
+#define BUTTON_DELETE_X 16
+#define BUTTON_BACK_X 30
+#define BUTTON_WIDTH 6
+#define BUTTON_Y_OFFSET 2
+#define ID_COLUMN 3
+#define PLAYER1_COLUMN 13
+#define PLAYER2_COLUMN 28
+#define RESULT_COLUMN 43
 
-static rowHeight = 2; // Height of each row (in console lines)
-static int tableStartY = 8; // Starting Y coordinate of the table
-
+int MAX_REPLAYS = 10;
 // Function to draw the replay management UI
 void drawReplayManagementUI() {
     system("cls");
-    
-    gotoxy(27, 3);
-    printf("Admin Dashboard");
-    
-    gotoxy(0, 5);
+
+    // Draw title
+    gotoxy(TITLE_X, TITLE_Y);
+    printf("Replay Management");
+
+    // Draw table header
+    gotoxy(TABLE_START_X, TABLE_START_Y);
     printf("----------------------------------------------------");
 
-    gotoxy(1, 6);
+    gotoxy(1, TABLE_START_Y + 1);
     printf("|   id   |   player1   |   player2   |   result   |");
-    
-    gotoxy(0, 7);
+
+    gotoxy(TABLE_START_X, TABLE_START_Y + 2);
     printf("----------------------------------------------------");
 
+    // Draw table rows
     for (int i = 0; i < MAX_REPLAYS; i++) {
-        gotoxy(1, tableStartY + i * rowHeight);
+        gotoxy(1, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("|        |             |             |            |");
     }
-    
-    gotoxy(0, tableStartY + MAX_REPLAYS * rowHeight);
+
+    // Draw table footer
+    gotoxy(TABLE_START_X, TABLE_START_Y + 3 + MAX_REPLAYS * ROW_HEIGHT);
     printf("----------------------------------------------------");
-    
-    gotoxy(16, tableStartY + MAX_REPLAYS * rowHeight + 2);
+
+    // Draw buttons
+    gotoxy(BUTTON_DELETE_X, TABLE_START_Y + 3 + MAX_REPLAYS * ROW_HEIGHT + BUTTON_Y_OFFSET);
     printf("[ Delete ]");
-    
-    gotoxy(30, tableStartY + MAX_REPLAYS * rowHeight + 2);
+
+    gotoxy(BUTTON_BACK_X, TABLE_START_Y + 3 + MAX_REPLAYS * ROW_HEIGHT + BUTTON_Y_OFFSET);
     printf("[ Back ]");
+
     currentScreen = VIEW_ADMIN_REPLAY_MANAGE;
 }
-
-// // Function to fetch replay data from the server
-// void fetchReplayData() {
-//     // Simulate fetching replay data (example data)
-//     for (int i = 0; i < MAX_REPLAYS; i++) {
-//         replayDataArray[i].id = i + 1;
-//         sprintf(replayDataArray[i].player1, "Player %d", i + 1);
-//         sprintf(replayDataArray[i].player2, "Player %d", MAX_REPLAYS - i);
-//         sprintf(replayDataArray[i].result, i % 2 == 0 ? "Win" : "Loss");
-//     }
-// }
 
 // Function to display replay data in the table
 void displayReplayData() {
     for (int i = 0; i < MAX_REPLAYS; i++) {
-        gotoxy(3, tableStartY + i * rowHeight);
+        gotoxy(ID_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%02d", replayDataArray[i].id);
-        
-        gotoxy(13, tableStartY + i * rowHeight);
+
+        gotoxy(PLAYER1_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-9s", replayDataArray[i].player1);
-        
-        gotoxy(28, tableStartY + i * rowHeight);
+
+        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-9s", replayDataArray[i].player2);
-        
-        gotoxy(43, tableStartY + i * rowHeight);
+
+        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-7s", replayDataArray[i].result);
     }
 }
 
-
 // Function to handle row clicks and determine the selected row and ID
 void handleRowClick() {
-
-    // Determine which row was clicked
-    if (MousePos.Y >= tableStartY && MousePos.Y < tableStartY + (MAX_REPLAYS * rowHeight)) {
-        int clickedRow = (MousePos.Y - tableStartY) / rowHeight;
-
+    if (MousePos.Y >= TABLE_START_Y && MousePos.Y < TABLE_START_Y + (MAX_REPLAYS * ROW_HEIGHT)) {
+        int clickedRow = (MousePos.Y - TABLE_START_Y) / ROW_HEIGHT;
         if (clickedRow < MAX_REPLAYS) {
             replayId = replayDataArray[clickedRow].id;
-        } 
+        }
     }
-    
 }
 
-void handleOnScreenReplayManagement(){
-
-    if (MousePos.Y == (tableStartY + MAX_REPLAYS * rowHeight + 2) && MousePos.X >= 16 && MousePos.X <= 22){
+void handleOnScreenReplayManagement() {
+    if (MousePos.Y == (TABLE_START_Y + 3 + MAX_REPLAYS * ROW_HEIGHT + BUTTON_Y_OFFSET) && MousePos.X >= 16 && MousePos.X <= 22) {
         // Example: Call delete function (You can change to other operations)
         deleteReplay(replayId);
-    }
-    else if (MousePos.Y == (tableStartY + MAX_REPLAYS * rowHeight + 2) && MousePos.X >= 30 && MousePos.X <= 36){
-        // Giải phóng bộ nhớ động khi không còn sử dụng
+    } else if (MousePos.Y == (TABLE_START_Y + 3 + MAX_REPLAYS * ROW_HEIGHT + BUTTON_Y_OFFSET) && MousePos.X >= 30 && MousePos.X <= 36) {
+        // Free memory when no longer needed
         free(replayDataArray);
-        // Gọi hàm frameScreenAdmin ở đây
-        // frameScreenAdmin();
+        frameAdminScreen();
     }
 }
 
@@ -130,7 +124,7 @@ void deleteReplay(int replayId) {
         displayReplayData();
         
         // Step 7: Send updated data to server (if needed)
-        // Gọi hàm gửi dữ liệu lên server ở đây
-
+        // Call function to send data to server here
+        // deleteGame(replayId);
     }
 }

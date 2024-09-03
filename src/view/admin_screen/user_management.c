@@ -1,10 +1,11 @@
 #include <stdio.h>
+#include "games.h"
 #include <windows.h>
 #include "top_screen.h"
-#include "games.h"
 
-#define MAX_USERS 9
+#define MAX_USERS 20
 int userId = 0;
+int selectedColumn;
 int clickedRow;
 char newData[50];
 
@@ -21,8 +22,6 @@ typedef struct {
 // Example array and number of users
 userData userDataArray[MAX_USERS]; 
 int numUsers = 5; // Number of users
-int rowHeight = 2; // Height of each row (in console lines)
-int tableStartY = 10; // Starting Y coordinate of the table
 
 void frameUserManagement();
 void fetchUserData();
@@ -31,7 +30,7 @@ int handleUserRowClick();
 void handleOnScreenUserManagement();
 void deleteUser(int userId);
 void addUser();
-void sendDataToServer();
+//void sendDataToServer();
 void editUser();
 void enterData();
 
@@ -46,7 +45,7 @@ void frameUserManagement() {
     gotoxy(0, 7);
     printf("-------------------------------------------------------------------------------");
     gotoxy(0, 8);
-    printf("|   id   |   username   |     password     |   win   |   lose    |    draw    |");
+    printf("|   STT   |   username   |     password     |   win   |   lose    |    draw    |");
     gotoxy(0, 9);
     printf("-------------------------------------------------------------------------------");
 
@@ -60,18 +59,6 @@ void frameUserManagement() {
     currentScreen = VIEW_ADMIN_USER_MANAGE;
 }
 
-// Function to fetch replay data from the server
-void fetchUserData() {
-    // Simulate fetching replay data (example data)
-    for (int i = 0; i < MAX_USERS; i++) {
-        sprintf_s(userDataArray[i].username, sizeof(userDataArray[i].username), "Username %d", i + 1);
-        sprintf_s(userDataArray[i].password, sizeof(userDataArray[i].password), "Password %d", MAX_USERS - i);
-        sprintf_s(userDataArray[i].win, sizeof(userDataArray[i].win), "%d", i);
-        sprintf_s(userDataArray[i].lose, sizeof(userDataArray[i].lose), "%d", i);
-        sprintf_s(userDataArray[i].draw, sizeof(userDataArray[i].draw), "%d", i);
-        userDataArray[i].id = i+1;
-    }
-}
 
 // Function to display replay data in the table
 void displayUserData() {
@@ -98,13 +85,24 @@ void displayUserData() {
 
 // Function to handle row clicks and determine the selected row and ID
 int handleUserRowClick() {
-
-    // Determine which row was clicked
     if (MousePos.Y >= tableStartY && MousePos.Y < tableStartY + (numUsers * rowHeight)) {
         clickedRow = (MousePos.Y - tableStartY) / rowHeight;
-
         if (clickedRow < numUsers) {
             userId = userDataArray[clickedRow].id;
+            printf("Clicked on row %d with User ID: %d\n", clickedRow + 1, userId);
+            
+            if (MousePos.X >= 24 && MousePos.X < 43) {
+                selectedColumn = 4;
+            }
+            else if (MousePos.X >= 43 && MousePos.X < 53) {
+                selectedColumn = 1;
+            }
+            else if (MousePos.X >= 53 && MousePos.X < 65) {
+                selectedColumn = 2;
+            }
+            else if (MousePos.X >= 63 && MousePos.X < 78) {
+                selectedColumn = 3;
+            }
         }
     }
     return clickedRow;
@@ -120,11 +118,15 @@ void handleOnScreenUserManagement() {
     else if (MousePos.Y == 4 && MousePos.X >= 30 && MousePos.X <= 39) {
         editUser();
     }
-    else if (MousePos.Y == 6 && MousePos.X >= 40 && MousePos.X <= 41) {
+    else if (MousePos.Y == 6 && MousePos.X >= 30 && MousePos.X <= 41) {
         frameAdminScreen(); // Back
     }
 }
 
+//xoa 1 nguoi dung
+//cac buoc xoa 1 nguoi dung
+//1. chon hang co nguoi dung muon xoa
+//2. nhan [delete]
 void deleteUser(int userId) {
     int foundIndex = -1;
 
@@ -154,64 +156,68 @@ void deleteUser(int userId) {
         userDataArray[numUsers].lose[0] = '\0';
         userDataArray[numUsers].draw[0] = '\0';
 
+        for (int i = 0; i < numUsers; i++) {
+            userDataArray[i].id = i + 1;
+        }
+
         // Step 6: Update the UI
         frameUserManagement();
         displayUserData();
-
-        printf("User with ID %d deleted.\n", userId);
-
-        // Step 7: Send updated data to server (if needed)
-        sendDataToServer();
     }
 }
 
+//them thong tin nguoi dung moi
+//cac buoc them nguoi dung
+//1. Nhan [Add]
+//2. Nhap thong tin
+//3. enter
 void addUser() {
-    int foundIndex = -1;
+    int foundIndex;
     //add new row
     numUsers = numUsers + 1;
-    userDataArray[numUsers].id = numUsers;
-    userDataArray[numUsers].username[0] = '\0';
-    userDataArray[numUsers].password[0] = '\0';
-    userDataArray[numUsers].win[0] = '\0';
-    userDataArray[numUsers].lose[0] = '\0';
-    userDataArray[numUsers].draw[0] = '\0';
+    userDataArray[numUsers - 1].id = numUsers;
+    userDataArray[numUsers - 1].username[0] = '\0';
+    userDataArray[numUsers - 1].password[0] = '\0';
+    userDataArray[numUsers - 1].win[0] = '\0';
+    userDataArray[numUsers - 1].lose[0] = '\0';
+    userDataArray[numUsers - 1].draw[0] = '\0';
 
     // Update the UI
     frameUserManagement();
     displayUserData();
-    printf("Enter new data");
 
     //enter and save the data
     gotoxy(13, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers].username, sizeof(userDataArray[numUsers].username), newData);
+    strcpy_s(userDataArray[numUsers-1].username, sizeof(userDataArray[numUsers].username), newData);
 
     gotoxy(28, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers].password, sizeof(userDataArray[numUsers].password), newData);
+    strcpy_s(userDataArray[numUsers-1].password, sizeof(userDataArray[numUsers].password), newData);
 
     gotoxy(48, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers].win, sizeof(userDataArray[numUsers].win), newData);
+    strcpy_s(userDataArray[numUsers-1].win, sizeof(userDataArray[numUsers].win), newData);
 
     gotoxy(59, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers].lose, sizeof(userDataArray[numUsers].lose), newData);
+    strcpy_s(userDataArray[numUsers-1].lose, sizeof(userDataArray[numUsers].lose), newData);
 
     gotoxy(71, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers].draw, sizeof(userDataArray[numUsers].draw), newData);
+    strcpy_s(userDataArray[numUsers-1].draw, sizeof(userDataArray[numUsers].draw), newData);
 
     // update the UI
     frameUserManagement();
     displayUserData();
 }
 
-// Function to send data back to the server after deletion
-void sendDataToServer() {
-    printf("Data sent back to the server.\n");
-}
-
+//ham sua thong tin nguoi dung, ko sua id và username
+//cac buoc sua thong tin
+//1. chon o can sua
+//2. nhan [edit]
+//3. nhap thong tin
+//4. enter
 void editUser() {
     int foundIndex;
     for (int i = 0; i < numUsers; i++) {
@@ -220,34 +226,42 @@ void editUser() {
             break;
         }
     }
-
-    userDataArray[foundIndex].password[0] = '\0';
-    userDataArray[foundIndex ].win[0] = '\0';
-    userDataArray[foundIndex ].lose[0] = '\0';
-    userDataArray[foundIndex ].draw[0] = '\0';
-
-    // Update the UI
-    frameUserManagement();
-    displayUserData();
-    printf("Enter data");
-
-    gotoxy(28, tableStartY + foundIndex * rowHeight);
-    enterData();
-    strcpy_s(userDataArray[foundIndex].password, sizeof(userDataArray[foundIndex].password), newData);
-
-    gotoxy(48, tableStartY + foundIndex * rowHeight);
-    enterData();
-    strcpy_s(userDataArray[foundIndex].win, sizeof(userDataArray[foundIndex].win), newData);
-
-    gotoxy(59, tableStartY + foundIndex * rowHeight);
-    enterData();
-    strcpy_s(userDataArray[foundIndex ].lose, sizeof(userDataArray[foundIndex].lose), newData);
-
-    gotoxy(71, tableStartY + foundIndex * rowHeight );
-    enterData();
-    strcpy_s(userDataArray[foundIndex].draw, sizeof(userDataArray[foundIndex].draw), newData);
-
-    // update the UI
+    if (selectedColumn == 4) {
+        userDataArray[foundIndex].password[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(28, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].password, sizeof(userDataArray[foundIndex].password), newData);
+    }
+    else if (selectedColumn == 1) {
+        userDataArray[foundIndex].win[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(48, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].win, sizeof(userDataArray[foundIndex].win), newData);
+        printf("%d", selectedColumn);
+    }
+    else if (selectedColumn == 2) {
+        userDataArray[foundIndex].lose[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(59, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].lose, sizeof(userDataArray[foundIndex].lose), newData);
+    }
+    else if (selectedColumn == 3) {
+        userDataArray[foundIndex].draw[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(71, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].draw, sizeof(userDataArray[foundIndex].draw), newData);
+    }
+    else {
+        printf("Invalid column selected.\n");
+    }
     frameUserManagement();
     displayUserData();
 }

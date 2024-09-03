@@ -3,6 +3,7 @@
 
 RES_OPCODE sign_in(int clientfd, char *username, char *password, char* role) {
     User* user = userList;
+    if (username == NULL || password == NULL) return SIGN_IN_INPUT_WRONG;
     while (user) {
         if (strcmp(user->username, username) == 0) {
             // Kiểm tra password

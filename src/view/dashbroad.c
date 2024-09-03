@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <windows.h>
 #include "top_screen.h"
-#include "games.h"
 
 void frameDashboardAdmin(char* role, char* username) {
 	system("cls");
@@ -58,10 +55,10 @@ void frameDashboardAdmin(char* role, char* username) {
 		replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
 		if (replayDataArray == NULL) {
 			printf("Không thể cấp phát bộ nhớ\n");
-			return 1;
+			return;
 		}
 		// Data fetching from server
-
+		fetchReplayInfoData();
 
 		// Draw the initial UI
 		drawReplayInfoUI();
@@ -88,9 +85,10 @@ void frameDashboardAdmin(char* role, char* username) {
 		replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
 		if (replayDataArray == NULL) {
 			printf("Không thể cấp phát bộ nhớ\n");
-			return 1;
+			return;
 		}
 		// Data fetching from server
+		fetchReplayInfoData();
 
 
 		// Draw the initial UI
@@ -102,6 +100,7 @@ void frameDashboardAdmin(char* role, char* username) {
 
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 signout(sockfd, signed_in_username);
+		 strcpy(signed_in_username, "\0");
 	 }
  }
 

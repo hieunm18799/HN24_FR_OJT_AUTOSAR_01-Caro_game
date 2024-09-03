@@ -13,22 +13,20 @@ typedef enum GAME_STATUS {
 } GAME_STATUS;
 
 typedef struct Move {
-    unsigned char x;
-    unsigned char y;
+    unsigned char x, y;
     struct Move *next;
 } Move;
 
 typedef struct Game {
     unsigned int id;
-    char player1_name[MAX_LENGTH];
-    char player2_name[MAX_LENGTH];
+    char player1_name[MAX_LENGTH], player2_name[MAX_LENGTH], result[MAX_LENGTH];
+    unsigned char board_width, board_height;
     GAME_STATUS status;
-    char result[MAX_LENGTH];
     Move *moves;
     struct Game *next;
 } Game;
 
-int MAX_REPLAYS;
+
 extern Game *global_games;
 
 
@@ -52,9 +50,10 @@ typedef struct {
 
 int initializeGame();
 unsigned int addGame(char *player1_name, char *player2_name);
-int changeGame(unsigned int id, char *player1_name, char *player2_name, GAME_STATUS status);
-int addMove(unsigned int id, unsigned char x, unsigned char y);
-int redoMove(Game *current); //redo
+int changeGame(Game *game, char *player1_name, char *player2_name, char *result, GAME_STATUS status);
+int addMove(Game *game, unsigned char x, unsigned char y);
+Game* findGameById(unsigned int game_id);
+int redoMove(Game *current, unsigned char *x, unsigned char *y); //redo
 int deleteGame(unsigned int id);
 int getGamesByUsername(char *username);
 Game *getGames();

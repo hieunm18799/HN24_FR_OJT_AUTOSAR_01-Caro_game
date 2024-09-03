@@ -42,6 +42,14 @@ bool setUserStatus(const char* username, const char* status) {
     return false;
 }
 
+void increasedWins(User *user) {
+    user->wins++;
+}
+
+void increasedLosses(User *user) {
+    user->losses++;
+}
+
 void deleteUser(const char* username) {
     User* current = userList;
     User* prev = NULL;

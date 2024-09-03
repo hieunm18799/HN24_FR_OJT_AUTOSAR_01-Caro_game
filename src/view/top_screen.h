@@ -1,6 +1,11 @@
 #ifndef TOP_SCREEN_H
 #define TOP_SCREEN_H
 
+#include <stdio.h>
+#include <conio.h>
+#include "games.h"
+#include <windows.h>
+
 enum SCREEN {
     VIEW_TOP_NOT_SIGN_IN,
     VIEW_TOP_SIGNED_IN_ADMIN,
@@ -20,6 +25,8 @@ extern COORD MousePos; // Biến lưu trữ vị trí chuột
 extern int Click_flag; // Cờ để xác định xem đã click chuột hay chưa
 extern int currentScreen;
 extern unsigned int game_id;
+extern char player1_username[50], player2_username[50];
+extern int player1_win, player1_lose, player2_win, player2_lose;
 extern char signed_in_role[50];
 extern char signed_in_username[50];
 extern char signin_username[50];
@@ -27,15 +34,10 @@ extern char signin_password[50];
 extern char signup_username[50];
 extern char signup_password[50];
 extern char signup_reenterPassword[50];
-extern sockfd;
-
-typedef struct {
-    int id;
-    char player1[50];
-    char player2[50];
-    char result[10];
-    char move[50];
-} ReplayData;
+extern int sockfd;
+extern int replayId;
+extern int rowHeight;
+extern int tableStartY;
 
 // Dynamic array of replays
 ReplayData *replayDataArray;
@@ -75,6 +77,8 @@ void drawReplayInfoUI();
 void fetchReplayInfoData();
 void displayReplayInfoData();
 void handleOnScreenReplayInfo();
+
+void showErrorNotification(const char* errorMessage);
 
 #endif
 
