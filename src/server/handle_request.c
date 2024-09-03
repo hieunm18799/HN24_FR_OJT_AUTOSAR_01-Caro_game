@@ -14,7 +14,6 @@ bool handlePick(int clientfd, Request *req, Response *res);
 bool handleQuit(int clientfd, Request *req, Response *res);
 bool handleControlReplay(int clientfd, Request *req, Response *res);
 
-
 bool handleRedoAsk(int clientfd, Request *req, Response *res);
 bool handleRedoAgree(int clientfd, Request *req, Response *res);
 
