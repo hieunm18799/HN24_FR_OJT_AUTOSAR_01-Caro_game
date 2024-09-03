@@ -97,13 +97,13 @@ void handleClickOnWatchReplayScreen() {
 }
 
 
-void ReplayGameInfo(int board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
+void ReplayGameInfo(char board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
     int move_count = 0;
 
     // Calculate the total number of moves from the board
     for (int cell_x = 0; cell_x < MAXIMUM_SIZE; ++cell_x) {
         for (int cell_y = 0; cell_y < MAXIMUM_SIZE; ++cell_y) {
-            if (board[cell_x][cell_y] != 0) {
+            if (board[cell_x][cell_y] == 'X' || board[cell_x][cell_y] == 'O') {
                 move_count++;
             }
         }
