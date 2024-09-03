@@ -24,6 +24,7 @@ void handle_sigint(int sig);
 void startGUI(int sockfd);
 DWORD WINAPI ReceiveHandler(LPVOID lpParameter);
 
+static int rcvBytes = 0;
 int sockfd;
 
 int main(int argc, char const *argv[]) {
@@ -89,14 +90,20 @@ int main(int argc, char const *argv[]) {
 }
 
 void handle_sigint(int sig) {
-    printf("\nCaught signal %d (SIGINT), exiting...\n", sig);
+    #ifdef _WIN32
+    WSACleanup();
+    closesocket(sockfd);
+    #endif
+    #ifdef UNIX
+    close(sockfd);
+    #endif
     exit(0);
 }
 
 void startGUI(int sockfd) {
     drawInitialUI();
 
-    while (1) {
+    while (rcvBytes != -1) {
         handleMouseClick(); // Gọi hàm để xử lý sự kiện chuột
 
         if (Click_flag) { // Nếu có sự kiện click
@@ -152,30 +159,42 @@ void startGUI(int sockfd) {
 
 
 DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
-    while (1) {
+    while (rcvBytes != -1) {
         Response *res = (Response *)malloc(sizeof(Response));
-        int rcvBytes = recvRes(sockfd, res, sizeof(Response), 0);
+        rcvBytes = recvRes(sockfd, res, sizeof(Response), 0);
         if (rcvBytes != -1) {
+            unsigned char x, y;
+            char username[50];
             switch (res->code) {
             case SYNTAX_ERROR:
                 break;
             case SIGN_UP_INPUT_WRONG:
                 // Show error
+                showErrorNotification("Sign-up input is wrong!");
+                break;
+            case SIGN_IN_INPUT_WRONG:
+                // Show error
+                showErrorNotification("Sign-up input is wrong!");
                 break;
             case USERNAME_NOT_EXISTED:
                 // Show error
+                showErrorNotification("This account is not registered!");
                 break;
             case WRONG_PASSWORD:
                 // Show error
+                showErrorNotification("Wrong password!");
                 break;
             case USERNAME_EXISTED:
                 // Show error
+                showErrorNotification("Username already exists! Please choose another.");
                 break;
             case ACCOUNT_BUSY:
                 // Show error
+                showErrorNotification("This account is being used by another player!");
                 break;
             case SIGN_OUT_FAIL:
                 // Show error
+                showErrorNotification("Sign-out encountered an error!");
                 break;
             case SIGN_IN_SUCCESS:
                 readSigninSuccess(res->data, signed_in_username, signed_in_role);
@@ -196,29 +215,32 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
                 drawPlayCaroBoard();
                 break;
             case YOUR_TURN:
+                printMessagePlayCaro(res->message);
                 break;
             case OTHER_PLAYER_TURN:
+                printMessagePlayCaro(res->message);
                 break;
             case PICK_FAIL:
+                printMessagePlayCaro(res->message);
                 break;
             case PICK_SUCCESS:
-                unsigned char x, y;
-                char username[50];
-                readPickSucccess(res->data, username, &x, &y);
-                addPicked(username, x, y);
+                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
                 break;
             case REDO_FAIL:
                 break;
             case REDO_SUCCESS:
-                redoLastPicked();
+                if (readPickSuccess(res->data, username, &x, &y)) redoLastPicked(x, y);
                 break;
             case REDO_ASK_SUCCESS:
                 printMessagePlayCaro(res->message);
                 break;
             case YOU_WIN:
-                printMessagePlayCaro("Player %s won!", signed_in_username);
+                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
+                printMessagePlayCaro(res->message);
                 break;
             case OTHER_PLAYER_WIN:
+                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
+                printMessagePlayCaro(res->message);
                 break;
             case QUIT_SUCCESS:
                 dashboard();

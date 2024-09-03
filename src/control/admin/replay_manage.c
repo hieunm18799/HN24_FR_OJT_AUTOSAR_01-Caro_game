@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "games.h" // Để truy cập vào cấu trúc và danh sách các trận đấu
+#include "games.h" 
 
 
 // Hàm xóa lịch sử đấu theo ID

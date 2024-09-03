@@ -16,7 +16,7 @@ int initializeGame() {
 
 int MAX_REPLAYS = 0;
 
-Move *createMoves(unsigned char x, unsigned char y) {
+static Move *createMoves(unsigned char x, unsigned char y) {
     Move *ret = (Move*)malloc(sizeof(Move));
     if (ret == NULL) return NULL;
     ret->x = x;
@@ -40,8 +40,10 @@ unsigned int addGame(char *player1_name, char *player2_name) {
     newGame->id = gameCount + 1;  // ID cho trận đấu mới
     strcpy(newGame->player1_name, player1_name);
     strcpy(newGame->player2_name, player2_name);
-    newGame->status = NOT_PLAY;  // Trạng thái ban đầu
     strcpy(newGame->result, "");
+    newGame->status = NOT_PLAY;  // Trạng thái ban đầu
+    newGame->board_height = BOARD_LENGTH;
+    newGame->board_width = BOARD_LENGTH;
     newGame->moves = NULL;
     newGame->next = global_games;  // Thêm vào đầu danh sách
     global_games = newGame;
@@ -52,49 +54,43 @@ unsigned int addGame(char *player1_name, char *player2_name) {
 }
 
 // Thay đổi thông tin của một trận đấu
-int changeGame(unsigned int id, char *player1_name, char *player2_name, char *result, GAME_STATUS status) {
-    Game *current = global_games;
-    while (current != NULL) {
-        if (current->id == id) {
-            if (player1_name != "\0") strncpy(current->player1_name, player1_name, MAX_LENGTH);
-            if (player2_name != "\0")  strncpy(current->player2_name, player2_name, MAX_LENGTH);
-            if (result != "\0")  strncpy(current->result, result, MAX_LENGTH);
-            current->status = status;
-            return 1;
-        }
-        current = current->next;
-    }
-    return 0;
+int changeGame(Game *current, char *player1_name, char *player2_name, char *result, GAME_STATUS status) {
+    if (player1_name != "\0") strncpy(current->player1_name, player1_name, MAX_LENGTH);
+    if (player2_name != "\0")  strncpy(current->player2_name, player2_name, MAX_LENGTH);
+    if (result != "\0")  strncpy(current->result, result, MAX_LENGTH);
+    current->status = status;
+    return 1;
 }
 
 
 // Thêm nước đi vào trận đấu
-int addMove(unsigned int id, unsigned char x, unsigned char y) {
-    Game *current = global_games;
-    while (current != NULL) {
-        if (current->id == id) {
-            current->status = current->status == PLAYER1 ? PLAYER2 : PLAYER1;
-            if (current->moves == NULL) {
-                current->moves = createMoves(x, y);
-                return 1;
-            }
-            Move *curMove = current->moves;
-            while (curMove->next != NULL) curMove = curMove->next;
-            curMove->next = createMoves(x,y);
-            return 1;
-        }
-        current = current->next;
+int addMove(Game *current, unsigned char x, unsigned char y) {
+    if (current->moves == NULL) {
+        current->moves = createMoves(x, y);
+        return 1;
     }
-    return 0;
+    Move *curMove = current->moves;
+    while (curMove->next != NULL) curMove = curMove->next;
+    curMove->next = createMoves(x,y);
+    return 1;
 }
 
+Game* findGameById(unsigned int game_id) {
+    Game *current = global_games;
+    while (current != NULL) {
+        if (current->id == game_id) return current;
+        current = current->next;
+    }
+    return NULL;
+}
 
 // Hoàn tác một nước đi trong trận đấu (redo)
-int redoMove(Game *current) {
+int redoMove(Game *current, unsigned char *x, unsigned char *y) {
     if (current->moves == NULL) return 0;
     
     if (current->moves->next == NULL) {
-        printf("%d %d\n", current->moves->x, current->moves->y);
+        *x = current->moves->x;
+        *y = current->moves->y;
         // List has only one element
         free(current->moves);
         current->moves = NULL;
@@ -103,12 +99,11 @@ int redoMove(Game *current) {
 
     // Traverse the list to find the second-to-last node
     Move *temp = current->moves;
-    while (temp->next->next != NULL) {
-        printf("%d %d\n", temp->x, temp->y);
-        temp = temp->next;
-    }
+    while (temp->next->next != NULL) temp = temp->next;
 
     // Free the last node
+    *x = temp->next->x;
+    *y = temp->next->y;
     free(temp->next);
     temp->next = NULL;
 
@@ -173,13 +168,4 @@ void freeMoves(Game *game) {
         game->moves = game->moves->next;
         free(temp);
     }
-}
-
-// Hàm tính tỷ lệ thắng dựa trên thông tin của người chơi
-double calculateWinRate(User *user) {
-    int totalGames = user->wins + user->losses + user->draws;
-    if (totalGames == 0) {
-        return 0.0; // Tránh chia cho 0 nếu chưa có trận đấu nào
-    }
-    return (double)user->wins / totalGames;
 }

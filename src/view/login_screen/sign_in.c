@@ -29,6 +29,22 @@
 void drawSignInUI() {
     system("cls");
 
+    // Draw top border
+    gotoxy(8, 1);
+    printf("+--------------------------------------------------------------+");
+
+    // Draw side borders
+    for (int i = 2; i <= 20; i++) {
+        gotoxy(8, i);
+        printf("|");
+        gotoxy(71, i);
+        printf("|");
+    }
+
+    // Draw bottom border
+    gotoxy(8, 21);
+    printf("+--------------------------------------------------------------+");
+
     gotoxy(SIGNUP_X, SIGNUP_Y);
     printf(SIGNUP_LABEL);
 
@@ -60,13 +76,18 @@ void handleClickOnSigninScreen() {
     if (MousePos.Y >= USERNAME_Y && MousePos.Y <= PASSWORD_Y && MousePos.X >= (INPUT_X + 2) && MousePos.X <= (INPUT_X + INPUT_WIDTH - 2)) {
         enterSigninCredentials(signin_username, signin_password);
     } 
-    else if (MousePos.Y == SIGNUP_Y && MousePos.X >= SIGNUP_X && MousePos.X <= (SIGNUP_X + strlen(SIGNUP_LABEL))) {
+    else if (MousePos.Y == SIGNUP_Y && MousePos.X >= SIGNUP_X && MousePos.X <= (SIGNUP_X + 10)) {
         drawSignUpUI(); // Open the sign-up screen from the sign-in screen
     } 
-    else if (MousePos.Y == BACK_Y && MousePos.X >= BACK_X && MousePos.X <= (BACK_X + strlen(BACK_LABEL))) {
+    else if (MousePos.Y == BACK_Y && MousePos.X >= BACK_X && MousePos.X <= (BACK_X + 6)) {
         drawInitialUI(); // Button "Back" opens the initial screen
     } 
-    else if (MousePos.Y == SIGNIN_Y && MousePos.X >= SIGNIN_X && MousePos.X <= (SIGNIN_X + strlen(SIGNIN_LABEL))) {
+    else if (MousePos.Y == SIGNIN_Y && MousePos.X >= SIGNIN_X && MousePos.X <= (SIGNIN_X + 10)) {
         signin(sockfd, signin_username, signin_password); // Handle sign-in
     }
+}
+
+void showErrorNotification(const char* errorMessage) {
+    gotoxy(10, 20);
+    printf("Error: %s", errorMessage);
 }
