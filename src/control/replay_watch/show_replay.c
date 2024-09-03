@@ -78,8 +78,8 @@ void printMatchHistory(MatchHistory *history) {
     }
 }
 
-// Hàm lấy dữ liệu lịch sử đấu cho hiển thị
-RES_OPCODE fetchReplayDataForDisplay(MatchHistory *history, ReplayData *replayDataArray, int *numReplays) {
+// Hàm lấy dữ liệu lịch sử đấu cho hiển thị 
+void fetchReplayDataForDisplay(MatchHistory *history, ReplayData *replayDataArray, int *numReplays) {
     int index = 0;
     while (history != NULL && index < MAX_REPLAYS) {
         replayDataArray[index].id = history->game_id;
