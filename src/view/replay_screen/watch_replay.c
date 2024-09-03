@@ -131,6 +131,7 @@ void handleClickOnWatchReplayScreen() {
 
         // handleReplayButton(move_data[14], move_data_count);
 		// Data fetching from server
+        fetchReplayInfoData();
         
 		// Draw the initial UI
 		drawReplayInfoUI();

@@ -156,30 +156,38 @@ DWORD WINAPI ReceiveHandler(void *socket_desc) {
         int rcvBytes = recvRes(sockfd, res, sizeof(Response), 0);
         if (rcvBytes != -1) {
             switch (res->code) {
+            case SYNTAX_ERROR:
+                break;
+            case SIGN_UP_INPUT_WRONG:
+                // Show error
+                showErrorNotification("Sign-up input is wrong!");
+                break;
+            case USERNAME_NOT_EXISTED:
+                // Show error
+                showErrorNotification("This account is not registered!");
+                break;
+            case WRONG_PASSWORD:
+                // Show error
+                showErrorNotification("Wrong password!");
+                break;
+            case USERNAME_EXISTED:
+                // Show error
+                showErrorNotification("Username already exists! Please choose another.");
+                break;
+            case ACCOUNT_BUSY:
+                // Show error
+                showErrorNotification("This account is being used by another player!");
+                break;
+            case SIGN_OUT_FAIL:
+                // Show error
+                showErrorNotification("Sign-out encountered an error!");
+                break;
             case SIGN_IN_SUCCESS:
                 readSigninSuccess(res->data, signed_in_username, signed_in_role);
                 dashboard();
                 break;
-            case USERNAME_NOT_EXISTED:
-                // Show error
-                break;
-            case WRONG_PASSWORD:
-                // Show error
-                break;
-            case ACCOUNT_BUSY:
-                // Show error
-                break;
             case SIGN_UP_SUCCESS:
                 drawSignInUI(); // Mở giao diện đăng nhập sau khi đăng ký
-                break;
-            case USERNAME_EXISTED:
-                // Show error
-                break;
-            case SIGN_UP_INPUT_WRONG:
-                // Show error
-                break;
-            case SIGN_OUT_FAIL:
-                // Show error
                 break;
             case SIGN_OUT_SUCCESS:
                 drawInitialUI();

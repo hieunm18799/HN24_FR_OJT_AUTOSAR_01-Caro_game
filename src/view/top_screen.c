@@ -10,6 +10,8 @@
 #define BUTTON_X 35
 #define SIGNIN_Y 10
 #define SIGNUP_Y 12
+#define INPUT_X 30
+#define INPUT_WIDTH 20
 
 COORD MousePos; // Stores mouse position
 int Click_flag = 0; // Flag to detect mouse click
@@ -84,6 +86,12 @@ void enterSigninCredentials(char *username, char *password) {
     char ch;
     int i = 0;
 
+    gotoxy(INPUT_X, USERNAME_Y);
+    printf("[ %*s ]", INPUT_WIDTH - 2, "");
+
+    gotoxy(INPUT_X, PASSWORD_Y);
+    printf("[ %*s ]", INPUT_WIDTH - 2, "");
+
     // Input username
     gotoxy(USERNAME_X, USERNAME_Y);  // Position of the username input field
     i = 0;
@@ -119,6 +127,15 @@ void enterSigninCredentials(char *username, char *password) {
 void enterSignupCredentials(char *username, char *password, char *reenterPassword) {
     char ch;
     int i = 0;
+
+    gotoxy(INPUT_X, USERNAME_Y);
+    printf("[                    ]");
+
+    gotoxy(INPUT_X, PASSWORD_Y);
+    printf("[                    ]");
+
+    gotoxy(INPUT_X, REENTER_PASSWORD_Y);
+    printf("[                    ]");
 
     // Input username
     gotoxy(USERNAME_X, USERNAME_Y);  // Position of the username input field
