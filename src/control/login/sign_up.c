@@ -15,7 +15,7 @@ RES_OPCODE sign_up(char* username, char* password, char* confirmPassword) {
 
     // Tạo người dùng mới
     newUser(username, password, "default");
-    writeUsersIni("Users.ini");
+    writeUsersIni();
 
     // Gửi phản hồi thành công
     return SIGN_UP_SUCCESS;

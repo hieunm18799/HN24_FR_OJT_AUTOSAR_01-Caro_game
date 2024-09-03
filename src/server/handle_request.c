@@ -199,3 +199,19 @@ bool handleshowReplay(int clientfd, Request *req, Response *res)
         return true;
     }
 }
+
+bool handleControlReplay(int clientfd, Request *req, Response *res)
+{
+    char username[MAX_LENGTH];
+    strcpy(username, strtok(req->message, "@"));
+    MatchHistory** head;
+    int *game_id;
+    res->code = fetchdeleteReplay(head, game_id);
+
+    if (res->code == REPLAY_CONTROL)
+    {      
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return true;
+    }
+}
