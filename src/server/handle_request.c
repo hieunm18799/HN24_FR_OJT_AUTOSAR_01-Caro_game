@@ -12,7 +12,7 @@ bool handleSignout(int clientfd, Request *req, Response *res);
 bool handleFindGame(int clientfd, Request *req, Response *res);
 bool handlePick(int clientfd, Request *req, Response *res);
 bool handleQuit(int clientfd, Request *req, Response *res);
-
+bool handleControlReplay(int clientfd, Request *req, Response *res);
 
 
 bool handleRedoAsk(int clientfd, Request *req, Response *res);
@@ -196,6 +196,22 @@ bool handleshowReplay(int clientfd, Request *req, Response *res)
     res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
  
     if (res->code == GET_REPLAYS)
+    {      
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return true;
+    }
+}
+
+bool handleControlReplay(int clientfd, Request *req, Response *res)
+{
+    char username[MAX_LENGTH];
+    strcpy(username, strtok(req->message, "@"));
+    MatchHistory** head;
+    int *game_id;
+    res->code = fetchdeleteReplay(head, game_id);
+
+    if (res->code == REPLAY_CONTROL)
     {      
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);

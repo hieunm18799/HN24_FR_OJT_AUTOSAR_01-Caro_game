@@ -155,6 +155,9 @@ int main(int argc, char *argv[]) {
                                 case GET_REPLAYS:
                                 handleshowReplay(tempfd, req, res);
                                 break;
+                                case REPLAY_CONTROL:
+                                handleControlReplay(tempfd, req, res);
+                                break;
                                 case GET_USERS:
                                 //
                                 break;
