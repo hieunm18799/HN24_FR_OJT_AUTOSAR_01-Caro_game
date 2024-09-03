@@ -100,6 +100,7 @@ void frameDashboardAdmin(char* role, char* username) {
 
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 signout(sockfd, signed_in_username);
+		 strcpy(signed_in_username, "\0");
 	 }
  }
 

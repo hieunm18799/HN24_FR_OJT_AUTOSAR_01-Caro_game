@@ -125,11 +125,11 @@ int main(int argc, char *argv[]) {
                         }
                         else {
                             switch (req->code) {
-                                case SIGN_IN:
-                                handleSignin(tempfd, req, res);
-                                break;
                                 case CLOSE:
                                 // Close command promp/terminal
+                                break;
+                                case SIGN_IN:
+                                handleSignin(tempfd, req, res);
                                 break;
                                 case SIGN_UP:
                                 handleSignup(tempfd, req, res);
@@ -159,6 +159,18 @@ int main(int argc, char *argv[]) {
                                 //
                                 break;
                                 case GET_GAMES:
+                                //
+                                break;
+                                case ADD_USER:
+                                //
+                                break;
+                                case EDIT_USER:
+                                //
+                                break;
+                                case DELETE_USER:
+                                //
+                                break;
+                                case DELETE_GAME:
                                 //
                                 break;
                                 default:

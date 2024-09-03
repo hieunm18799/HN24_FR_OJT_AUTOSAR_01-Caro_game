@@ -9,7 +9,7 @@ void createSignoutRequest(char *opcode, Request *req, char* username);
 void createLogOutByXRequest(char *opcode, Request *req, char* username);
 void createStartGameClientRequest(char *opcode, Request *req, char *username);
 void createPickClientRequest(char *opcode, Request *req, unsigned int game_id, char* username, unsigned char x, unsigned char y);
-void createQuitClientRequest(char *opcode, Request *req, char *username);
+void createQuitClientRequest(char *opcode, Request *req, unsigned int game_id, char *username);
 void createRedoAskRequest(char *opcode, Request *req, unsigned int game_id, char* username);
 void createRedoAgreeRequest(char *opcode, Request *req, unsigned int game_id, char* username);
 
@@ -21,7 +21,7 @@ int startGame(int clientfd, char *username);
 int pick(int clientfd, unsigned int game_id, char* username, unsigned char x, unsigned char y);
 int redoAsk(int clientfd, char *username, unsigned int game_id);
 int redoAgree(int clientfd, char *username, unsigned int game_id);
-int quit(int clientfd, char *username);
+int quit(int clientfd, unsigned int game_id, char *username);
 
 int signup(int clientfd, char* username, char* password, char* confirm_pass) {
     Request *req = createRequest();
@@ -103,9 +103,9 @@ int redoAgree(int clientfd, char *username, unsigned int game_id) {
     return 1;
 }
 
-int quit(int clientfd, char *username) {
+int quit(int clientfd, unsigned int game_id, char *username) {
     Request *req = createRequest();
-    createQuitClientRequest(STRING_QUIT, req, username);
+    createQuitClientRequest(STRING_QUIT, req, game_id, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -181,10 +181,11 @@ void createRedoAgreeRequest(char *opcode, Request *req, unsigned int game_id, ch
     setOpcodeRequest(req, sendbuff);
 }
 
-void createQuitClientRequest(char *opcode, Request *req, char *username) {
+void createQuitClientRequest(char *opcode, Request *req, unsigned int game_id, char *username) {
     char sendbuff[MAX_LENGTH];
-    strcpy(sendbuff, opcode);
-    strcat(sendbuff, " ");
-    strcat(sendbuff, username);
+    // strcpy(sendbuff, opcode);
+    // strcat(sendbuff, " ");
+    // strcat(sendbuff, username);
+    snprintf(sendbuff, sizeof(sendbuff), "%s %s%c%d%c", opcode, username, '@', game_id, '\0');
     setOpcodeRequest(req, sendbuff);
 }

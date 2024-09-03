@@ -7,14 +7,14 @@
 #define PLAYER_2_POSITION_X 5
 #define PLAYER_2_POSITION_Y 3
 #define CARO_BOARD_POSITION_X 0
-#define CARO_BOARD_POSITION_Y 5
+#define CARO_BOARD_POSITION_Y 9
 #define MAXIMUM_SIZE 100
 #define REDO_POSITION_X 5
-#define REDO_POSITION_Y (CARO_BOARD_POSITION_Y + board_height * 2 + 2)
-#define COUNT_DOWN_POSITION_X 5
-#define COUNT_DOWN_POSITION_Y (board_height * 2 + 8)
+#define REDO_POSITION_Y 5     
+// #define COUNT_DOWN_POSITION_X 5
+// #define COUNT_DOWN_POSITION_Y (board_height * 2 + 8)
 #define QUIT_POSITION_X 5
-#define QUIT_POSITION_Y (board_height * 2 + 9) 
+#define QUIT_POSITION_Y 7
 #define BUTTON_WIDTH 5  // Approximate width of the buttons
 #define BUTTON_HEIGHT 1  // Height of the buttons
 #define CELL_WIDTH 4
@@ -22,7 +22,7 @@
 #define COUNT_DOWN_TIME 10
 #define COUNT_DOWN_PRINT_TURN 13
 #define AGREE_POSITION_X 15
-#define AGREE_POSITION_Y (board_height * 2 + 7)
+#define AGREE_POSITION_Y 5
 #define WIN_CONDITION 4
 #define WIN_NOTIFY 15
 
@@ -32,7 +32,9 @@ void drawPlayCaroBoard();
 int MovePlayCaro();
 // void DisplayCountdown();
 void handleRedoRequest();
-int CheckWin(int last_x, int last_y);
+// int CheckWin(int last_x, int last_y);
+void printMessagePlayCaro(const char *format, ...);
+void RedrawPlayCaroBoard ();
 
 // Global variables
 static COORD CursorPosition;
@@ -46,8 +48,10 @@ static int redo_agreed = 0;    // Flag to indicate if redo is agreed
 char move_sig;
 int currentScreen;
 int board_width = 10, board_height = 10;
-int console_width, console_height; // Console dimensions
+
+int console_width, console_height, new_console_width, new_console_height; // Console dimensions
 char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
+
 int last_move_x = -1;
 int last_move_y = -1;
 
@@ -91,12 +95,12 @@ void drawPlayCaroBoard() {
     // scanf("%d", &board_height);
     system("cls");
 
-    // Initialize the board state
-    for (int i = 0; i < board_height; i++) {
-        for (int j = 0; j < board_width; j++) {
-            board[i][j] = ' '; // Empty cell
-        }
-    }
+    // // Initialize the board state
+    // for (int i = 0; i < board_height; i++) {
+    //     for (int j = 0; j < board_width; j++) {
+    //         board[i][j] = ' '; // Empty cell
+    //     }
+    // }
 
     // Calculate console size based on board dimensions
     // console_width = board_width * 4 + 5;
@@ -138,16 +142,16 @@ void drawPlayCaroBoard() {
 
     // Draw buttons
     gotoxy(REDO_POSITION_X,REDO_POSITION_Y);
-    printf("REDO");
+    printf("[REDO]");
 
     // gotoxy(COUNT_DOWN_POSITION_X,COUNT_DOWN_POSITION_Y);
     // printf("COUNTDOWN:");
 
     gotoxy(AGREE_POSITION_X,AGREE_POSITION_Y);
-    printf("AGREE");
+    printf("[AGREE]");
 
     gotoxy(QUIT_POSITION_X,QUIT_POSITION_Y);
-    printf("QUIT");
+    printf("[QUIT]");
 
     // hThread = CreateThread(NULL, 0, CountdownThread, NULL, 0, NULL);
     // if (hThread == NULL) {
@@ -192,8 +196,6 @@ int MovePlayCaro() {  // Change return type to int
         // Check if click is within "REDO" button
         if (MousePos.Y == REDO_POSITION_Y && MousePos.X >= REDO_POSITION_X && MousePos.X <= REDO_POSITION_X + BUTTON_WIDTH) {
             redo_requested = 1; // Set redo requested flag
-            gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 1);
-            printf("Requested a redo. Waiting for approval...");
             redoAsk(sockfd, signin_username, game_id);
 
             return 0;  // Indicate that no move was made during the redo request
@@ -202,10 +204,10 @@ int MovePlayCaro() {  // Change return type to int
         // Check if click is within "QUIT" button
         if (MousePos.Y == QUIT_POSITION_Y && MousePos.X >= QUIT_POSITION_X && MousePos.X <= QUIT_POSITION_X + BUTTON_WIDTH) {
             End_flag = 0; // Exit the loop to quit the game
-            CloseHandle(hThread); // Clean up the thread handle
-
+            // CloseHandle(hThread); // Clean up the thread handle
             //Redirect to TOP (LOGINED)
-            dashboard();
+            // dashboard();
+            quit(sockfd, game_id, signed_in_username);
             return 0;  // Indicate that no move was made due to quitting
         }
 
@@ -223,7 +225,7 @@ int MovePlayCaro() {  // Change return type to int
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
             // Redraw the specific cell
 
-            if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
+            // if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
                 // if (Player1_turn) {
                 //     printf("X");
                 //     board[cell_y][cell_x] = 'X'; // Update the board state
@@ -252,7 +254,7 @@ int MovePlayCaro() {  // Change return type to int
                 // countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
                 // countdown_active = 1;
                 return 1;  // Indicate that a move was successfully made
-            }
+            // }
         }
     //}
 
@@ -265,29 +267,17 @@ void addPicked(char *username, unsigned char cell_x, unsigned char cell_y) {
     printf("%c", temp);
     last_move_x = cell_x;
     last_move_y = cell_y;
-    board[cell_y][cell_x] = temp; // Update the board state
-    if (CheckWin(cell_x, cell_y)) {
-        gotoxy(PLAYER_1_POSITION_X + WIN_NOTIFY, PLAYER_1_POSITION_Y - 1);
-        printf("Player %s wins!\n", username);
-        End_flag = 0; // End the game
-        getchar();
-
-        //Direct to TOP (LOGINED)
-        dashboard();
-    }
+    // board[cell_y][cell_x] = temp; // Update the board state
+    // if (CheckWin(cell_x, cell_y)) {
+    //     printMessagePlayCaro("Player %s won!", username);
+    //     End_flag = 0; // End the game
+    //     //Direct to TOP (LOGINED)
+    //     // dashboard();
+    // }
 }
 
-void agreeMess() {
+void printMessagePlayCaro(const char *format, ...) {
     gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 1);
-    printf("A re-do request! Agree if you want");
-}
-
-void redoLastPicked() {
-    gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1 );
-    printf(" "); // Clear the last move from the board
-    board[last_move_y][last_move_x] = ' '; // Reset the board state
-    gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y + board_height * 2 + 2 );
-    // Clear the previous message
     CursorPosition.X = 0;
     CursorPosition.Y = AGREE_POSITION_Y - 1;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), CursorPosition);
@@ -296,6 +286,23 @@ void redoLastPicked() {
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     int console_width = csbi.dwSize.X;
     FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', console_width, CursorPosition, &written);
+    va_list args;
+
+    // Initialize the va_list with the variable arguments
+    va_start(args, format);
+
+    // Use vprintf to handle the variable arguments
+    vprintf(format, args);
+
+    // Clean up the va_list
+    va_end(args);
+}
+
+void redoLastPicked(unsigned char last_move_x, unsigned char last_move_y) {
+    gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1 );
+    printf(" "); // Clear the last move from the board
+    // board[last_move_y][last_move_x] = ' '; // Reset the board state
+    printMessagePlayCaro("");
 }
 
 int CheckWin(int last_x, int last_y) {
@@ -328,3 +335,41 @@ int CheckWin(int last_x, int last_y) {
 
     return 0; // No win condition met
 }
+
+void RedrawPlayCaroBoard () {
+    GetConsoleSize(&new_console_width, &new_console_height);
+    board_width = (new_console_width - 5) / 4;
+    board_height = (new_console_height - 10) / 2;
+
+    //Redraw the board
+    gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
+    for (int i = 0; i < board_height * 2 + 1; i++) {
+        if (i % 2 == 0) {
+            for (int j = 0; j < board_width * 4 + 1; j++) {
+                if (j % 4 == 0) printf("+");
+                else printf("-");
+            }
+        } else {
+            for (int j = 0; j < board_width * 4 + 1; j++) {
+                if (j % 4 == 0) printf("|");
+                else printf(" ");
+            }
+        }
+        printf("\n");
+    }
+
+    //Redraw the moves
+    for (int cell_y = 0; cell_y < board_height; cell_y++) {
+        for (int cell_x = 0; cell_x < board_width; cell_x++) {
+            // Lấy ký tự từ mảng board
+            char cell = board[cell_y][cell_x];
+
+            // Nếu ô không rỗng, vẽ ký tự vào vị trí tương ứng
+            if (cell != ' ') {
+                gotoxy(CARO_BOARD_POSITION_X + cell_x * CELL_WIDTH + 2, CARO_BOARD_POSITION_Y + cell_y * CELL_HEIGHT + 1);
+                printf("%c", cell);
+            }
+        }
+    }   
+}
+

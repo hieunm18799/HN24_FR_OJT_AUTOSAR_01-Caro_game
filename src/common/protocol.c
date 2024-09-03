@@ -51,26 +51,35 @@ void setMessageResponse(Response *msg) {
         case SYNTAX_ERROR:
             strcpy(msg->message, "Syntax error");
             break;
-        case USERNAME_EXISTED:
-            strcpy(msg->message, "Username existed! Please choose another!");
-            break;
-        case SIGN_UP_SUCCESS:
-            strcpy(msg->message, "Sign up successfully!");
+        case SIGN_UP_INPUT_WRONG:
+            strcpy(msg->message, "Sign-up's input are wrong!");
             break;
         case USERNAME_NOT_EXISTED:
             strcpy(msg->message, "This account is not registered!");
             break;
+        case WRONG_PASSWORD:
+            strcpy(msg->message, "Wrong password!");
+            break;
+        case USERNAME_EXISTED:
+            strcpy(msg->message, "Username existed! Please choose another!");
+            break;
         case ACCOUNT_BUSY:
             strcpy(msg->message, "This account is using by other player!");
+            break;
+        case SIGN_OUT_FAIL:
+            strcpy(msg->message, "Sign-out got error!");
             break;
         case SIGN_IN_SUCCESS:
             strcpy(msg->message, "Sign in successfully!");
             break;
-        case WRONG_PASSWORD:
-            strcpy(msg->message, "Wrong password!");
+        case SIGN_UP_SUCCESS:
+            strcpy(msg->message, "Sign up successfully!");
             break;
         case SIGN_OUT_SUCCESS:
             strcpy(msg->message, "Sign out successfully!");
+            break;
+        case WAITING_PLAYER:
+            strcpy(msg->message, "No game matched the requirement!");
             break;
         case GAME_START:
             strcpy(msg->message, "Game started! Each turn has a duration of 30 seconds..");
@@ -79,18 +88,28 @@ void setMessageResponse(Response *msg) {
             strcpy(msg->message, "Your turn!");
             break;
         case OTHER_PLAYER_TURN:
-            strcat(msg->data, " 's turn!");
-            strcpy(msg->message, msg->data);
+            strcpy(msg->message, "Opposite's turn!");
             break;
         case PICK_FAIL:
-            strcpy(msg->message, "Wrong number. Please pick another!");
+            strcpy(msg->message, "Pick failed!");
+            break;
+        case PICK_SUCCESS:
+            strcpy(msg->message, "Pick successed!");
+            break;
+        case REDO_FAIL:
+            strcpy(msg->message, "Sending redo's message failed!");
+            break;
+        case REDO_SUCCESS:
+            strcpy(msg->message, "Redo is accepted!");
+            break;
+        case REDO_ASK_SUCCESS:
+            strcpy(msg->message, "Redo is requested!");
             break;
         case YOU_WIN:
             strcpy(msg->message, "You won!");
             break;
         case OTHER_PLAYER_WIN:
-            strcat(msg->data, " won!");
-            strcpy(msg->message, msg->data);
+            strcpy(msg->message, "Opposite won!");
             break;
         case QUIT_SUCCESS:
             strcpy(msg->message, "You have been quited!");

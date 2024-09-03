@@ -34,7 +34,7 @@ extern char signin_password[50];
 extern char signup_username[50];
 extern char signup_password[50];
 extern char signup_reenterPassword[50];
-extern sockfd;
+extern int sockfd;
 extern int replayId;
 extern int rowHeight;
 extern int tableStartY;
