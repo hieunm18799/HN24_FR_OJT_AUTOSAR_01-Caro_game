@@ -35,10 +35,10 @@ void DrawReplayBoard() {
     printf("CARO GAME");
 
     gotoxy(PLAYER_1_POSITION_X, PLAYER_1_POSITION_Y);
-    printf("<X> PLAYER 1");
+    printf("<X> Player: %s - %d Win %d - Lose",player1_username, player1_win, player1_lose);
 
     gotoxy(PLAYER_2_POSITION_X, PLAYER_2_POSITION_Y);
-    printf("<O> PLAYER 2");
+    printf("<X> Player: %s - %d Win - %d Lose",player2_username, player2_win, player2_lose);
 
     gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y);
     for (int i = 0; i < board_height * 2 + 1; i++) {
