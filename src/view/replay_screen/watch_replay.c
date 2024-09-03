@@ -83,13 +83,10 @@ void handleClickOnWatchReplayScreen() {
 			return;
 		}
 
-<<<<<<< HEAD
         // handleReplayButton(move_data[14], move_data_count);
 		// Data fetching from server
         fetchReplayInfoData();
         
-=======
->>>>>>> 4c900d039772e216fccb8a784b2e279218ffcfd1
 		// Draw the initial UI
 		drawReplayInfoUI();
 
@@ -101,6 +98,18 @@ void handleClickOnWatchReplayScreen() {
 
 
 void ReplayGameInfo(int board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
+    int move_count = 0;
+
+    // Calculate the total number of moves from the board
+    for (int cell_x = 0; cell_x < MAXIMUM_SIZE; ++cell_x) {
+        for (int cell_y = 0; cell_y < MAXIMUM_SIZE; ++cell_y) {
+            if (board[cell_x][cell_y] != 0) {
+                move_count++;
+            }
+        }
+    }
+
+    int moves_replayed = 0;
 
     // Iterate over the board to replay the moves
     for (int cell_x = 0; cell_x < board_width; ++cell_x) {
@@ -116,6 +125,9 @@ void ReplayGameInfo(int board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
                     printf("O");
                 }
 
+                moves_replayed++;
+                // Pause for a short period between moves
+                Sleep(1000);  // Pause for 1 second
             }
         }
     }
