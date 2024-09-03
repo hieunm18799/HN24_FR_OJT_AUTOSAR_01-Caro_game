@@ -3,6 +3,8 @@
 
 #define THRESHOLD 0.1
 
+static double calculateWinRate(User *user);
+
 // Tìm kiếm người chơi khác có cùng trình độ với người đang tìm trận
 RES_OPCODE findGame(User *curUser, unsigned int *game_id, User *opositePlayer) {
     double targetWinRate = calculateWinRate(curUser), smallestDifference = THRESHOLD;
@@ -33,6 +35,15 @@ RES_OPCODE findGame(User *curUser, unsigned int *game_id, User *opositePlayer) {
     }
 
     *game_id = bestGame->id;
-    changeGame(bestGame->id, opositePlayer->username, curUser->username, "\0", PLAYER1);
+    changeGame(bestGame, opositePlayer->username, curUser->username, "\0", PLAYER1);
     return GAME_START; // Trả về mã thành công nếu tìm thấy
+}
+
+// Hàm tính tỷ lệ thắng dựa trên thông tin của người chơi
+static double calculateWinRate(User *user) {
+    int totalGames = user->wins + user->losses + user->draws;
+    if (totalGames == 0) {
+        return 0.0; // Tránh chia cho 0 nếu chưa có trận đấu nào
+    }
+    return (double)user->wins / totalGames;
 }
