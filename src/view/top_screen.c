@@ -50,6 +50,15 @@ void drawInitialUI() {
     currentScreen = VIEW_TOP_NOT_SIGN_IN; // Set the current screen to the initial screen
 }
 
+// Hàm lấy kích thước hiện tại của console
+void GetConsoleSize(int *width, int *height) {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+
+    *width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    *height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+}
+
 // Handle mouse click events
 void handleMouseClick() {
     HANDLE hInput;
