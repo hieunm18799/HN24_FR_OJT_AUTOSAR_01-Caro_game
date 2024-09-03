@@ -88,10 +88,10 @@ void setMessageResponse(Response *msg) {
             strcpy(msg->message, "Your turn!");
             break;
         case OTHER_PLAYER_TURN:
-            strcpy(msg->message, " 's turn!");
+            strcpy(msg->message, "Opposite's turn!");
             break;
         case PICK_FAIL:
-            strcpy(msg->message, "Pick is wrong!");
+            strcpy(msg->message, "Pick failed!");
             break;
         case PICK_SUCCESS:
             strcpy(msg->message, "Pick successed!");
@@ -109,7 +109,7 @@ void setMessageResponse(Response *msg) {
             strcpy(msg->message, "You won!");
             break;
         case OTHER_PLAYER_WIN:
-            strcpy(msg->message, " won!");
+            strcpy(msg->message, "Opposite won!");
             break;
         case QUIT_SUCCESS:
             strcpy(msg->message, "You have been quited!");
