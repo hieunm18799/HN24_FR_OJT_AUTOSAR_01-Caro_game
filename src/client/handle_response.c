@@ -29,8 +29,17 @@ void readGameStart(char *input, unsigned int *game_id, char* player1_username, i
     *player2_lose = atoi(strtok(NULL, "\0"));
 }
 
-void readPickSucccess(char *input, char *username, unsigned char *x, unsigned char *y){
+int readPickSuccess(char *input, char *username, unsigned char *x, unsigned char *y){
+    if (strcmp(input, "\0") == 0) return 0;
     strcpy(username, strtok(input, "@"));
     *x = atoi(strtok(NULL, "@"));
     *y = atoi(strtok(NULL, "\0"));
+    return 1;
+}
+
+int readRedoSuccess(char *input, unsigned char *x, unsigned char *y){
+    if (strcmp(input, "\0") == 0) return 0;
+    *x = atoi(strtok(input, "@"));
+    *y = atoi(strtok(NULL, "\0"));
+    return 1;
 }

@@ -23,7 +23,7 @@
 #define COUNT_DOWN_PRINT_TURN 13
 #define AGREE_POSITION_X 15
 #define AGREE_POSITION_Y (board_height * 2 + 7)
-#define WIN_CONDITION 4
+// #define WIN_CONDITION 4
 #define WIN_NOTIFY 15
 
 // Function prototypes
@@ -32,7 +32,7 @@ void drawPlayCaroBoard();
 int MovePlayCaro();
 // void DisplayCountdown();
 void handleRedoRequest();
-int CheckWin(int last_x, int last_y);
+// int CheckWin(int last_x, int last_y);
 void printMessagePlayCaro(const char *format, ...);
 
 // Global variables
@@ -48,7 +48,7 @@ char move_sig;
 int currentScreen;
 int board_width = 10, board_height = 10;
 int console_width, console_height; // Console dimensions
-char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
+// char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; // Maximum board size 100x100
 int last_move_x = -1;
 int last_move_y = -1;
 
@@ -92,12 +92,12 @@ void drawPlayCaroBoard() {
     // scanf("%d", &board_height);
     system("cls");
 
-    // Initialize the board state
-    for (int i = 0; i < board_height; i++) {
-        for (int j = 0; j < board_width; j++) {
-            board[i][j] = ' '; // Empty cell
-        }
-    }
+    // // Initialize the board state
+    // for (int i = 0; i < board_height; i++) {
+    //     for (int j = 0; j < board_width; j++) {
+    //         board[i][j] = ' '; // Empty cell
+    //     }
+    // }
 
     // Calculate console size based on board dimensions
     // console_width = board_width * 4 + 5;
@@ -222,7 +222,7 @@ int MovePlayCaro() {  // Change return type to int
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
             // Redraw the specific cell
 
-            if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
+            // if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
                 // if (Player1_turn) {
                 //     printf("X");
                 //     board[cell_y][cell_x] = 'X'; // Update the board state
@@ -251,7 +251,7 @@ int MovePlayCaro() {  // Change return type to int
                 // countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
                 // countdown_active = 1;
                 return 1;  // Indicate that a move was successfully made
-            }
+            // }
         }
     //}
 
@@ -264,13 +264,13 @@ void addPicked(char *username, unsigned char cell_x, unsigned char cell_y) {
     printf("%c", temp);
     last_move_x = cell_x;
     last_move_y = cell_y;
-    board[cell_y][cell_x] = temp; // Update the board state
-    if (CheckWin(cell_x, cell_y)) {
-        printMessagePlayCaro("Player %s won!", username);
-        End_flag = 0; // End the game
-        //Direct to TOP (LOGINED)
-        // dashboard();
-    }
+    // board[cell_y][cell_x] = temp; // Update the board state
+    // if (CheckWin(cell_x, cell_y)) {
+    //     printMessagePlayCaro("Player %s won!", username);
+    //     End_flag = 0; // End the game
+    //     //Direct to TOP (LOGINED)
+    //     // dashboard();
+    // }
 }
 
 void printMessagePlayCaro(const char *format, ...) {
@@ -295,40 +295,40 @@ void printMessagePlayCaro(const char *format, ...) {
     va_end(args);
 }
 
-void redoLastPicked() {
+void redoLastPicked(unsigned char last_move_x, unsigned char last_move_y) {
     gotoxy(CARO_BOARD_POSITION_X + last_move_x * CELL_WIDTH + 2,CARO_BOARD_POSITION_Y + last_move_y * CELL_HEIGHT + 1 );
     printf(" "); // Clear the last move from the board
-    board[last_move_y][last_move_x] = ' '; // Reset the board state
+    // board[last_move_y][last_move_x] = ' '; // Reset the board state
     printMessagePlayCaro("");
 }
 
-int CheckWin(int last_x, int last_y) {
-    char player = board[last_y][last_x];
-    int count;
+// int CheckWin(int last_x, int last_y) {
+//     char player = board[last_y][last_x];
+//     int count;
 
-    // Check horizontal
-    count = 1;
-    for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
-    for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
+//     // Check horizontal
+//     count = 1;
+//     for (int i = last_x - 1; i >= 0 && board[last_y][i] == player; i--) count++;
+//     for (int i = last_x + 1; i < board_width && board[last_y][i] == player; i++) count++;
+//     if (count >= WIN_CONDITION) return 1;
 
-    // Check vertical
-    count = 1;
-    for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
-    for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
+//     // Check vertical
+//     count = 1;
+//     for (int i = last_y - 1; i >= 0 && board[i][last_x] == player; i--) count++;
+//     for (int i = last_y + 1; i < board_height && board[i][last_x] == player; i++) count++;
+//     if (count >= WIN_CONDITION) return 1;
 
-    // Check diagonal from top-left to bottom-right
-    count = 1;
-    for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
-    for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
+//     // Check diagonal from top-left to bottom-right
+//     count = 1;
+//     for (int i = 1; last_x - i >= 0 && last_y - i >= 0 && board[last_y - i][last_x - i] == player; i++) count++;
+//     for (int i = 1; last_x + i < board_width && last_y + i < board_height && board[last_y + i][last_x + i] == player; i++) count++;
+//     if (count >= WIN_CONDITION) return 1;
 
-    // Check diagonal from bottom-left to top-right
-    count = 1;
-    for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
-    for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
-    if (count >= WIN_CONDITION) return 1;
+//     // Check diagonal from bottom-left to top-right
+//     count = 1;
+//     for (int i = 1; last_x - i >= 0 && last_y + i < board_height && board[last_y + i][last_x - i] == player; i++) count++;
+//     for (int i = 1; last_x + i < board_width && last_y - i >= 0 && board[last_y - i][last_x + i] == player; i++) count++;
+//     if (count >= WIN_CONDITION) return 1;
 
-    return 0; // No win condition met
-}
+//     return 0; // No win condition met
+// }
