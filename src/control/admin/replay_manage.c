@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "games.h" 
+#include "games.h" // Để truy cập vào cấu trúc và danh sách các trận đấu
 
 
 // Hàm xóa lịch sử đấu theo ID
@@ -35,7 +35,7 @@ int deleteReplay(MatchHistory** head, unsigned int game_id) {
     return 0; // Trả về 0 nếu không tìm thấy game_id
 }
 
-RES_OPCODE fetchdeleteReplay(MatchHistory** head, int game_id) {
+RES_OPCODE deleteReplay(MatchHistory** head, int game_id) {
     if (head == NULL || *head == NULL) {
         return DELETE_REPLAY_FAILURE; // Danh sách rỗng hoặc con trỏ head rỗng
     }
@@ -50,7 +50,8 @@ RES_OPCODE fetchdeleteReplay(MatchHistory** head, int game_id) {
             if (previous == NULL) {
                 // Trường hợp node cần xóa là node đầu tiên
                 *head = current->next;
-            } else {
+            }
+            else {
                 // Trường hợp node cần xóa không phải là node đầu tiên
                 previous->next = current->next;
             }

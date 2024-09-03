@@ -206,7 +206,7 @@ bool handleControlReplay(int clientfd, Request *req, Response *res)
     strcpy(username, strtok(req->message, "@"));
     MatchHistory** head;
     int *game_id;
-    res->code = fetchdeleteReplay(head, game_id);
+    res->code = deleteReplay(head, game_id);
 
     if (res->code == REPLAY_CONTROL)
     {      
