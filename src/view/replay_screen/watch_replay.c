@@ -21,13 +21,7 @@
 int console_width, console_height;
 int replay_active = 0; // Flag to track replay state
 int current_move_index = 0;
-
-// void gotoxy(int x, int y) {
-//     COORD coord;
-//     coord.X = x;
-//     coord.Y = y;
-//     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-// }
+char board[MAXIMUM_SIZE][MAXIMUM_SIZE]; 
 
 void handleStartStop() {
     replay_active = !replay_active;  // Toggle replay state
@@ -39,33 +33,6 @@ void handleStartStop() {
     
 //     SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), buffer_size);
 //     SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &window_size);
-// }
-
-
-// COORD MousePos;
-// int Click_flag;
-// int currentScreen;
-
-// Hàm xử lý sự kiện click chuột
-// void handleMouseClick() {
-//     HANDLE hInput;
-//     DWORD events;
-//     INPUT_RECORD inputRecord;
-
-//     hInput = GetStdHandle(STD_INPUT_HANDLE);
-//     SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-
-//     // Đọc sự kiện chuột
-//     if (ReadConsoleInput(hInput, &inputRecord, 1, &events)) {
-//         if (inputRecord.EventType == MOUSE_EVENT) {
-//             MOUSE_EVENT_RECORD mouseEvent = inputRecord.Event.MouseEvent;
-//             if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-//                 MousePos = mouseEvent.dwMousePosition; // Lưu vị trí chuột
-//                 Click_flag = 1;  // Đặt cờ click để chỉ ra rằng đã có sự kiện click
-//                 Sleep(100); // Tránh đọc nhiều lần cùng một sự kiện click
-//             }
-//         }
-//     }
 // }
 
 void DrawReplayBoard() {
@@ -141,55 +108,75 @@ void handleClickOnWatchReplayScreen() {
     // }
 }
 
-void ReplayGameInfo(int move[], int move_count) {
-    if (current_move_index >= move_count) {
-        replay_active = 0;
-        current_move_index = 0;
-        //return;
+
+void ReplayGameInfo(int board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
+    if (!replay_active) return;  // Early return if replay is not active
+
+    int move_count = 0; //Tổng số bước đi trong replay
+
+    // Calculate the total number of moves from the board
+    for (int x = 0; x < MAXIMUM_SIZE; ++x) {
+        for (int y = 0; y < MAXIMUM_SIZE; ++y) {
+            if (board[x][y] != 0) {
+                move_count++;
+            }
+        }
     }
 
-    int move_x = move[current_move_index];
-    int move_y = move[current_move_index + 1];
+    int moves_replayed = 0; // Đếm số bước đã đi bắt đầu từ lúc replay.
 
-    // Di chuyển con trỏ đến tọa độ cần vẽ
-    gotoxy(CARO_BOARD_POSITION_X + move_x * 4 + 2, CARO_BOARD_POSITION_Y + move_y * 2 + 1);
+    // Iterate over the board to replay the moves
+    for (int cell_x = 0; cell_x < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_x) {
+        for (int cell_y = 0; cell_y < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_y) {
+            if (board[cell_x][cell_y] != 0) {  // A move has been made at this position
+                // Move cursor to the drawing position
+                gotoxy(CARO_BOARD_POSITION_X + cell_x * 4 + 2, CARO_BOARD_POSITION_Y + cell_y * 2 + 1);
 
-    // Kiểm tra nước đi của người chơi (Player 1 hoặc Player 2)
-    if (current_move_index % 4 == 0) {
-        printf("X");
-    } else {
-        printf("O");
+                // Check the player and print X or O
+                if (board[cell_x][cell_y] == 1) {
+                    printf("X");
+                } else if (board[cell_x][cell_y] == 2) {
+                    printf("O");
+                }
+
+                moves_replayed++;
+
+                // Pause briefly between moves
+                for (int i = 0; i < 10; i++) {
+                    if (!replay_active) return;  // Stop if replay_active is set to 0
+                    Sleep(50);  // Sleep for a short period to allow for frequent checks
+                    handleMouseClick();  // Check for mouse click events
+                }
+            }
+        }
     }
 
-    current_move_index += 2;
-
-    // Khoảng dừng dài hơn và kiểm tra thường xuyên
-    for (int i = 0; i < 1000; i += 100) {
-        if (!replay_active) break;  // Kiểm tra nút "Stop" thường xuyên
-        Sleep(100);  // Dừng trong 100ms và sau đó kiểm tra lại
-        handleMouseClick();  // Đảm bảo có thể bấm nút trong lúc chờ
-    }
+    // When the replay finishes, reset the state
+    replay_active = 0;
 }
-
- 
-void handleReplayButton(int move[], int move_count) {
-    if (replay_active) {
-        ReplayGameInfo(move, move_count);
-    }
-}
-
 
 // int main() {
+//     // Initialize a test board with some moves
+//     int test_board[BOARD_SIZE][BOARD_SIZE] = {
+//         {1, 2, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {0, 0, 1, 2, 0, 0, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 1, 2, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 1, 2, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 1, 2},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+//     };
+
 //     DrawReplayBoard();
-//     int moves[] = {1, 2, 3, 4, 2, 3, 4, 5,6,7,8,9,0,2};
-//     int move_count = sizeof(moves) / sizeof(int);
 
 //     while (1) {
 //         handleMouseClick();
 //         handleClickOnWatchReplayScreen();
-//         handleReplayButton(moves, move_count);
+//         ReplayGameInfo(test_board);  // Now it checks replay_active inside the function
 //     }
 
 //     return 0;
 // }
-
