@@ -16,11 +16,7 @@ void createGetUsersDataRequest(char *opcode, Request *req);
 void createAdminAddUserRequest(char *opcode, Request *req, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
 void createAdminEditUserRequest(char *opcode, Request *req, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
 void createAdminDeleteUserRequest(char *opcode, Request *req, char *username);
-<<<<<<< HEAD
-void createAdminDeleteReplayRequest(char *opcode, Request *req, int replayId);
-=======
 void createGetReplaysDataRequest(char *opcode, Request *req, char *username);
->>>>>>> 0f753141e8efb1c439c8a61d260def531e506b03
 
 int signin(int clientfd, char* username, char* password);
 int signup(int clientfd, char* username, char* password, char* confirm_pass);
@@ -35,11 +31,7 @@ int getUsersData(int clientfd);
 int adminAddUser(int clientfd, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
 int adminEditUser(int clientfd, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
 int adminDeleteUser(int clientfd, char *username);
-<<<<<<< HEAD
-int adminDeleteReplay(int clientfd, int replayId);
-=======
 int getReplaysData(int clientfd, char *username);
->>>>>>> 0f753141e8efb1c439c8a61d260def531e506b03
 
 int signup(int clientfd, char* username, char* password, char* confirm_pass) {
     Request *req = createRequest();
@@ -180,15 +172,15 @@ int adminDeleteUser(int clientfd, char *username) {
     return 1;
 }
 
-int adminDeleteReplay(int clientfd, int replayId) {
-    Request *req = createRequest();
-    createAdminDeleteReplayRequest(STRING_DELETE_GAME, req, replayId);
-    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
-    if (n_sent < 0)
-        return n_sent;
-    free(req);
-    return 1;
-}
+// int adminDeleteReplay(int clientfd, int replayId) {
+//     Request *req = createRequest();
+//     createAdminDeleteReplayRequest(STRING_DELETE_GAME, req, replayId);
+//     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+//     if (n_sent < 0)
+//         return n_sent;
+//     free(req);
+//     return 1;
+// }
 
 ////////////////////////////////////////////////////////
 /*Create request*/
@@ -293,14 +285,8 @@ void createAdminDeleteUserRequest(char *opcode, Request *req, char *username) {
     setOpcodeRequest(req, sendbuff);
 }
 
-<<<<<<< HEAD
-void createAdminDeleteReplayRequest(char *opcode, Request *req, int replayId) {
-    char sendbuff[MAX_LENGTH];
-    snprintf(sendbuff, sizeof(sendbuff), "%s %d%c", opcode, replayId, '\0');
-=======
 void createGetReplaysDataRequest(char *opcode, Request *req, char *username) {
     char sendbuff[MAX_LENGTH];
     snprintf(sendbuff, sizeof(sendbuff), "%s %s%c", opcode, username, '\0');
->>>>>>> 0f753141e8efb1c439c8a61d260def531e506b03
     setOpcodeRequest(req, sendbuff);
 }
