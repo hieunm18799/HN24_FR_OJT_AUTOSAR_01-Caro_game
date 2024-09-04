@@ -53,6 +53,6 @@ dkms.conf
 
 # Custom
 .vscode
-build/*
-out/*
 .vs
+out/*
+build/*

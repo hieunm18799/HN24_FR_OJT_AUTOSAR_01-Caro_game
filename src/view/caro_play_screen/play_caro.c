@@ -115,16 +115,19 @@ void drawPlayCaroBoard() {
 
     // Set up player 1 label position
     gotoxy(PLAYER_1_POSITION_X,PLAYER_1_POSITION_Y);
-    printf("<X> PLAYER 1");
+    printf("<X> Player: %s - %d Win - %d Lose",player1_username, player1_win, player1_lose);
 
     // Set up player 2 label position
     gotoxy(PLAYER_2_POSITION_X,PLAYER_2_POSITION_Y);
-    printf("<O> PLAYER 2");
+    printf("<O> Player: %s - %d Win - %d Lose",player2_username, player2_win, player2_lose);
 
     // Set up board drawing position
     gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
 
     // Draw the board
+    GetConsoleSize(&console_width, &console_height);
+    board_width = (console_width - 5) / 4;
+    board_height = (console_height - 10) / 2;
     for (int i = 0; i < board_height * 2 + 1; i++) {
         if (i % 2 == 0) {
             for (int j = 0; j < board_width * 4 + 1; j++) {
@@ -220,21 +223,24 @@ int MovePlayCaro() {  // Change return type to int
         // Calculate which cell was clicked based on the mouse position
         int cell_x = (MousePos.X - CARO_BOARD_POSITION_X) / cell_width;
         int cell_y = (MousePos.Y - CARO_BOARD_POSITION_Y) / cell_height;
-
+            
         // Ensure the click is within the board boundaries
         if (cell_x >= 0 && cell_x < board_width && cell_y >= 0 && cell_y < board_height) {
-            // Redraw the specific cell
+            // Check if the cell is empty
+            pick(sockfd, game_id, signed_in_username, cell_x, cell_y);
 
-            // if (board[cell_y][cell_x] == ' ') { // Check if the cell is empty
-                // if (Player1_turn) {
-                //     printf("X");
-                //     board[cell_y][cell_x] = 'X'; // Update the board state
-                //     Player1_turn = 0;
-                // } else {
-                //     printf("O");
-                //     board[cell_y][cell_x] = 'O'; // Update the board state
-                //     Player1_turn = 1;
-                // }
+            // if (board[cell_y][cell_x] == ' ') {
+            //     // Save the move in the board array
+            //     if (Player1_turn) {
+            //         board[cell_y][cell_x] = 'X';
+            //         Player1_turn = 0;
+            //     } else {
+            //         board[cell_y][cell_x] = 'O';
+            //         Player1_turn = 1;
+            //     }
+            // }
+
+
                 // Save the last move position
                 // last_move_x = cell_x;
                 // last_move_y = cell_y;
@@ -249,12 +255,11 @@ int MovePlayCaro() {  // Change return type to int
                 //     //Direct to TOP (LOGINED)
                 //     dashboard();
                 // } else 
-                pick(sockfd, game_id, signed_in_username, cell_x, cell_y);
+
 
                 // countdown_time = COUNT_DOWN_TIME;  // Reset the countdown for the next turn
                 // countdown_active = 1;
                 return 1;  // Indicate that a move was successfully made
-            // }
         }
     //}
 
@@ -338,38 +343,34 @@ int CheckWin(int last_x, int last_y) {
 
 void RedrawPlayCaroBoard () {
     GetConsoleSize(&new_console_width, &new_console_height);
-    board_width = (new_console_width - 5) / 4;
-    board_height = (new_console_height - 10) / 2;
 
-    //Redraw the board
-    gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
-    for (int i = 0; i < board_height * 2 + 1; i++) {
-        if (i % 2 == 0) {
-            for (int j = 0; j < board_width * 4 + 1; j++) {
-                if (j % 4 == 0) printf("+");
-                else printf("-");
-            }
-        } else {
-            for (int j = 0; j < board_width * 4 + 1; j++) {
-                if (j % 4 == 0) printf("|");
-                else printf(" ");
-            }
-        }
-        printf("\n");
-    }
+    // Kiểm tra nếu kích thước console đã thay đổi
+    if(new_console_height != console_height || new_console_width != console_width){
+        // Cập nhật kích thước bảng
+        board_width = (new_console_width - 5) / 4;
+        board_height = (new_console_height - 10) / 2;
 
-    //Redraw the moves
-    for (int cell_y = 0; cell_y < board_height; cell_y++) {
-        for (int cell_x = 0; cell_x < board_width; cell_x++) {
-            // Lấy ký tự từ mảng board
-            char cell = board[cell_y][cell_x];
+        // Vẽ lại bàn cờ
+        drawPlayCaroBoard();
 
-            // Nếu ô không rỗng, vẽ ký tự vào vị trí tương ứng
-            if (cell != ' ') {
-                gotoxy(CARO_BOARD_POSITION_X + cell_x * CELL_WIDTH + 2, CARO_BOARD_POSITION_Y + cell_y * CELL_HEIGHT + 1);
-                printf("%c", cell);
+        // Vẽ lại các nước đi
+        for (int cell_y = 0; cell_y < board_height; cell_y++) {
+            for (int cell_x = 0; cell_x < board_width; cell_x++) {
+                // Lấy ký tự từ mảng board
+                char cell = board[cell_y][cell_x];
+
+                // Nếu ô không rỗng, vẽ ký tự vào vị trí tương ứng
+                if (cell != ' ') {
+                    gotoxy(CARO_BOARD_POSITION_X + cell_x * CELL_WIDTH + 2, CARO_BOARD_POSITION_Y + cell_y * CELL_HEIGHT + 1);
+                    printf("%c", cell);
+                }
             }
         }
-    }   
+
+        // Cập nhật lại kích thước console hiện tại
+        console_height = new_console_height;
+        console_width = new_console_width;
+    }  
 }
+
 

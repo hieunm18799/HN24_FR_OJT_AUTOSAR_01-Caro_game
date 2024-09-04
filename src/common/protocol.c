@@ -54,6 +54,9 @@ void setMessageResponse(Response *msg) {
         case SIGN_UP_INPUT_WRONG:
             strcpy(msg->message, "Sign-up's input are wrong!");
             break;
+        case SIGN_IN_INPUT_WRONG:
+            strcpy(msg->message, "Sign-in's input are wrong!");
+            break;
         case USERNAME_NOT_EXISTED:
             strcpy(msg->message, "This account is not registered!");
             break;
@@ -114,6 +117,48 @@ void setMessageResponse(Response *msg) {
         case QUIT_SUCCESS:
             strcpy(msg->message, "You have been quited!");
             break;
+        case GET_USERS_SUCCESS:
+            strcpy(msg->message, "Get users done!");
+            break;
+        case GET_USERS_CONTINUE:
+            strcpy(msg->message, "Get users not done!");
+            break;
+        case GET_USERS_FAIL:
+            strcpy(msg->message, "Get users failed!");
+            break;
+        case GET_GAMES_SUCCESS:
+            strcpy(msg->message, "Get games done!");
+            break;
+        case GET_GAMES_FAIL:
+            strcpy(msg->message, "Get games failed!");
+            break;
+        case ADD_USER_SUCCESS:
+            strcpy(msg->message, "Added user!");
+            break;
+        case ADD_USER_FAIL:
+            strcpy(msg->message, "User not added!");
+            break;
+        case EDIT_USER_SUCCESS:
+            strcpy(msg->message, "Edited user!");
+            break;
+        case EDIT_USER_FAIL:
+            strcpy(msg->message, "User not edited!");
+            break;
+        case DELETE_USER_SUCCESS:
+            strcpy(msg->message, "Deleted user!");
+            break;
+        case DELETE_USER_FAIL:
+            strcpy(msg->message, "User not deleted!");
+            break;
+        case DELETE_GAME_SUCCESS:
+            strcpy(msg->message, "Deleted game!");
+            break;
+        case DELETE_GAME_FAIL:
+            strcpy(msg->message, "Game not deleted!");
+            break;
+        case GET_REPLAY_SUCCESS:
+            strcpy(msg->message, "Get replays done!");
+            break;
         default:
             strcpy(msg->message, "No Message!");
             break;
@@ -127,24 +172,40 @@ void setOpcodeRequest(Request *req, char *input) {
   splitMessage(input, code, data);
   strcpy(req->message, data);
 
-    if (strcmp(code, STRING_SIGN_UP) == 0)
+    if (strcmp(code, STRING_CLOSE) == 0)
+        req->code = CLOSE;
+    else if (strcmp(code, STRING_SIGN_UP) == 0)
         req->code = SIGN_UP;
     else if (strcmp(code, STRING_SIGN_IN) == 0)
         req->code = SIGN_IN;
     else if (strcmp(code, STRING_SIGN_OUT) == 0)
         req->code = SIGN_OUT;
-    else if (strcmp(code, STRING_CLOSE) == 0)
-        req->code = CLOSE;
     else if (strcmp(code, STRING_FIND_GAME) == 0)
         req->code = FIND_GAME;
     else if (strcmp(code, STRING_PICK) == 0)
         req->code = PICK;
-    else if (strcmp(code, STRING_QUIT) == 0)
-        req->code = QUIT;
     else if (strcmp(code, STRING_REDO_ASK) == 0)
         req->code = REDO_ASK;
     else if (strcmp(code, STRING_REDO_AGREE) == 0)
         req->code = REDO_AGREE;
+    else if (strcmp(code, STRING_QUIT) == 0)
+        req->code = QUIT;
+    else if (strcmp(code, STRING_GET_REPLAYS) == 0)
+        req->code = GET_REPLAYS;
+    else if (strcmp(code, STRING_GET_USERS) == 0)
+        req->code = GET_USERS;
+    else if (strcmp(code, STRING_GET_GAMES) == 0)
+        req->code = GET_GAMES;
+    else if (strcmp(code, STRING_ADD_USER) == 0)
+        req->code = ADD_USER;
+    else if (strcmp(code, STRING_ADD_USER) == 0)
+        req->code = ADD_USER;
+    else if (strcmp(code, STRING_EDIT_USER) == 0)
+        req->code = EDIT_USER;
+    else if (strcmp(code, STRING_DELETE_USER) == 0)
+        req->code = DELETE_USER;
+    else if (strcmp(code, STRING_DELETE_GAME) == 0)
+        req->code = DELETE_GAME;
     else{
         req->code = -1;
     }

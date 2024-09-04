@@ -9,25 +9,34 @@ void initializeUser() {
     readUsersIni("Users.ini");
 }
 
-User *createUser(const char* username, const char* password, const char* role) {
+User *createUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
     User *res = (User*)malloc(sizeof(User));
     if (res == NULL) return NULL;
     strcpy(res->username, username);
     strcpy(res->password, password);
-    if (role == "") strcpy(res->role, "default");
+    if (role == NULL) strcpy(res->role, "default");
     else strcpy(res->role, role);
     strcpy(res->status, "NOT_SIGN_IN");
     res->clientfd = INVALID_SOCKET;
-    res->wins = 0;
-    res->losses = 0;
-    res->draws = 0;
+    res->wins = wins;
+    res->losses = losses;
+    res->draws = draws;
     return res;
 }
 
-void newUser(const char* username, const char* password, const char* role) {
-    User* newUser = createUser(username, password, role);
+void newUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    User* newUser = createUser(username, password, role, wins, losses, draws);
     newUser->next = userList;
     userList = newUser;
+}
+
+void changeUser(User *user, const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    strcpy(user->username, username);
+    strcpy(user->password, password);
+    strcpy(user->role, role);
+    user->wins = wins;
+    user->losses = losses;
+    user->draws = draws;
 }
 
 bool setUserStatus(const char* username, const char* status) {
@@ -50,7 +59,7 @@ void increasedLosses(User *user) {
     user->losses++;
 }
 
-void deleteUser(const char* username) {
+int deleteUser(const char* username) {
     User* current = userList;
     User* prev = NULL;
     while (current != NULL) {
@@ -61,12 +70,12 @@ void deleteUser(const char* username) {
                 prev->next = current->next;
             }
             free(current);
-            writeUsersIni("Users.ini");
-            return;
+            return 1;
         }
         prev = current;
         current = current->next;
     }
+    return 0;
 }
 
 char* getUserRole(const char* username) {
@@ -104,5 +113,76 @@ void freeUsers() {
         User *temp = userList;
         userList = userList->next;
         free(temp);
+    }
+}
+
+void writeUsersIni() {
+    FILE *file = fopen(userFileName, "w");
+    if (!file) {
+        printf("Failed to open User's file!");
+        return;
+    }
+
+    User* current = userList;
+    while (current) {
+        fprintf(file, "[%s]\n", current->username);
+        fprintf(file, "Password=%s\n", current->password);
+        fprintf(file, "Role=%s\n", current->role);
+        fprintf(file, "Status=%s\n", current->status);
+        fprintf(file, "Wins=%d\n", current->wins);
+        fprintf(file, "Losses=%d\n", current->losses);
+        fprintf(file, "Draws=%d\n", current->draws);
+        fprintf(file, "\n");
+        current = current->next;
+    }
+
+    fclose(file);
+}
+
+void readUsersIni() {
+    FILE *file = fopen(userFileName, "r");
+    if (!file) {
+        printf("Failed to open User's file!");
+        return;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    User* current = NULL;
+
+    while (fgets(line, sizeof(line), file)) {
+        if (line[0] == '[') {  // Mở đầu một mục người dùng mới
+            current = (User*)malloc(sizeof(User));
+            memset(current, 0, sizeof(User));
+            sscanf(line, "[%49[^]]]", current->username);
+            current->clientfd = INVALID_SOCKET; // Khởi tạo giá trị socket không hợp lệ
+            current->next = userList;
+            userList = current;
+        } else if (current) {
+            if (strncmp(line, "Password=", 9) == 0) {
+                sscanf(line + 9, "%49s", current->password);
+            } else if (strncmp(line, "Role=", 5) == 0) {
+                sscanf(line + 5, "%49s", current->role);
+            } else if (strncmp(line, "Status=", 7) == 0) {
+                sscanf(line + 7, "%49s", current->status);
+            } else if (strncmp(line, "Wins=", 5) == 0) {
+                sscanf(line + 5, "%d", &current->wins);
+            } else if (strncmp(line, "Losses=", 7) == 0) {
+                sscanf(line + 7, "%d", &current->losses);
+            } else if (strncmp(line, "Draws=", 6) == 0) {
+                sscanf(line + 6, "%d", &current->draws);
+            }
+        }
+    }
+
+    fclose(file);
+}
+
+void logoutUsers() {
+    User *current = userList; // `userList` là con trỏ tới danh sách người chơi
+
+    // Tìm người chơi đang tìm trận dựa trên tên
+    while (current != NULL) {
+        strcpy(current->status, "NOT_SIGN_IN");
+        current = current->next;
     }
 }

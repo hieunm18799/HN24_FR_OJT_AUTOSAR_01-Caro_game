@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <winsock2.h>
 
+#define MAX_LINE_LENGTH 256
+
 // Cấu trúc dữ liệu của người dùng
 typedef struct User {
     char username[50];
@@ -17,28 +19,24 @@ typedef struct User {
     struct User* next;
 } User;
 
-extern User* userList;
+static char userFileName[] = "Users.ini";
 
 // Hàm quản lý người dùng
 void initializeUser();                        // Khởi tạo danh sách người dùng từ Users.ini
-User *createUser(const char* username, const char* password, const char* role);
-void newUser(const char* username, const char* password, const char* role);  // Tạo người dùng mới
+User *createUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws);
+void newUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws);  // Tạo người dùng mới
+void changeUser(User *user, const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws);  // Tạo người dùng mới
 bool setUserStatus(const char* username, const char* status);  // Cập nhật trạng thái người dùng
 void increasedWins(User *user);
 void increasedLosses(User *user);
 User *findUserByName(const char* username);
-void writeUsersIni(const char* filename);    // Ghi danh sách người dùng vào tệp INI
-void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
+int deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
 User* getUsers();                            // Lấy danh sách người dùng
 char* getUserRole(const char* username);      // Lấy role người dùng
 void freeUsers();
+void logoutUsers();
 
-// // Các hàm quản lý người dùng
-// void listUsers();
-// void deleteUserByAdmin(const char* username);
-// void updateUserStatus(const char* username, const char* status);
-
-// Hàm đọc file Users.ini
-void readUsersIni(const char* filename);
+void readUsersIni();
+void writeUsersIni();
 
 #endif // USER_H

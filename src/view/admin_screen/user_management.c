@@ -32,10 +32,10 @@ typedef struct {
 
 // Example array and number of users
 userData userDataArray[MAX_USERS]; 
-int numUsers = 5; // Number of users
+int numUsers = 0; // Number of users
 
 void frameUserManagement();
-void fetchUserData();
+void addUserData();
 void displayUserData();
 int handleUserRowClick();
 void handleOnScreenUserManagement();
@@ -201,6 +201,8 @@ void deleteUser(int userId) {
         }
     }
 
+    adminDeleteUser(sockfd, userDataArray[foundIndex].username);
+
     // Step 2: If the replay is found, delete it
     if (foundIndex != -1) {
         // Step 3: Shift remaining replays to fill the gap
@@ -277,6 +279,8 @@ void addUser() {
     enterData();
     strcpy_s(userDataArray[numUsers-1].draw, sizeof(userDataArray[numUsers].draw), newData);
 
+    strcpy(userDataArray[numUsers-1].role, "default");
+    adminAddUser(sockfd, userDataArray[numUsers-1].username, userDataArray[numUsers-1].password, userDataArray[numUsers-1].role, atoi(userDataArray[numUsers-1].win), atoi(userDataArray[numUsers-1].lose), atoi(userDataArray[numUsers-1].draw));
     // update the UI
     frameUserManagement();
     displayUserData();
@@ -341,7 +345,38 @@ void editUser() {
     else {
         printf("Invalid column selected.\n");
     }
+    adminEditUser(sockfd, userDataArray[foundIndex].username, userDataArray[foundIndex].password, userDataArray[foundIndex].role, atoi(userDataArray[foundIndex].win), atoi(userDataArray[foundIndex].lose), atoi(userDataArray[foundIndex].draw));
     frameUserManagement();
     displayUserData();
 }
 
+//ham nhap du lieu 
+void enterData() {
+    int i = 0;
+    char ch;
+    while ((ch = _getch()) != '\r') { // Enter key
+        if (ch == '\b') { // Backspace key
+            if (i > 0) {
+                i--;
+                printf("\b \b"); // Move back, overwrite with space, move back again
+            }
+        }
+        else if (ch != 0 && ch != '\xE0') { // Ignore special keys
+            newData[i] = ch;
+            i++;
+            printf("%c", ch); // Echo the character
+        }
+    }
+    newData[i] = '\0'; // Null-terminate the string
+}
+
+void addUserData(char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    if (username == NULL || password == NULL || role == NULL) return;
+    strcpy(userDataArray[numUsers].username, username);
+    strcpy(userDataArray[numUsers].password, password);
+    strcpy(userDataArray[numUsers].role, role);
+    sprintf(userDataArray[numUsers].win, "%d", wins);
+    sprintf(userDataArray[numUsers].lose, "%d", losses);
+    sprintf(userDataArray[numUsers].draw, "%d", draws);
+    numUsers++;
+}

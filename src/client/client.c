@@ -124,6 +124,7 @@ void startGUI(int sockfd) {
                     break;
                 case VIEW_PLAY_GAME:
                     MovePlayCaro();
+                    RedrawPlayCaroBoard(); 
                     break;
                 case VIEW_TOP_SIGNED_IN_ADMIN:
                     openAdmin();
@@ -170,6 +171,10 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
             case SYNTAX_ERROR:
                 break;
             case SIGN_UP_INPUT_WRONG:
+                // Show error
+                showErrorNotification("Sign-up input is wrong!");
+                break;
+            case SIGN_IN_INPUT_WRONG:
                 // Show error
                 showErrorNotification("Sign-up input is wrong!");
                 break;
@@ -236,11 +241,44 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
                 printMessagePlayCaro(res->message);
                 break;
             case OTHER_PLAYER_WIN:
-                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
+                if (readGetUsersContinue(res->data, username, &x, &y)) addPicked(username, x, y);
                 printMessagePlayCaro(res->message);
                 break;
             case QUIT_SUCCESS:
                 dashboard();
+                break;
+            case GET_USERS_SUCCESS:
+                frameUserManagement();
+                displayUserData();
+                break;
+            case GET_USERS_CONTINUE:
+                char password[50], role[50];
+                unsigned int wins, losses, draws;
+                if (readGetUsersContinue(res->data, username, password, role, &wins, &losses, &draws)) addUserData(username, password, role, wins, losses, draws);
+                break;
+            case GET_USERS_FAIL:
+                break;
+            case GET_GAMES_SUCCESS:
+                break;
+            case GET_GAMES_FAIL:
+                break;
+            case ADD_USER_SUCCESS:
+                break;
+            case ADD_USER_FAIL:
+                break;
+            case EDIT_USER_SUCCESS:
+                break;
+            case EDIT_USER_FAIL:
+                break;
+            case DELETE_USER_SUCCESS:
+                break;
+            case DELETE_USER_FAIL:
+                break;
+            case DELETE_GAME_SUCCESS:
+                break;
+            case DELETE_GAME_FAIL:
+                break;
+            case GET_REPLAY_SUCCESS:
                 break;
             default:
                 break;

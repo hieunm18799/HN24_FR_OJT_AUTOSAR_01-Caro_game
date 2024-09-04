@@ -2,7 +2,8 @@
 #include "protocol.h"
 
 RES_OPCODE sign_out(int clientfd, char *username) {
-    User* user = userList;
+    if (username == NULL) return SIGN_OUT_FAIL;
+    User* user = getUsers();
     while (user) {
         if (strcmp(user->username, username) == 0) {
             if (user->clientfd == clientfd) {

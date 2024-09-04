@@ -18,10 +18,16 @@
 #include <stdio.h>
 #include "users.h"
 #include "protocol.h"
+#include "signal.h"
 
-User *global_users = NULL;
+// Signal handler function
+void signal_handler(int signal_num);
 
 int main(int argc, char *argv[]) {
+    // Register signal handlers
+    signal(SIGINT, signal_handler);  // Handle Ctrl+C interrupt
+    signal(SIGSEGV, signal_handler); // Handle segmentation fault
+    signal(SIGABRT, signal_handler); // Handle abort
     initializeUser();
 
     #ifdef _WIN32
@@ -153,22 +159,25 @@ int main(int argc, char *argv[]) {
                                 handleQuit(tempfd, req, res);
                                 break;
                                 case GET_REPLAYS:
-                                handleshowReplay(tempfd, req, res);
+                          //      handleshowReplay(tempfd, req, res);
+                                break;
+                                case REPLAY_CONTROL:
+                                handleControlReplay(tempfd, req, res);
                                 break;
                                 case GET_USERS:
-                                //
+                                handleGetUsers(tempfd, req, res);
                                 break;
                                 case GET_GAMES:
                                 //
                                 break;
                                 case ADD_USER:
-                                //
+                                handleAdminAddUser(tempfd, req, res);
                                 break;
                                 case EDIT_USER:
-                                //
+                                handleAdminEditUser(tempfd, req, res);
                                 break;
                                 case DELETE_USER:
-                                //
+                                handleAdminDeleteUser(tempfd, req, res);
                                 break;
                                 case DELETE_GAME:
                                 //
@@ -198,4 +207,20 @@ int main(int argc, char *argv[]) {
     WSACleanup();
     #endif
     return 0;
+}
+
+// Signal handler function
+void signal_handler(int signal_num) {
+    logoutUsers();
+    writeUsersIni();
+    printf("Caught signal %d\n", signal_num);
+    if (signal_num == SIGSEGV) {
+        printf("Segmentation fault encountered!\n");
+    } else if (signal_num == SIGINT) {
+        printf("Interrupt signal caught. Exiting gracefully...\n");
+        exit(0);
+    } else if (signal_num == SIGABRT) {
+        printf("Abnormal termination triggered!\n");
+        exit(1);
+    }
 }
