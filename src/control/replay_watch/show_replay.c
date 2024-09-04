@@ -13,6 +13,7 @@ RES_OPCODE fetchReplayDataForPlayer(ReplayData *replayDataArray, int *numReplays
     
     while (history != NULL) {
         // Kiểm tra nếu người chơi cụ thể là một trong hai người chơi trong trận đấu
+        printf("%d\n", history->game_id);
         if (strcmp(history->player1_name, playerName) == 0 || strcmp(history->player2_name, playerName) == 0) {
             // Sao chép dữ liệu trận đấu vào mảng replayDataArray
             replayDataArray[index].id = history->game_id;
