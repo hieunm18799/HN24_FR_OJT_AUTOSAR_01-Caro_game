@@ -6,8 +6,10 @@
     ]
   },
   "ExpandedNodes": [
-    ""
+    "",
+    "\\src",
+    "\\src\\control",
+    "\\src\\control\\play_caro"
   ],
-  "SelectedNode": "\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
 }

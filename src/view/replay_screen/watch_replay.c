@@ -35,10 +35,10 @@ void DrawReplayBoard() {
     printf("CARO GAME");
 
     gotoxy(PLAYER_1_POSITION_X, PLAYER_1_POSITION_Y);
-    printf("<X> PLAYER 1");
+    printf("<X> Player: %s - %d Win %d - Lose",player1_username, player1_win, player1_lose);
 
     gotoxy(PLAYER_2_POSITION_X, PLAYER_2_POSITION_Y);
-    printf("<O> PLAYER 2");
+    printf("<X> Player: %s - %d Win - %d Lose",player2_username, player2_win, player2_lose);
 
     gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y);
     for (int i = 0; i < board_height * 2 + 1; i++) {
@@ -97,11 +97,23 @@ void handleClickOnWatchReplayScreen() {
 }
 
 
-void ReplayGameInfo(int board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
+void ReplayGameInfo(char board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
+    int move_count = 0;
+
+    // Calculate the total number of moves from the board
+    for (int cell_x = 0; cell_x < MAXIMUM_SIZE; ++cell_x) {
+        for (int cell_y = 0; cell_y < MAXIMUM_SIZE; ++cell_y) {
+            if (board[cell_x][cell_y] == 'X' || board[cell_x][cell_y] == 'O') {
+                move_count++;
+            }
+        }
+    }
+
+    int moves_replayed = 0;
 
     // Iterate over the board to replay the moves
-    for (int cell_x = 0; cell_x < board_width; ++cell_x) {
-        for (int cell_y = 0; cell_y < board_height; ++cell_y) {
+    for (int cell_x = 0; cell_x < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_x) {
+        for (int cell_y = 0; cell_y < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_y) {
             if (board[cell_x][cell_y] != 0) {  // A move has been made at this position
                 // Move cursor to the drawing position
                 gotoxy(CARO_BOARD_POSITION_X + cell_x * 4 + 2, CARO_BOARD_POSITION_Y + cell_y * 2 + 1);
@@ -113,6 +125,9 @@ void ReplayGameInfo(int board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
                     printf("O");
                 }
 
+                moves_replayed++;
+                // Pause for a short period between moves
+                Sleep(1000);  // Pause for 1 second
             }
         }
     }

@@ -1,5 +1,6 @@
 #include "games.h"
 #include "users.h"
+#include <math.h>
 
 #define THRESHOLD 0.1
 
@@ -19,6 +20,7 @@ RES_OPCODE findGame(User *curUser, unsigned int *game_id, User *opositePlayer) {
             User *tempUser = findUserByName(current->player1_name);
             double currentWinRate = calculateWinRate(tempUser);
             double difference = fabs(currentWinRate - targetWinRate);
+            printf("%lf %lf %lf\n", difference, currentWinRate, targetWinRate);
             if (difference < smallestDifference) {
                 smallestDifference = difference;
                 bestGame = current;

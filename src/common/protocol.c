@@ -54,6 +54,9 @@ void setMessageResponse(Response *msg) {
         case SIGN_UP_INPUT_WRONG:
             strcpy(msg->message, "Sign-up's input are wrong!");
             break;
+        case SIGN_IN_INPUT_WRONG:
+            strcpy(msg->message, "Sign-in's input are wrong!");
+            break;
         case USERNAME_NOT_EXISTED:
             strcpy(msg->message, "This account is not registered!");
             break;

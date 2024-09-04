@@ -172,6 +172,10 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
                 // Show error
                 showErrorNotification("Sign-up input is wrong!");
                 break;
+            case SIGN_IN_INPUT_WRONG:
+                // Show error
+                showErrorNotification("Sign-up input is wrong!");
+                break;
             case USERNAME_NOT_EXISTED:
                 // Show error
                 showErrorNotification("This account is not registered!");
