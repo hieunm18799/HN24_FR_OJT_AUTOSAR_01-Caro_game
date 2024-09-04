@@ -24,13 +24,12 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
     curGame->status = curGame->status == PLAYER1 ? PLAYER2 : PLAYER1;
     if (res) {
         changeGame(curGame, "\0", "\0", username, END);
+        addReplay(curGame, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
+        printf("win\n");
+        saveMatchHistoryToIniFile("Re_play.ini", curGame);
         increasedWins(findUserByName(username));
         increasedLosses(findUserByName(oppUser->username));
         writeUsersIni();
-
-        addReplay(curGame, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
-        saveMatchHistoryToIniFile("Re_play.ini", curGame);
-
         return YOU_WIN;
     }
     return PICK_SUCCESS;
@@ -79,14 +78,12 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *oppfd) {
     *oppfd = findUserByName(oppUserName)->clientfd;
 
     changeGame(curGame, "\0", "\0", oppUserName, END);
-    increasedWins(findUserByName(oppUserName));
-    increasedLosses(findUserByName(username));
-    writeUsersIni();
-    
     // Gọi addReplay và saveMatchHistoryToIniFile
     addReplay(curGame, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
     saveMatchHistoryToIniFile("Re_play.ini", curGame);
-
+    increasedWins(findUserByName(oppUserName));
+    increasedLosses(findUserByName(username));
+    writeUsersIni();
     return QUIT_SUCCESS;
 }
 

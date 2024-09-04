@@ -7,7 +7,7 @@
 
 // Hàm luu lich su tran dau vào file
 void saveMatchHistoryToIniFile(MatchHistory* history, const char* filename) {
-    FILE* file = fopen(filename, "a");
+    FILE* file = fopen(filename, "w");
     if (file == NULL) {
         printf("Không thể mở file %s để ghi.\n", filename);
         return;
