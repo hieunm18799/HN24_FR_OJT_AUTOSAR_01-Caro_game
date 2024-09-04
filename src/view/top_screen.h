@@ -79,6 +79,7 @@ void displayReplayInfoData();
 void handleOnScreenReplayInfo();
 
 void showErrorNotification(const char* errorMessage);
+void clearMessageLine();
 
 #endif
 
