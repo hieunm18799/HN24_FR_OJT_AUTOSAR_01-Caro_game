@@ -110,5 +110,35 @@ void addReplayData(unsigned int game_id, char *player1, char *player2, char *res
     strcpy(replayDataArray[MAX_REPLAYS].player1, player1);
     strcpy(replayDataArray[MAX_REPLAYS].player2, player2);
     strcpy(replayDataArray[MAX_REPLAYS].result, result);
+    printf("%d %s %s %s %d", game_id, player1, player2, result, MAX_REPLAYS);
     MAX_REPLAYS++;
+}
+
+void addAndDisplayReplayData(unsigned int game_id, char *player1, char *player2, char *result) {
+    if (player1 == NULL || player2 == NULL || result == NULL) return;
+
+    // Add replay data
+    replayDataArray[MAX_REPLAYS].id = game_id;
+    strcpy(replayDataArray[MAX_REPLAYS].player1, player1);
+    strcpy(replayDataArray[MAX_REPLAYS].player2, player2);
+    strcpy(replayDataArray[MAX_REPLAYS].result, result);
+
+    // Display the new replay data
+    int i = 0;
+    for(i = 0; i < MAX_REPLAYS;  i++){
+    gotoxy(ID_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
+    printf("%02d", replayDataArray[i].id);
+
+    gotoxy(PLAYER1_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
+    printf("%-9s", replayDataArray[i].player1);
+
+    gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
+    printf("%-9s", replayDataArray[i].player2);
+
+    gotoxy(RESULT_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
+    printf("%-7s", replayDataArray[i].result);
+
+    // Increment the replay counter
+    // MAX_REPLAYS++;
+    }
 }
