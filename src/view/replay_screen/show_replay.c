@@ -78,7 +78,8 @@ void handleOnScreenReplayInfo() {
 
     // Handle "Watch" button click
     if (MousePos.Y == buttonY && MousePos.X >= BUTTON_WATCH_X && MousePos.X <= (BUTTON_WATCH_X + BUTTON_WIDTH)) {
-        DrawReplayBoard();
+        watchReplay(sockfd, replayId);
+        // DrawReplayBoard();
         // Implement returning replayId to control
     }
     // Handle "Back" button click

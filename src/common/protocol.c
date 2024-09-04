@@ -126,10 +126,10 @@ void setMessageResponse(Response *msg) {
         case GET_USERS_FAIL:
             strcpy(msg->message, "Get users failed!");
             break;
-        case GET_REPLAYS_SUCCESS:
+        case GET_USERNAME_REPLAYS_SUCCESS:
             strcpy(msg->message, "Get replays done!");
             break;
-        case GET_REPLAYS_FAIL:
+        case GET_USERNAME_REPLAYS_FAIL:
             strcpy(msg->message, "Get replays failed!");
             break;
         case ADD_USER_SUCCESS:
@@ -156,8 +156,14 @@ void setMessageResponse(Response *msg) {
         case DELETE_GAME_FAIL:
             strcpy(msg->message, "Game not deleted!");
             break;
-        case GET_REPLAYS_CONTINUE:
+        case GET_USERNAME_REPLAYS_CONTINUE:
             strcpy(msg->message, "Getting replays!");
+            break;
+        case GET_REPLAYID_MOVES_SUCCESS:
+            strcpy(msg->message, "Got moves!");
+            break;
+        case GET_REPLAYID_MOVES_FAIL:
+            strcpy(msg->message, "Getting failed!");
             break;
         default:
             strcpy(msg->message, "No Message!");
@@ -190,12 +196,12 @@ void setOpcodeRequest(Request *req, char *input) {
         req->code = REDO_AGREE;
     else if (strcmp(code, STRING_QUIT) == 0)
         req->code = QUIT;
-    else if (strcmp(code, STRING_GET_REPLAYS) == 0)
-        req->code = GET_REPLAYS;
+    else if (strcmp(code, STRING_GET_USERNAME_REPLAYS) == 0)
+        req->code = GET_USERNAME_REPLAYS;
     else if (strcmp(code, STRING_GET_USERS) == 0)
         req->code = GET_USERS;
-    else if (strcmp(code, STRING_GET_REPLAYS) == 0)
-        req->code = GET_REPLAYS;
+    else if (strcmp(code, STRING_GET_USERNAME_REPLAYS) == 0)
+        req->code = GET_USERNAME_REPLAYS;
     else if (strcmp(code, STRING_ADD_USER) == 0)
         req->code = ADD_USER;
     else if (strcmp(code, STRING_ADD_USER) == 0)
@@ -206,6 +212,8 @@ void setOpcodeRequest(Request *req, char *input) {
         req->code = DELETE_USER;
     else if (strcmp(code, STRING_DELETE_GAME) == 0)
         req->code = DELETE_GAME;
+    else if (strcmp(code, STRING_GET_REPLAYID_MOVES) == 0)
+        req->code = GET_REPLAYID_MOVES;
     else{
         req->code = -1;
     }
