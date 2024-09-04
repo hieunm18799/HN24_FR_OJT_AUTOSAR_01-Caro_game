@@ -83,13 +83,10 @@ void handleClickOnWatchReplayScreen() {
 			return;
 		}
 
-<<<<<<< HEAD
         // handleReplayButton(move_data[14], move_data_count);
 		// Data fetching from server
         fetchReplayInfoData();
         
-=======
->>>>>>> 4c900d039772e216fccb8a784b2e279218ffcfd1
 		// Draw the initial UI
 		drawReplayInfoUI();
 
