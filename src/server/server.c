@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
                                 handleQuit(tempfd, req, res);
                                 break;
                                 case GET_REPLAYS:
-                          //      handleshowReplay(tempfd, req, res);
+                                handleshowReplay(tempfd, req, res);
                                 break;
                                 case REPLAY_CONTROL:
                                 handleControlReplay(tempfd, req, res);

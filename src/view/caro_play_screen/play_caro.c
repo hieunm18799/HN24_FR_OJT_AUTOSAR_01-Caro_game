@@ -95,12 +95,12 @@ void drawPlayCaroBoard() {
     // scanf("%d", &board_height);
     system("cls");
 
-    // // Initialize the board state
-    // for (int i = 0; i < board_height; i++) {
-    //     for (int j = 0; j < board_width; j++) {
-    //         board[i][j] = ' '; // Empty cell
-    //     }
-    // }
+    // Initialize the board state
+    for (int i = 0; i < board_height; i++) {
+        for (int j = 0; j < board_width; j++) {
+            board[i][j] = ' '; // Empty cell
+        }
+    }
 
     // Calculate console size based on board dimensions
     // console_width = board_width * 4 + 5;
@@ -229,16 +229,11 @@ int MovePlayCaro() {  // Change return type to int
             // Check if the cell is empty
             pick(sockfd, game_id, signed_in_username, cell_x, cell_y);
 
-            // if (board[cell_y][cell_x] == ' ') {
-            //     // Save the move in the board array
-            //     if (Player1_turn) {
-            //         board[cell_y][cell_x] = 'X';
-            //         Player1_turn = 0;
-            //     } else {
-            //         board[cell_y][cell_x] = 'O';
-            //         Player1_turn = 1;
-            //     }
-            // }
+        if (board[cell_y][cell_x] == ' ') {
+            // Save the move in the board array
+            board[cell_y][cell_x] = move_sig;
+        }
+
 
 
                 // Save the last move position
@@ -346,12 +341,54 @@ void RedrawPlayCaroBoard () {
 
     // Kiểm tra nếu kích thước console đã thay đổi
     if(new_console_height != console_height || new_console_width != console_width){
-        // Cập nhật kích thước bảng
-        board_width = (new_console_width - 5) / 4;
-        board_height = (new_console_height - 10) / 2;
 
         // Vẽ lại bàn cờ
-        drawPlayCaroBoard();
+        system("cls");
+
+        // Set up game title position
+        gotoxy(CARO_GAME_STRING_POSITION_X,CARO_GAME_STRING_POSITION_Y);
+        printf("CARO GAME");
+
+        // Set up player 1 label position
+        gotoxy(PLAYER_1_POSITION_X,PLAYER_1_POSITION_Y);
+        printf("<X> Player: %s - %d Win - %d Lose",player1_username, player1_win, player1_lose);
+
+        // Set up player 2 label position
+        gotoxy(PLAYER_2_POSITION_X,PLAYER_2_POSITION_Y);
+        printf("<O> Player: %s - %d Win - %d Lose",player2_username, player2_win, player2_lose);
+
+        // Set up board drawing position
+        gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
+
+        // Draw the board
+        GetConsoleSize(&console_width, &console_height);
+        board_width = (console_width - 5) / 4;
+        board_height = (console_height - 10) / 2;
+        for (int i = 0; i < board_height * 2 + 1; i++) {
+            if (i % 2 == 0) {
+                for (int j = 0; j < board_width * 4 + 1; j++) {
+                    if (j % 4 == 0) printf("+");
+                    else printf("-");
+                }
+            } else {
+                for (int j = 0; j < board_width * 4 + 1; j++) {
+                    if (j % 4 == 0) printf("|");
+                    else printf(" ");
+                }
+            }
+            printf("\n");
+        }
+
+        // Draw buttons
+        gotoxy(REDO_POSITION_X,REDO_POSITION_Y);
+        printf("[REDO]");
+
+        gotoxy(AGREE_POSITION_X,AGREE_POSITION_Y);
+        printf("[AGREE]");
+
+        gotoxy(QUIT_POSITION_X,QUIT_POSITION_Y);
+        printf("[QUIT]");
+
 
         // Vẽ lại các nước đi
         for (int cell_y = 0; cell_y < board_height; cell_y++) {

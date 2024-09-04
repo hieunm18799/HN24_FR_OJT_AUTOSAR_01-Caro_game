@@ -97,39 +97,38 @@ void handleClickOnWatchReplayScreen() {
 }
 
 
-void ReplayGameInfo(char board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
-    int move_count = 0;
-
-    // Calculate the total number of moves from the board
-    for (int cell_x = 0; cell_x < MAXIMUM_SIZE; ++cell_x) {
-        for (int cell_y = 0; cell_y < MAXIMUM_SIZE; ++cell_y) {
-            if (board[cell_x][cell_y] == 'X' || board[cell_x][cell_y] == 'O') {
-                move_count++;
-            }
-        }
+void ReplayGameInfo(const MatchHistory *history) {
+    if (history == NULL || history->moves == NULL) {
+        printf("No match history available.\n");
+        return;
     }
+
+    // Vẽ bảng cờ trước khi phát lại các nước đi
+    DrawReplayBoard();
 
     int moves_replayed = 0;
+    Move *current_move = history->moves;
 
-    // Iterate over the board to replay the moves
-    for (int cell_x = 0; cell_x < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_x) {
-        for (int cell_y = 0; cell_y < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_y) {
-            if (board[cell_x][cell_y] != 0) {  // A move has been made at this position
-                // Move cursor to the drawing position
-                gotoxy(CARO_BOARD_POSITION_X + cell_x * 4 + 2, CARO_BOARD_POSITION_Y + cell_y * 2 + 1);
+    // Duyệt qua danh sách liên kết để phát lại các nước đi
+    while (current_move != NULL) {
+        // Di chuyển con trỏ đến vị trí vẽ
+        gotoxy(CARO_BOARD_POSITION_X + current_move->x * 4 + 2, CARO_BOARD_POSITION_Y + current_move->y * 2 + 1);
 
-                // Check the player and print X or O
-                if (board[cell_x][cell_y] == 'X') {
-                    printf("X");
-                } else if (board[cell_x][cell_y] == 'O') {
-                    printf("O");
-                }
-
-                moves_replayed++;
-                // Pause for a short period between moves
-                Sleep(1000);  // Pause for 1 second
-            }
+        // Xác định người chơi và in X hoặc O
+        if (moves_replayed % 2 == 0) { // Nước đi chẵn: Người chơi 1
+            printf("X");
+        } else { // Nước đi lẻ: Người chơi 2
+            printf("O");
         }
+
+        moves_replayed++;
+        current_move = current_move->next;
+
+        // Tạm dừng giữa các nước đi
+        Sleep(1000);  // Pause for 1 second
     }
 
+    // Hiển thị thông báo và chờ người dùng nhấn phím trước khi kết thúc
+    printf("\nReplay completed. Press any key to exit...");
+    getchar(); // Đọc ký tự từ bàn phím để dừng chương trình
 }
