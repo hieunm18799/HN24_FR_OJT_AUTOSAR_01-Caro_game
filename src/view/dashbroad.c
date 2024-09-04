@@ -58,7 +58,7 @@ void frameDashboardAdmin(char* role, char* username) {
 			return;
 		}
 		// Data fetching from server
-		fetchReplayInfoData();
+		fetchReplayDataForAllPlayers();
 
 		// Draw the initial UI
 		drawReplayInfoUI();
@@ -88,7 +88,7 @@ void frameDashboardAdmin(char* role, char* username) {
 			return;
 		}
 		// Data fetching from server
-		fetchReplayInfoData();
+		fetchReplayDataForPlayer();
 
 
 		// Draw the initial UI
