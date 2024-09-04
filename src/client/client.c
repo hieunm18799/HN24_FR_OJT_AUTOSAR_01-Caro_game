@@ -241,7 +241,7 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
                 printMessagePlayCaro(res->message);
                 break;
             case OTHER_PLAYER_WIN:
-                if (readGetUsersContinue(res->data, username, &x, &y)) addPicked(username, x, y);
+                if (readPickSuccess(res->data, username, &x, &y)) addPicked(username, x, y);
                 printMessagePlayCaro(res->message);
                 break;
             case QUIT_SUCCESS:
