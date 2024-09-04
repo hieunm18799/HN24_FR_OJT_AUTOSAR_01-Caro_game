@@ -27,6 +27,10 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
         increasedWins(findUserByName(username));
         increasedLosses(findUserByName(oppUser->username));
         writeUsersIni();
+
+        addReplay(curGame, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
+        saveMatchHistoryToIniFile("Re_play.ini", curGame);
+
         return YOU_WIN;
     }
     return PICK_SUCCESS;
@@ -78,6 +82,11 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *oppfd) {
     increasedWins(findUserByName(oppUserName));
     increasedLosses(findUserByName(username));
     writeUsersIni();
+    
+    // Gọi addReplay và saveMatchHistoryToIniFile
+    addReplay(curGame, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
+    saveMatchHistoryToIniFile("Re_play.ini", curGame);
+
     return QUIT_SUCCESS;
 }
 
