@@ -6,6 +6,7 @@
 
 #define MAX_GAMES 100
 
+MatchHistory* global_replay = NULL; // Khai báo và khởi tạo biến toàn cục
 Game *global_games = NULL;  // Danh sách liên kết của các trận đấu
 static unsigned int gameCount = 0;  // Đếm số lượng trận đấu hiện có
 
@@ -168,4 +169,54 @@ void freeMoves(Game *game) {
         game->moves = game->moves->next;
         free(temp);
     }
+}
+
+
+// Hàm thêm một replay vào danh sách
+void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves) {
+    MatchHistory* newNode = (MatchHistory*)malloc(sizeof(MatchHistory));
+    if (newNode == NULL) {
+        printf("Không thể cấp phát bộ nhớ cho trận đấu mới.\n");
+        return;
+    }
+
+    strcpy(newNode->player1_name, player1_name);
+    strcpy(newNode->player2_name, player2_name);
+    newNode->game_id = game_id;
+    strcpy(newNode->result, result);
+    newNode->moves = moves; // Gán danh sách các nước đi
+    newNode->next = *head;
+    *head = newNode;
+}
+
+
+//ham xoa 1 replay
+int deleteReplay(MatchHistory** head, unsigned int game_id) {
+    MatchHistory* current = *head;
+    MatchHistory* prev = NULL;
+
+    while (current != NULL) {
+        if (current->game_id == game_id) {
+            if (prev == NULL) {
+                *head = current->next;
+            }
+            else {
+                prev->next = current->next;
+            }
+
+            // Giải phóng bộ nhớ của danh sách moves
+            Move* tempMove;
+            while (current->moves != NULL) {
+                tempMove = current->moves;
+                current->moves = current->moves->next;
+                free(tempMove);
+            }
+
+            free(current);
+            return 1;
+        }
+        prev = current;
+        current = current->next;
+    }
+    return 0;
 }
