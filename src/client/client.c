@@ -124,6 +124,7 @@ void startGUI(int sockfd) {
                     break;
                 case VIEW_PLAY_GAME:
                     MovePlayCaro();
+                    RedrawPlayCaroBoard(); 
                     break;
                 case VIEW_TOP_SIGNED_IN_ADMIN:
                     openAdmin();
