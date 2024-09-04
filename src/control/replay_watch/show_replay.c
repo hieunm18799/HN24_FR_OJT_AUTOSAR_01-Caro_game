@@ -27,7 +27,7 @@ RES_OPCODE fetchReplayDataForAllPlayers(MatchHistory *history, ReplayData *repla
 
     *numReplays = index;
 
-    return GET_REPLAY_SUCCESS;
+    return GET_REPLAYS_SUCCESS;
 }
 
 // Hàm lấy lịch sử trận đấu của một người chơi cụ thể
