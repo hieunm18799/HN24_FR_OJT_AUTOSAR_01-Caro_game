@@ -144,7 +144,7 @@ int adminAddUser(int clientfd, char *username, char *password, char *role, unsig
 }
 int adminEditUser(int clientfd, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws) {
     Request *req = createRequest();
-    createAdminEditUserRequest(STRING_ADD_USER, req, username, password, role, wins, losses, draws);
+    createAdminEditUserRequest(STRING_EDIT_USER, req, username, password, role, wins, losses, draws);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -154,7 +154,7 @@ int adminEditUser(int clientfd, char *username, char *password, char *role, unsi
 
 int adminDeleteUser(int clientfd, char *username) {
     Request *req = createRequest();
-    createAdminDeleteUserRequest(STRING_ADD_USER, req, username);
+    createAdminDeleteUserRequest(STRING_DELETE_USER, req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
