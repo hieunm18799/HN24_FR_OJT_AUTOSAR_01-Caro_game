@@ -21,13 +21,19 @@ User *createUser(const char* username, const char* password, const char* role, u
     res->wins = wins;
     res->losses = losses;
     res->draws = draws;
+    res->next = NULL;
     return res;
 }
 
 void newUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
     User* newUser = createUser(username, password, role, wins, losses, draws);
-    newUser->next = userList;
-    userList = newUser;
+    if (userList == NULL) {
+        userList = newUser;
+    } else {
+        User *temp = userList;
+        while (temp->next != NULL) temp = temp->next;
+        temp->next = newUser;
+    }
 }
 
 void changeUser(User *user, const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
@@ -147,7 +153,7 @@ void readUsersIni() {
     }
 
     char line[MAX_LINE_LENGTH];
-    User* current = NULL;
+    User* current = NULL, *temp;
 
     while (fgets(line, sizeof(line), file)) {
         if (line[0] == '[') {  // Mở đầu một mục người dùng mới
@@ -155,8 +161,13 @@ void readUsersIni() {
             memset(current, 0, sizeof(User));
             sscanf(line, "[%49[^]]]", current->username);
             current->clientfd = INVALID_SOCKET; // Khởi tạo giá trị socket không hợp lệ
-            current->next = userList;
-            userList = current;
+            if (userList == NULL) {
+                userList = current;
+                temp = userList;
+            } else {
+                temp->next = current;
+                temp = temp->next;
+            }
         } else if (current) {
             if (strncmp(line, "Password=", 9) == 0) {
                 sscanf(line + 9, "%49s", current->password);
