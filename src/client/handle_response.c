@@ -43,3 +43,14 @@ int readRedoSuccess(char *input, unsigned char *x, unsigned char *y){
     *y = atoi(strtok(NULL, "\0"));
     return 1;
 }
+
+int readGetUsersContinue(char *input, char *username, char *password, char *role, unsigned int *wins, unsigned int *losses, unsigned int *draws){
+    if (strcmp(input, "\0") == 0) return 0;
+    strcpy(username, strtok(input, "@"));
+    strcpy(password, strtok(NULL, "@"));
+    strcpy(role, strtok(NULL, "@"));
+    *wins = atoi(strtok(NULL, "@"));
+    *losses = atoi(strtok(NULL, "@"));
+    *draws = atoi(strtok(NULL, "\0"));
+    return 1;
+}

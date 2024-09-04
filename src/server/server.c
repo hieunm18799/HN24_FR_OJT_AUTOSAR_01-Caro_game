@@ -162,19 +162,19 @@ int main(int argc, char *argv[]) {
                                 handleshowReplay(tempfd, req, res);
                                 break;
                                 case GET_USERS:
-                                //
+                                handleGetUsers(tempfd, req, res);
                                 break;
                                 case GET_GAMES:
                                 //
                                 break;
                                 case ADD_USER:
-                                //
+                                handleAdminAddUser(tempfd, req, res);
                                 break;
                                 case EDIT_USER:
-                                //
+                                handleAdminEditUser(tempfd, req, res);
                                 break;
                                 case DELETE_USER:
-                                //
+                                handleAdminDeleteUser(tempfd, req, res);
                                 break;
                                 case DELETE_GAME:
                                 //

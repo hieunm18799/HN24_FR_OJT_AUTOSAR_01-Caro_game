@@ -1,27 +1,28 @@
 #include "users.h"
+#include "protocol.h"
 #include <stdio.h>
 #include <string.h>
 
-// Hàm liệt kê tất cả người dùng
-void listUsers() {
-    User* current = getUsers();
-    printf("Username\tRole\tStatus\tWins\tLosses\tDraws\n");
-    while (current != NULL) {
-        printf("%s\t\t%s\t%s\t%d\t%d\t%d\n", 
-            current->username, current->role, current->status, 
-            current->wins, current->losses, current->draws);
-        current = current->next;
-    }
+RES_OPCODE adminAddUser(char *username, char *password, char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    if (username == NULL || password == NULL) return ADD_USER_FAIL;
+    User* user = findUserByName(username);
+    if (user != NULL) return ADD_USER_FAIL;
+
+    // Tạo người dùng mới
+    newUser(username, password, role, wins, losses, draws);
+    writeUsersIni();
+    return ADD_USER_SUCCESS;
 }
 
 // Hàm xóa người dùng (chỉ admin mới có quyền sử dụng)
-void deleteUserByAdmin(const char* username) {
+RES_OPCODE adminDeleteUser(const char* username) {
+    if (username == NULL) return DELETE_USER_FAIL;
     User* current = getUsers();
     while (current != NULL) {
         if (strcmp(current->username, username) == 0) {
             if (strcmp(current->role, "admin") == 0) {
                 printf("Cannot delete an admin user!\n");
-                return;
+                return DELETE_USER_FAIL;
             }
             break;
         }
@@ -29,25 +30,26 @@ void deleteUserByAdmin(const char* username) {
     }
     
     // Gọi hàm deleteUser trong users.c để thực hiện xóa
-    deleteUser(username);
+    if (!deleteUser(username)) return DELETE_USER_FAIL;
+    writeUsersIni();
     printf("User %s has been deleted.\n", username);
 }
 
 // Hàm cập nhật trạng thái người dùng (chỉ admin mới có quyền sử dụng)
-void updateUserStatus(const char* username, const char* status) {
+RES_OPCODE adminEditUser(char *username, char *password, char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    if (username == NULL || password == NULL) return EDIT_USER_FAIL;
     User* current = getUsers();
     while (current != NULL) {
         if (strcmp(current->username, username) == 0) {
-            // Không cho phép admin thay đổi trạng thái của chính mình
-            if (strcmp(current->role, "admin") == 0 && strcmp(status, "NOT_SIGN_IN") == 0) {
-                printf("Cannot change status of admin!\n");
-                return;
-            }
-            setUserStatus(username, status);
-            printf("User %s status has been updated to %s.\n", username, status);
-            return;
+            // // Không cho phép admin thay đổi trạng thái của chính mình
+            // if (strcmp(current->role, "admin") == 0 && strcmp(status, "NOT_SIGN_IN") == 0) {
+            //     printf("Cannot change status of admin!\n");
+            //     return;
+            // }
+            changeUser(current, username, password, role, wins, losses, draws);
+            return EDIT_USER_SUCCESS;
         }
         current = current->next;
     }
-    printf("User %s not found.\n", username);
+    return EDIT_USER_FAIL;
 }
