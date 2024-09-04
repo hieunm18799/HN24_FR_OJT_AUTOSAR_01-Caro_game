@@ -279,6 +279,16 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
             case DELETE_GAME_FAIL:
                 break;
             case GET_REPLAY_SUCCESS:
+                // Draw the initial UI
+                drawReplayInfoUI();
+
+                // Display the fetched data
+                displayReplayInfoData();
+                break;
+            case GET_REPLAY_CONTINUE:
+                char player1[50], player2[50], result[50];
+                unsigned int game_id;
+                if (readGetReplaysContinue(res->data, &game_id, player1, player2, result)) addReplayData(game_id, player1, player2, result);
                 break;
             default:
                 break;

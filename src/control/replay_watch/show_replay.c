@@ -7,9 +7,10 @@
 
 
 // Hàm lấy lịch sử trận đấu của một người chơi cụ thể
-RES_OPCODE fetchReplayDataForPlayer(MatchHistory *history, ReplayData *replayDataArray, int *numReplays, const char *playerName) {
+RES_OPCODE fetchReplayDataForPlayer(ReplayData *replayDataArray, int *numReplays, const char *playerName) {
     int index = 0;
-
+    MatchHistory *history = global_replay;
+    
     while (history != NULL && index < MAX_REPLAYS) {
         // Kiểm tra nếu người chơi cụ thể là một trong hai người chơi trong trận đấu
         if (strcmp(history->player1_name, playerName) == 0 || strcmp(history->player2_name, playerName) == 0) {
