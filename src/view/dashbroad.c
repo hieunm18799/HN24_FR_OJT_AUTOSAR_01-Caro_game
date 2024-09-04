@@ -52,11 +52,6 @@ void frameDashboardAdmin(char* role, char* username) {
 	 }
 	else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay 
-		replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
-		if (replayDataArray == NULL) {
-			printf("Không thể cấp phát bộ nhớ\n");
-			return;
-		}
 		getReplaysData(sockfd, signed_in_username);
 	 }
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
@@ -75,11 +70,6 @@ void frameDashboardAdmin(char* role, char* username) {
 	 }
 	 else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay
-		replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
-		if (replayDataArray == NULL) {
-			printf("Không thể cấp phát bộ nhớ\n");
-			return;
-		}
 		getReplaysData(sockfd, signed_in_username);
 	 }
 

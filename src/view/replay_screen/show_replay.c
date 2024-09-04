@@ -99,6 +99,11 @@ void fetchReplayInfoData() {
 
 void addReplayData(unsigned int game_id, char *player1, char *player2, char *result) {
     if (player1 == NULL || player2 == NULL || result == NULL) return;
+    replayDataArray = (ReplayData*)realloc(sizeof(ReplayData), MAX_REPLAYS + 1);
+    if (replayDataArray == NULL) {
+        printf("Không thể cấp phát bộ nhớ\n");
+        return;
+    }
     replayDataArray[MAX_REPLAYS].id = game_id;
     strcpy(replayDataArray[MAX_REPLAYS].player1, player1);
     strcpy(replayDataArray[MAX_REPLAYS].player2, player2);

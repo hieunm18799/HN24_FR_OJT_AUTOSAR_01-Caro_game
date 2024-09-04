@@ -10,8 +10,6 @@
 RES_OPCODE fetchReplayDataForPlayer(ReplayData *replayDataArray, int *numReplays, const char *playerName) {
     int index = 0;
     MatchHistory *history = loadMatchHistoryFromFile("Re_play.ini");
-    printf("ok\n");
-    printf("%p\n", history);
     
     while (history != NULL && index < MAX_REPLAYS) {
         // Kiểm tra nếu người chơi cụ thể là một trong hai người chơi trong trận đấu
