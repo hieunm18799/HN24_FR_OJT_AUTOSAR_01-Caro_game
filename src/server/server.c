@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
                                 case QUIT:
                                 handleQuit(tempfd, req, res);
                                 break;
-                                case GET_REPLAYS:
+                                case GET_USERNAME_REPLAYS:
                                 handleShowReplay(tempfd, req, res);
                                 break;
                                 case REPLAY_CONTROL:
@@ -178,6 +178,9 @@ int main(int argc, char *argv[]) {
                                 break;
                                 case DELETE_GAME:
                                 //
+                                break;
+                                case GET_REPLAYID_MOVES:
+                                handleWatchReplay(tempfd, req, res);
                                 break;
                                 default:
                                 break;
