@@ -125,7 +125,7 @@ bool handlePick(int clientfd, Request *req, Response *res) {
 }
 
 bool handleRedoAsk(int clientfd, Request *req, Response *res) {
-    char username;
+    char *username;
     SOCKET opofd;
     username = strtok(req->message, "@");
     unsigned int game_id = atoi(strtok(NULL, "\0"));
@@ -192,6 +192,23 @@ bool handleControlReplay(int clientfd, Request *req, Response *res)
     res->code = deleteReplay(head, game_id);
 
     if (res->code == REPLAY_CONTROL)
+    {      
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return true;
+    }
+}
+
+bool handleshowReplay(int clientfd, Request *req, Response *res)
+{
+    char username[MAX_LENGTH];
+    strcpy(username, strtok(req->message, "@"));
+    MatchHistory *history;
+    ReplayData *replayDataArray;
+    int *numReplays;
+    res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
+ 
+    if (res->code == GET_REPLAYS)
     {      
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);

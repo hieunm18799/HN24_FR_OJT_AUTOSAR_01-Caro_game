@@ -15,7 +15,8 @@ RES_OPCODE adminAddUser(char *username, char *password, char* role, unsigned int
 }
 
 // Hàm xóa người dùng (chỉ admin mới có quyền sử dụng)
-RES_OPCODE adminDeleteUser(const char* username) {
+RES_OPCODE adminDeleteUser(char* username) {
+    printf("ok\n");
     if (username == NULL) return DELETE_USER_FAIL;
     User* current = getUsers();
     while (current != NULL) {
