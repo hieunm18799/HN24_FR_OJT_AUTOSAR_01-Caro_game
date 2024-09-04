@@ -34,6 +34,7 @@ RES_OPCODE adminDeleteUser(char* username) {
     if (!deleteUser(username)) return DELETE_USER_FAIL;
     writeUsersIni();
     printf("User %s has been deleted.\n", username);
+    return DELETE_USER_SUCCESS;
 }
 
 // Hàm cập nhật trạng thái người dùng (chỉ admin mới có quyền sử dụng)
