@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <winsock2.h>
 
+#define MAX_LINE_LENGTH 256
+
 // Cấu trúc dữ liệu của người dùng
 typedef struct User {
     char username[50];
@@ -17,6 +19,7 @@ typedef struct User {
     struct User* next;
 } User;
 
+static char userFileName[] = "Users.ini";
 extern User* userList;
 
 // Hàm quản lý người dùng
@@ -27,18 +30,13 @@ bool setUserStatus(const char* username, const char* status);  // Cập nhật t
 void increasedWins(User *user);
 void increasedLosses(User *user);
 User *findUserByName(const char* username);
-void writeUsersIni(const char* filename);    // Ghi danh sách người dùng vào tệp INI
 void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
 User* getUsers();                            // Lấy danh sách người dùng
 char* getUserRole(const char* username);      // Lấy role người dùng
 void freeUsers();
+void logoutUsers();
 
-// // Các hàm quản lý người dùng
-// void listUsers();
-// void deleteUserByAdmin(const char* username);
-// void updateUserStatus(const char* username, const char* status);
-
-// Hàm đọc file Users.ini
-void readUsersIni(const char* filename);
+void readUsersIni();
+void writeUsersIni();
 
 #endif // USER_H

@@ -3,61 +3,64 @@
 #include <string.h>
 #include "games.h" // Để truy cập vào cấu trúc và danh sách các trận đấu
 
-// Hàm hiển thị tất cả các lịch sử đấu
-void displayAllMatches() {
-    Game *current = getGames(); // Giả sử getGames() trả về con trỏ đầu của danh sách các trận đấu
-    while (current != NULL) {
-        printf("Game ID: %d\n", current->id);
-        printf("Player 1: %s\n", current->player1_name);
-        printf("Player 2: %s\n", current->player2_name);
-        printf("Status: %d\n", current->status);
-        printf("Result: %s\n\n", current->result);
-        current = current->next;
-    }
-}
 
 // Hàm xóa lịch sử đấu theo ID
-int deleteMatchById(unsigned int id) {
-    Game *current = getGames(); // Lấy con trỏ đầu của danh sách các trận đấu
-    Game *previous = NULL;
+int deleteReplay(MatchHistory** head, unsigned int game_id) {
+    if (head == NULL || *head == NULL) {
+        return 0; // Danh sách rỗng hoặc con trỏ head rỗng
+    }
 
-    // Duyệt qua danh sách để tìm trận đấu có ID khớp
+    MatchHistory* current = *head;
+    MatchHistory* previous = NULL;
+
+    // Duyệt qua danh sách để tìm trận đấu có game_id khớp
     while (current != NULL) {
-        if (current->id == id) {
-            // Nếu tìm thấy trận đấu cần xóa
+        if (current->game_id == game_id) {
+            // Nếu tìm thấy, cập nhật các liên kết để bỏ qua node này
             if (previous == NULL) {
-                // Nếu trận đấu cần xóa là trận đầu tiên trong danh sách
-                // setGames(current->next); // Giả sử setGames() để cập nhật con trỏ đầu của danh sách
-            } else {
-                // Nếu không phải trận đầu tiên
-                previous->next = current->next; // Bỏ qua trận đấu cần xóa
+                // Trường hợp node cần xóa là node đầu tiên
+                *head = current->next;
             }
-            free(current); // Giải phóng bộ nhớ cho trận đấu bị xóa
-            printf("Deleted game with ID: %u\n", id);
-            return 1; // Trả về 1 để biểu thị thành công
+            else {
+                // Trường hợp node cần xóa không phải là node đầu tiên
+                previous->next = current->next;
+            }
+            free(current); // Giải phóng bộ nhớ của node bị xóa
+            return 1; // Trả về 1 nếu xóa thành công
         }
-        previous = current; // Di chuyển previous đến current
-        current = current->next; // Di chuyển đến trận đấu tiếp theo
-    }
-
-    // Nếu không tìm thấy trận đấu cần xóa
-    printf("Game with ID: %u not found.\n", id);
-    return 0; // Trả về 0 để biểu thị không thành công
-}
-
-void saveGamesToFile() {
-    FILE *file = fopen("game_history.txt", "w");
-    if (!file) {
-        perror("Could not open file");
-        return;
-    }
-
-    Game *current = getGames();
-    while (current != NULL) {
-        fprintf(file, "%d,%s,%s,%d,%s\n", current->id, current->player1_name, current->player2_name, current->status, current->result);
+        previous = current;
         current = current->next;
     }
 
-    fclose(file);
-    printf("Games saved to file successfully.\n");
+    return 0; // Trả về 0 nếu không tìm thấy game_id
+}
+
+RES_OPCODE deleteReplay(MatchHistory** head, int game_id) {
+    if (head == NULL || *head == NULL) {
+        return DELETE_REPLAY_FAILURE; // Danh sách rỗng hoặc con trỏ head rỗng
+    }
+
+    MatchHistory* current = *head;
+    MatchHistory* previous = NULL;
+
+    // Duyệt qua danh sách để tìm trận đấu có game_id khớp
+    while (current != NULL) {
+        if (current->game_id == game_id) {
+            // Nếu tìm thấy, cập nhật các liên kết để bỏ qua node này
+            if (previous == NULL) {
+                // Trường hợp node cần xóa là node đầu tiên
+                *head = current->next;
+            }
+            else {
+                // Trường hợp node cần xóa không phải là node đầu tiên
+                previous->next = current->next;
+            }
+            free(current); // Giải phóng bộ nhớ của node bị xóa
+            return DELETE_REPLAY_SUCCESS; // Trả về mã thành công nếu xóa thành công
+        }
+        previous = current;
+        current = current->next;
+    }
+
+    return DELETE_REPLAY_FAILURE; // Trả về mã lỗi nếu không tìm thấy game_id
 }

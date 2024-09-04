@@ -12,6 +12,9 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
     if (curGame == NULL || curGame->status == END || checkMove(curGame->moves, x, y, 0)) return PICK_FAIL;
     if (strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER2 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER1) return OTHER_PLAYER_TURN;
 
+    if (curGame->board_height < x + 1) curGame->board_height = x + 1;
+    if (curGame->board_width < y + 1) curGame->board_width = y + 1;
+
     int res = addMove(curGame, x, y);
 
     if (res == 0) return PICK_FAIL;
@@ -23,6 +26,7 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
         changeGame(curGame, "\0", "\0", username, END);
         increasedWins(findUserByName(username));
         increasedLosses(findUserByName(oppUser->username));
+        writeUsersIni();
         return YOU_WIN;
     }
     return PICK_SUCCESS;
@@ -73,6 +77,7 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *oppfd) {
     changeGame(curGame, "\0", "\0", oppUserName, END);
     increasedWins(findUserByName(oppUserName));
     increasedLosses(findUserByName(username));
+    writeUsersIni();
     return QUIT_SUCCESS;
 }
 
