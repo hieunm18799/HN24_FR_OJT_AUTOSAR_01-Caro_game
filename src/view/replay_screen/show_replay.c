@@ -55,21 +55,22 @@ void drawReplayInfoUI() {
     currentScreen = VIEW_REPLAY_LIST;
 }
 
-void displayReplayInfoData() {
-    for (int i = 0; i < MAX_REPLAYS; i++) {
-        gotoxy(ID_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
-        printf("%02d", replayDataArray[i].id);
+void displayReplay(ReplayData replayDataArray[], int numReplays) {
+    for (int i = 0; i < numReplays && i < MAX_REPLAYS; i++) {
+        gotoxy(3, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // id column
+        printf("%-6d", replayDataArray[i].id);
 
-        gotoxy(PLAYER1_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
-        printf("%-9s", replayDataArray[i].player1);
+        gotoxy(11, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // player1 column
+        printf("%-11s", replayDataArray[i].player1);
 
-        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
-        printf("%-9s", replayDataArray[i].player2);
+        gotoxy(25, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // player2 column
+        printf("%-11s", replayDataArray[i].player2);
 
-        gotoxy(RESULT_COLUMN, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
-        printf("%-7s", replayDataArray[i].result);
+        gotoxy(39, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // result column
+        printf("%-10s", replayDataArray[i].result);
     }
 }
+
 
 void handleOnScreenReplayInfo() {
     int buttonY = TABLE_START_Y + 3 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET;

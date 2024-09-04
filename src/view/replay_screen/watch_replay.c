@@ -91,7 +91,7 @@ void handleClickOnWatchReplayScreen() {
 		drawReplayInfoUI();
 
 		// Display the fetched data
-		displayReplayInfoData();
+		//displayReplayInfoData();
         }
     // }
 }
