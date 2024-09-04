@@ -183,16 +183,15 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
     return true;
 }
 
-bool handleshowReplay(int clientfd, Request *req, Response *res)
+bool handleControlReplay(int clientfd, Request *req, Response *res)
 {
     char username[MAX_LENGTH];
     strcpy(username, strtok(req->message, "@"));
-    MatchHistory *history;
-    ReplayData *replayDataArray;
-    int *numReplays;
-    res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
- 
-    if (res->code == GET_REPLAYS)
+    MatchHistory** head;
+    int *game_id;
+    res->code = deleteReplay(head, game_id);
+
+    if (res->code == REPLAY_CONTROL)
     {      
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);
