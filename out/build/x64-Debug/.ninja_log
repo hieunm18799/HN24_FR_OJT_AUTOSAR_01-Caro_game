@@ -18,10 +18,8 @@
 940	1489	7471213572573786	CMakeFiles/server_app.dir/src/control/admin/replay_manage.c.obj	287682b666b1dca1
 1197	1785	7471213575698686	CMakeFiles/server_app.dir/src/model/users.c.obj	86227fe414b58b63
 983	1509	7471213572573786	CMakeFiles/server_app.dir/src/control/login/sign_up.c.obj	bbf03a748aa83ae6
-1189	1784	7471213575698686	CMakeFiles/server_app.dir/src/model/user_ini_write.c.obj	ccbad2694678cf03
 949	1469	7471213572417451	CMakeFiles/server_app.dir/src/control/admin/user_manage.c.obj	502ae72001eeddc5
 961	1487	7471213572573786	CMakeFiles/server_app.dir/src/control/login/sign_in.c.obj	c015add407aaa94c
-1182	1723	7471213575073685	CMakeFiles/server_app.dir/src/model/user_ini_read.c.obj	985532a413ca3dc4
 930	1478	7471213572417451	CMakeFiles/server_app.dir/src/common/protocol.c.obj	e712f1cb6cdaa4f3
 1021	1591	7471213573667585	CMakeFiles/server_app.dir/src/model/games.c.obj	37a912dae69e3b6
 1479	1824	7471213576011335	CMakeFiles/server_app.dir/src/server/server.c.obj	4e023e0cda2893d

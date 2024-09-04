@@ -4,6 +4,7 @@
 #include "top_screen.h"
 
 #define MAX_USERS 20
+<<<<<<< HEAD
 #define tableStartY 10
 #define column1 6
 #define column2 27
@@ -13,6 +14,8 @@
 #define column6 76
 #define column7 83
 
+=======
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
 int userId = 0;
 int selectedColumn;
 int clickedRow;
@@ -53,6 +56,7 @@ void frameUserManagement() {
     gotoxy(40, 4); printf("[ Delete ]");
     gotoxy(30, 6); printf("[  Back  ]");
     gotoxy(0, 7);
+<<<<<<< HEAD
     printf("------------------------------------------------------------------------------------");
     gotoxy(0, 8); printf("|");
     gotoxy(column1, 8); printf("|");
@@ -71,6 +75,11 @@ void frameUserManagement() {
     gotoxy(column5+1, 8); printf("Lose");
     gotoxy(column6+1, 8); printf("Draw");
 
+=======
+    printf("-------------------------------------------------------------------------------");
+    gotoxy(0, 8);
+    printf("|   STT   |   username   |     password     |   win   |   lose    |    draw    |");
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
     gotoxy(0, 9);
     printf("------------------------------------------------------------------------------------");
 
@@ -126,6 +135,7 @@ int handleUserRowClick() {
             userId = userDataArray[clickedRow].id;
             printf("Clicked on row %d with User ID: %d\n", clickedRow + 1, userId);
             
+<<<<<<< HEAD
             if (MousePos.X >= column2 && MousePos.X < column3) {
                 selectedColumn = 4;//password
             }
@@ -143,6 +153,19 @@ int handleUserRowClick() {
             else if (MousePos.X >= column6 && MousePos.X < column7) {
                 selectedColumn = 3;//draw
                 printf("draw");
+=======
+            if (MousePos.X >= 24 && MousePos.X < 43) {
+                selectedColumn = 4;
+            }
+            else if (MousePos.X >= 43 && MousePos.X < 53) {
+                selectedColumn = 1;
+            }
+            else if (MousePos.X >= 53 && MousePos.X < 65) {
+                selectedColumn = 2;
+            }
+            else if (MousePos.X >= 63 && MousePos.X < 78) {
+                selectedColumn = 3;
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
             }
         }
     }
@@ -164,6 +187,7 @@ void handleOnScreenUserManagement() {
     }
 }
 
+<<<<<<< HEAD
 //ham nhap du lieu 
 void enterData() {
     int i = 0;
@@ -185,6 +209,8 @@ void enterData() {
 }
 
 
+=======
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
 //xoa 1 nguoi dung
 //cac buoc xoa 1 nguoi dung
 //1. chon hang co nguoi dung muon xoa
@@ -241,7 +267,10 @@ void addUser() {
     userDataArray[numUsers - 1].id = numUsers;
     userDataArray[numUsers - 1].username[0] = '\0';
     userDataArray[numUsers - 1].password[0] = '\0';
+<<<<<<< HEAD
     userDataArray[numUsers - 1].role[0] = '\0';
+=======
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
     userDataArray[numUsers - 1].win[0] = '\0';
     userDataArray[numUsers - 1].lose[0] = '\0';
     userDataArray[numUsers - 1].draw[0] = '\0';
@@ -257,22 +286,37 @@ void addUser() {
 
     gotoxy(column2 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
+<<<<<<< HEAD
     strcpy_s(userDataArray[numUsers - 1].password, sizeof(userDataArray[numUsers].password), newData);
+=======
+    strcpy_s(userDataArray[numUsers-1].password, sizeof(userDataArray[numUsers].password), newData);
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
 
     gotoxy(column3 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
+<<<<<<< HEAD
     strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), newData);
+=======
+    strcpy_s(userDataArray[numUsers-1].win, sizeof(userDataArray[numUsers].win), newData);
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
 
     gotoxy(column4 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
+<<<<<<< HEAD
     strcpy_s(userDataArray[numUsers-1].win, sizeof(userDataArray[numUsers].win), newData);
+=======
+    strcpy_s(userDataArray[numUsers-1].lose, sizeof(userDataArray[numUsers].lose), newData);
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
 
     gotoxy(column5 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
+<<<<<<< HEAD
     strcpy_s(userDataArray[numUsers-1].lose, sizeof(userDataArray[numUsers].lose), newData);
 
     gotoxy(column6 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
+=======
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
     strcpy_s(userDataArray[numUsers-1].draw, sizeof(userDataArray[numUsers].draw), newData);
 
     // update the UI
@@ -280,7 +324,11 @@ void addUser() {
     displayUserData();
 }
 
+<<<<<<< HEAD
 //ham sua thong tin nguoi dung, ko sua id và username
+=======
+//ham sua thong tin nguoi dung, ko sua id vÃ  username
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
 //cac buoc sua thong tin
 //1. chon o can sua
 //2. nhan [edit]
@@ -294,6 +342,7 @@ void editUser() {
             break;
         }
     }
+<<<<<<< HEAD
     if (selectedColumn == 4) {//password
         userDataArray[foundIndex].password[0] = '\0';
         frameUserManagement();
@@ -301,6 +350,64 @@ void editUser() {
         gotoxy(column2+1, tableStartY + foundIndex * rowHeight);
         enterData();
         strcpy_s(userDataArray[foundIndex].password, sizeof(userDataArray[foundIndex].password), newData);
+=======
+    if (selectedColumn == 4) {
+        userDataArray[foundIndex].password[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(28, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].password, sizeof(userDataArray[foundIndex].password), newData);
+    }
+    else if (selectedColumn == 1) {
+        userDataArray[foundIndex].win[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(48, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].win, sizeof(userDataArray[foundIndex].win), newData);
+        printf("%d", selectedColumn);
+    }
+    else if (selectedColumn == 2) {
+        userDataArray[foundIndex].lose[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(59, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].lose, sizeof(userDataArray[foundIndex].lose), newData);
+    }
+    else if (selectedColumn == 3) {
+        userDataArray[foundIndex].draw[0] = '\0';
+        frameUserManagement();
+        displayUserData();
+        gotoxy(71, tableStartY + foundIndex * rowHeight);
+        enterData();
+        strcpy_s(userDataArray[foundIndex].draw, sizeof(userDataArray[foundIndex].draw), newData);
+    }
+    else {
+        printf("Invalid column selected.\n");
+    }
+    frameUserManagement();
+    displayUserData();
+}
+
+//ham nhap du lieu 
+void enterData() {
+    int i = 0;
+    char ch;
+    while ((ch = _getch()) != '\r') { // Enter key
+        if (ch == '\b') { // Backspace key
+            if (i > 0) {
+                i--;
+                printf("\b \b"); // Move back, overwrite with space, move back again
+            }
+        }
+        else if (ch != 0 && ch != '\xE0') { // Ignore special keys
+            newData[i] = ch;
+            i++;
+            printf("%c", ch); // Echo the character
+        }
+>>>>>>> 8b20996e5a94109d092cd32a0f53e0249acaba8c
     }
     else if (selectedColumn == 5) {//role
         userDataArray[foundIndex].role[0] = '\0';

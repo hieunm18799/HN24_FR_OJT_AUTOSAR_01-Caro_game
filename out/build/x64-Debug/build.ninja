@@ -278,22 +278,6 @@ build CMakeFiles\server_app.dir\src\model\games.c.obj: C_COMPILER__server_app_un
   TARGET_COMPILE_PDB = CMakeFiles\server_app.dir\
   TARGET_PDB = server_app.pdb
 
-build CMakeFiles\server_app.dir\src\model\user_ini_read.c.obj: C_COMPILER__server_app_unscanned_Debug D$:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\model\user_ini_read.c || cmake_object_order_depends_target_server_app
-  FLAGS = /DWIN32 /D_WINDOWS /Ob0 /Od /RTC1 -MDd -Zi -Wall -W1
-  INCLUDES = -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\common -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\model -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\view
-  OBJECT_DIR = CMakeFiles\server_app.dir
-  OBJECT_FILE_DIR = CMakeFiles\server_app.dir\src\model
-  TARGET_COMPILE_PDB = CMakeFiles\server_app.dir\
-  TARGET_PDB = server_app.pdb
-
-build CMakeFiles\server_app.dir\src\model\user_ini_write.c.obj: C_COMPILER__server_app_unscanned_Debug D$:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\model\user_ini_write.c || cmake_object_order_depends_target_server_app
-  FLAGS = /DWIN32 /D_WINDOWS /Ob0 /Od /RTC1 -MDd -Zi -Wall -W1
-  INCLUDES = -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\common -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\model -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\view
-  OBJECT_DIR = CMakeFiles\server_app.dir
-  OBJECT_FILE_DIR = CMakeFiles\server_app.dir\src\model
-  TARGET_COMPILE_PDB = CMakeFiles\server_app.dir\
-  TARGET_PDB = server_app.pdb
-
 build CMakeFiles\server_app.dir\src\model\users.c.obj: C_COMPILER__server_app_unscanned_Debug D$:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\model\users.c || cmake_object_order_depends_target_server_app
   FLAGS = /DWIN32 /D_WINDOWS /Ob0 /Od /RTC1 -MDd -Zi -Wall -W1
   INCLUDES = -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\common -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\model -ID:\carogame\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\view
@@ -326,7 +310,7 @@ build CMakeFiles\server_app.dir\src\server\server.c.obj: C_COMPILER__server_app_
 #############################################
 # Link the executable server_app.exe
 
-build server_app.exe: C_EXECUTABLE_LINKER__server_app_Debug CMakeFiles\server_app.dir\src\common\protocol.c.obj CMakeFiles\server_app.dir\src\control\admin\replay_manage.c.obj CMakeFiles\server_app.dir\src\control\admin\user_manage.c.obj CMakeFiles\server_app.dir\src\control\login\sign_in.c.obj CMakeFiles\server_app.dir\src\control\login\sign_out.c.obj CMakeFiles\server_app.dir\src\control\login\sign_up.c.obj CMakeFiles\server_app.dir\src\control\play_caro\find_game.c.obj CMakeFiles\server_app.dir\src\control\play_caro\play_caro.c.obj CMakeFiles\server_app.dir\src\control\replay_watch\show_replay.c.obj CMakeFiles\server_app.dir\src\model\games.c.obj CMakeFiles\server_app.dir\src\model\user_ini_read.c.obj CMakeFiles\server_app.dir\src\model\user_ini_write.c.obj CMakeFiles\server_app.dir\src\model\users.c.obj CMakeFiles\server_app.dir\src\server\handle_request.c.obj CMakeFiles\server_app.dir\src\server\server.c.obj
+build server_app.exe: C_EXECUTABLE_LINKER__server_app_Debug CMakeFiles\server_app.dir\src\common\protocol.c.obj CMakeFiles\server_app.dir\src\control\admin\replay_manage.c.obj CMakeFiles\server_app.dir\src\control\admin\user_manage.c.obj CMakeFiles\server_app.dir\src\control\login\sign_in.c.obj CMakeFiles\server_app.dir\src\control\login\sign_out.c.obj CMakeFiles\server_app.dir\src\control\login\sign_up.c.obj CMakeFiles\server_app.dir\src\control\play_caro\find_game.c.obj CMakeFiles\server_app.dir\src\control\play_caro\play_caro.c.obj CMakeFiles\server_app.dir\src\control\replay_watch\show_replay.c.obj CMakeFiles\server_app.dir\src\model\games.c.obj CMakeFiles\server_app.dir\src\model\users.c.obj CMakeFiles\server_app.dir\src\server\handle_request.c.obj CMakeFiles\server_app.dir\src\server\server.c.obj
   FLAGS = /DWIN32 /D_WINDOWS /Ob0 /Od /RTC1 -MDd -Zi
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = ws2_32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
