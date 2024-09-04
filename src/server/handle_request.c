@@ -199,22 +199,22 @@ bool handleControlReplay(int clientfd, Request *req, Response *res)
     }
 }
 
-bool handleshowReplay(int clientfd, Request *req, Response *res)
-{
-    char username[MAX_LENGTH];
-    strcpy(username, strtok(req->message, "@"));
-    MatchHistory *history;
-    ReplayData *replayDataArray;
-    int *numReplays;
-    res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
+// bool handleshowReplay(int clientfd, Request *req, Response *res)
+// {
+//     char username[MAX_LENGTH];
+//     strcpy(username, strtok(req->message, "@"));
+//     MatchHistory *history;
+//     ReplayData *replayDataArray;
+//     int *numReplays;
+//     res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
  
-    if (res->code == GET_REPLAYS)
-    {      
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return true;
-    }
-}
+//     if (res->code == GET_REPLAYS)
+//     {      
+//         setMessageResponse(res);
+//         sendRes(clientfd, res, sizeof(Response), 0);
+//         return true;
+//     }
+// }
 
 bool handleGetUsers(int clientfd, Request *req, Response *res) {
     printf("Message: %s\n", req->message);
