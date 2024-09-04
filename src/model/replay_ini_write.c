@@ -7,9 +7,9 @@
 
 // Hàm luu lich su tran dau vào file
 void saveMatchHistoryToIniFile(MatchHistory* global_replay, const char* filename) {
-    FILE* file = fopen(filename, "w");
+    FILE* file = fopen(filename, "a");
     if (file == NULL) {
-        printf("Không thể mở file %s để ghi.\n", filename);
+        printf("Can't open file %s to write.\n", filename);
         return;
     }
     int gameCount = 1;

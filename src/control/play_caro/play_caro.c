@@ -3,11 +3,11 @@
 
 #define WIN_CONDITION 4
 
-static int checkMove(Move *moves, unsigned char x, unsigned char y, unsigned char flag);
-static int checkWin(Game *game, unsigned char x, unsigned char y);
+static int checkMove(Move* moves, unsigned char x, unsigned char y, unsigned char flag);
+static int checkWin(Game* game, unsigned char x, unsigned char y);
 
-RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsigned char y, SOCKET *oppfd) {
-    Game *curGame = findGameById(game_id);
+RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsigned char y, SOCKET* oppfd) {
+    Game* curGame = findGameById(game_id);
 
     if (curGame == NULL || curGame->status == END || checkMove(curGame->moves, x, y, 0)) return PICK_FAIL;
     if (strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER2 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER1) return OTHER_PLAYER_TURN;
@@ -18,7 +18,7 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
     int res = addMove(curGame, x, y);
 
     if (res == 0) return PICK_FAIL;
-    User *oppUser = findUserByName(strcmp(username, curGame->player1_name) == 0 ? curGame->player2_name : curGame->player1_name);
+    User* oppUser = findUserByName(strcmp(username, curGame->player1_name) == 0 ? curGame->player2_name : curGame->player1_name);
     *oppfd = oppUser->clientfd;
     res = checkWin(curGame, x, y);
     curGame->status = curGame->status == PLAYER1 ? PLAYER2 : PLAYER1;
@@ -48,8 +48,8 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
     return PICK_SUCCESS;
 }
 
-RES_OPCODE redoAsk(char* username, unsigned int game_id, SOCKET *oppfd) {
-    Game *curGame = findGameById(game_id);
+RES_OPCODE redoAsk(char* username, unsigned int game_id, SOCKET* oppfd) {
+    Game* curGame = findGameById(game_id);
 
     if (curGame == NULL || curGame->status == END || strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER1 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER2) return REDO_FAIL;
     char oppUserName[MAX_LENGTH];
@@ -59,11 +59,11 @@ RES_OPCODE redoAsk(char* username, unsigned int game_id, SOCKET *oppfd) {
     return REDO_ASK_SUCCESS;
 }
 
-RES_OPCODE redoAgree(char* username, unsigned int game_id, SOCKET *oppfd, unsigned char *x, unsigned char *y) {
-    Game *curGame = findGameById(game_id);
+RES_OPCODE redoAgree(char* username, unsigned int game_id, SOCKET* oppfd, unsigned char* x, unsigned char* y) {
+    Game* curGame = findGameById(game_id);
 
     if (curGame == NULL || curGame->status == END || strcmp(username, curGame->player1_name) == 0 && curGame->status == PLAYER2 || strcmp(username, curGame->player2_name) == 0 && curGame->status == PLAYER1) return REDO_FAIL;
-    
+
     char oppUserName[MAX_LENGTH];
     strcpy(oppUserName, strcmp(curGame->player1_name, username) == 0 ? curGame->player2_name : curGame->player1_name);
     *oppfd = findUserByName(oppUserName)->clientfd;
@@ -72,18 +72,18 @@ RES_OPCODE redoAgree(char* username, unsigned int game_id, SOCKET *oppfd, unsign
     return REDO_SUCCESS;
 }
 
-RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *oppfd) {
-    Game *curGame = findGameById(game_id);
+RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET* oppfd) {
+    Game* curGame = findGameById(game_id);
 
     if (curGame == NULL) return QUIT_SUCCESS;
     switch (curGame->status) {
-        case NOT_PLAY:
-            deleteGame(game_id);
-        case END:
-            return QUIT_SUCCESS;
-            break;
-        default:
-            break;
+    case NOT_PLAY:
+        deleteGame(game_id);
+    case END:
+        return QUIT_SUCCESS;
+        break;
+    default:
+        break;
     }
 
     char oppUserName[MAX_LENGTH];
@@ -94,6 +94,7 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *oppfd) {
     increasedWins(findUserByName(oppUserName));
     increasedLosses(findUserByName(username));
     writeUsersIni();
+
     MatchHistory* global_replay = NULL; // Đây là con trỏ kiểu MatchHistory*
 
     // Thêm trận đấu vào danh sách
@@ -108,11 +109,12 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *oppfd) {
         global_replay = global_replay->next;
         free(temp);
     }
+
     return QUIT_SUCCESS;
 }
 
-static int checkMove(Move *moves, unsigned char x, unsigned char y, unsigned char flag) {
-    Move *temp;
+static int checkMove(Move* moves, unsigned char x, unsigned char y, unsigned char flag) {
+    Move* temp;
     if (flag != PLAYER2) temp = moves;
     else if (moves->next != NULL) temp = moves->next;
     while (temp != NULL) {
@@ -126,7 +128,7 @@ static int checkMove(Move *moves, unsigned char x, unsigned char y, unsigned cha
     return 0;
 }
 
-static int checkWin(Game *game, unsigned char last_x, unsigned char last_y) {
+static int checkWin(Game* game, unsigned char last_x, unsigned char last_y) {
     // Check horizontal
     int count = 1;
     for (int i = last_x - 1; i >= 0; i--) {
