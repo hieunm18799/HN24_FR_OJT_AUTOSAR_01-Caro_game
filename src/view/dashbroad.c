@@ -51,7 +51,8 @@ void frameDashboardAdmin(char* role, char* username) {
 		 startGame(sockfd, signed_in_username);
 	 }
 	else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
-		 //chuyen sang man hinh replay 
+		 //chuyen sang man hinh replay
+		 MAX_REPLAYS = 0;
 		getReplaysData(sockfd, signed_in_username);
 	 }
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
@@ -70,6 +71,7 @@ void frameDashboardAdmin(char* role, char* username) {
 	 }
 	 else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 //chuyen sang man hinh replay
+		 MAX_REPLAYS = 0;
 		getReplaysData(sockfd, signed_in_username);
 	 }
 
