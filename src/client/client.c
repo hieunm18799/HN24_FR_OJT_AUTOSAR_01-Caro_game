@@ -136,6 +136,7 @@ void startGUI(int sockfd) {
                     openAdminScreen();
                     break;
                 case VIEW_ADMIN_USER_MANAGE:
+                    handleUserRowClick();
                     handleOnScreenUserManagement();
                     break;
                 case VIEW_ADMIN_REPLAY_MANAGE:
