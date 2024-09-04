@@ -229,10 +229,10 @@ int MovePlayCaro() {  // Change return type to int
             // Check if the cell is empty
             pick(sockfd, game_id, signed_in_username, cell_x, cell_y);
 
-        if (board[cell_y][cell_x] == ' ') {
-            // Save the move in the board array
-            board[cell_y][cell_x] = move_sig;
-        }
+        // if (board[cell_y][cell_x] == ' ') {
+        //     // Save the move in the board array
+        //     board[cell_y][cell_x] = move_sig;
+        // }
 
 
 
@@ -267,7 +267,8 @@ void addPicked(char *username, unsigned char cell_x, unsigned char cell_y) {
     printf("%c", temp);
     last_move_x = cell_x;
     last_move_y = cell_y;
-    // board[cell_y][cell_x] = temp; // Update the board state
+    board[cell_y][cell_x] = temp; // Update the board state
+    // SetConsoleSize(console_width, console_height);
     // if (CheckWin(cell_x, cell_y)) {
     //     printMessagePlayCaro("Player %s won!", username);
     //     End_flag = 0; // End the game
@@ -386,7 +387,7 @@ void RedrawPlayCaroBoard () {
         gotoxy(AGREE_POSITION_X,AGREE_POSITION_Y);
         printf("[AGREE]");
 
-        gotoxy(QUIT_POSITION_X,QUIT_POSITION_Y);
+        gotoxy(QUIT_POSITION_X,QUIT_POSITION_Y); 
         printf("[QUIT]");
 
 
