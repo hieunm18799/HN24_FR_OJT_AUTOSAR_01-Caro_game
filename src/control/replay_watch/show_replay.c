@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "games.h"
+#include "users.h"
 
 
 // Hàm lấy lịch sử trận đấu của một người chơi cụ thể
@@ -34,7 +35,30 @@ RES_OPCODE fetchReplayDataForPlayer(MatchHistory *history, ReplayData *replayDat
     return GET_REPLAY_SUCCESS;
 }
 
+RES_OPCODE fetchReplayDataForAllPlayers(MatchHistory *history, ReplayData *replayDataArray, int *numReplays) {
+    int index = 0;
 
+    while (history != NULL && index < MAX_REPLAYS) {
+        // Sao chép dữ liệu trận đấu vào mảng replayDataArray
+        replayDataArray[index].id = history->game_id;
+
+        strncpy(replayDataArray[index].player1, history->player1_name, sizeof(replayDataArray[index].player1) - 1);
+        replayDataArray[index].player1[sizeof(replayDataArray[index].player1) - 1] = '\0';
+
+        strncpy(replayDataArray[index].player2, history->player2_name, sizeof(replayDataArray[index].player2) - 1);
+        replayDataArray[index].player2[sizeof(replayDataArray[index].player2) - 1] = '\0';
+
+        strncpy(replayDataArray[index].result, history->result, sizeof(replayDataArray[index].result) - 1);
+        replayDataArray[index].result[sizeof(replayDataArray[index].result) - 1] = '\0';
+
+        index++;
+        history = history->next;
+    }
+
+    *numReplays = index;
+
+    return GET_REPLAY_SUCCESS;
+}
 
 
 //// Hàm lưu lịch sử trận đấu vào file

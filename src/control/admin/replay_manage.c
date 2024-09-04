@@ -2,65 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include "games.h" // Để truy cập vào cấu trúc và danh sách các trận đấu
+#include "protocol.h"
 
+RES_OPCODE fetchDeleteReplay(MatchHistory **history, unsigned int game_id) {
+    // Kiểm tra nếu danh sách replay rỗng
+    if (*history == NULL) {
+        return DELETE_REPLAY_NOT_FOUND;  // Không tìm thấy replay
+    }
 
-//// Hàm xóa lịch sử đấu theo ID
-//int deleteReplay(MatchHistory** head, unsigned int game_id) {
-//    if (head == NULL || *head == NULL) {
-//        return 0; // Danh sách rỗng hoặc con trỏ head rỗng
-//    }
-//
-//    MatchHistory* current = *head;
-//    MatchHistory* previous = NULL;
-//
-//    // Duyệt qua danh sách để tìm trận đấu có game_id khớp
-//    while (current != NULL) {
-//        if (current->game_id == game_id) {
-//            // Nếu tìm thấy, cập nhật các liên kết để bỏ qua node này
-//            if (previous == NULL) {
-//                // Trường hợp node cần xóa là node đầu tiên
-//                *head = current->next;
-//            }
-//            else {
-//                // Trường hợp node cần xóa không phải là node đầu tiên
-//                previous->next = current->next;
-//            }
-//            free(current); // Giải phóng bộ nhớ của node bị xóa
-//            return 1; // Trả về 1 nếu xóa thành công
-//        }
-//        previous = current;
-//        current = current->next;
-//    }
-//
-//    return 0; // Trả về 0 nếu không tìm thấy game_id
-//}
+    // Gọi hàm deleteReplay để xóa replay dựa trên game_id
+    int result = deleteReplay(history, game_id);
 
-// RES_OPCODE deleteReplay(MatchHistory** head, int game_id) {
-//     if (head == NULL || *head == NULL) {
-//         return DELETE_REPLAY_FAILURE; // Danh sách rỗng hoặc con trỏ head rỗng
-//     }
-
-//     MatchHistory* current = *head;
-//     MatchHistory* previous = NULL;
-
-//     // Duyệt qua danh sách để tìm trận đấu có game_id khớp
-//     while (current != NULL) {
-//         if (current->game_id == game_id) {
-//             // Nếu tìm thấy, cập nhật các liên kết để bỏ qua node này
-//             if (previous == NULL) {
-//                 // Trường hợp node cần xóa là node đầu tiên
-//                 *head = current->next;
-//             }
-//             else {
-//                 // Trường hợp node cần xóa không phải là node đầu tiên
-//                 previous->next = current->next;
-//             }
-//             free(current); // Giải phóng bộ nhớ của node bị xóa
-//             return DELETE_REPLAY_SUCCESS; // Trả về mã thành công nếu xóa thành công
-//         }
-//         previous = current;
-//         current = current->next;
-//     }
-
-//     return DELETE_REPLAY_FAILURE; // Trả về mã lỗi nếu không tìm thấy game_id
-// }
+    if (result == 1) {
+        return DELETE_REPLAY_SUCCESS;  // Xóa replay thành công
+    } else {
+        return DELETE_REPLAY_NOT_FOUND;  // Không tìm thấy replay để xóa
+    }
+}
