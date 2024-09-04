@@ -213,15 +213,16 @@ bool handleshowReplay(int clientfd, Request *req, Response *res)
     MatchHistory *history;
     ReplayData *replayDataArray;
     int *numReplays;
-    res->code = fetchReplayDataForAllPlayers(history, replayDataArray, numReplays);
+    res->code = fetchReplayDataForPlayer(history, replayDataArray, numReplays);
+
  
-    if (res->code == GET_REPLAYS)
-    {      
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return true;
-    }
-}
+     if (res->code == GET_REPLAYS)
+     {      
+         setMessageResponse(res);
+         sendRes(clientfd, res, sizeof(Response), 0);
+         return true;
+     }
+ }
 
 bool handleGetUsers(int clientfd, Request *req, Response *res) {
     printf("Message: %s\n", req->message);

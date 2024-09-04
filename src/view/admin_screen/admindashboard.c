@@ -25,6 +25,8 @@ void openAdminScreen() {
 	if (MousePos.Y == 6 && MousePos.X >= 10 && MousePos.X <= 33) {
 		// chuyen sang user management
 		// frameUserManagement();
+		extern int numUsers;
+		numUsers = 0;
 		getUsersData(sockfd);
 	}
 	else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
