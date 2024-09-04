@@ -24,12 +24,25 @@ RES_OPCODE pickCaro(char* username, unsigned int game_id, unsigned char x, unsig
     curGame->status = curGame->status == PLAYER1 ? PLAYER2 : PLAYER1;
     if (res) {
         changeGame(curGame, "\0", "\0", username, END);
-        addReplay(curGame, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
-        printf("win\n");
-        saveMatchHistoryToIniFile("Re_play.ini", curGame);
         increasedWins(findUserByName(username));
         increasedLosses(findUserByName(oppUser->username));
         writeUsersIni();
+        // Tạo đối tượng MatchHistory từ dữ liệu Game
+        // Đảm bảo rằng matchHistoryList là con trỏ
+        MatchHistory* global_replay = NULL; // Đây là con trỏ kiểu MatchHistory*
+
+        // Thêm trận đấu vào danh sách
+        addReplay(&global_replay, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
+
+        // Gọi hàm lưu lịch sử trận đấu
+        saveMatchHistoryToIniFile(global_replay, "Re_play.ini");
+
+        // Giải phóng bộ nhớ đã cấp phát cho danh sách liên kết
+        while (global_replay != NULL) {
+            MatchHistory* temp = global_replay;
+            global_replay = global_replay->next;
+            free(temp);
+        }
         return YOU_WIN;
     }
     return PICK_SUCCESS;
@@ -78,12 +91,23 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET *oppfd) {
     *oppfd = findUserByName(oppUserName)->clientfd;
 
     changeGame(curGame, "\0", "\0", oppUserName, END);
-    // Gọi addReplay và saveMatchHistoryToIniFile
-    addReplay(curGame, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
-    saveMatchHistoryToIniFile("Re_play.ini", curGame);
     increasedWins(findUserByName(oppUserName));
     increasedLosses(findUserByName(username));
     writeUsersIni();
+    MatchHistory* global_replay = NULL; // Đây là con trỏ kiểu MatchHistory*
+
+    // Thêm trận đấu vào danh sách
+    addReplay(&global_replay, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
+
+    // Gọi hàm lưu lịch sử trận đấu
+    saveMatchHistoryToIniFile(global_replay, "Re_play.ini");
+
+    // Giải phóng bộ nhớ đã cấp phát cho danh sách liên kết
+    while (global_replay != NULL) {
+        MatchHistory* temp = global_replay;
+        global_replay = global_replay->next;
+        free(temp);
+    }
     return QUIT_SUCCESS;
 }
 
