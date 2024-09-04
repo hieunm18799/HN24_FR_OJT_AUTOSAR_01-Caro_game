@@ -206,7 +206,7 @@ bool handleshowReplay(int clientfd, Request *req, Response *res)
     MatchHistory *history;
     ReplayData *replayDataArray;
     int *numReplays;
-    res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
+    res->code = fetchReplayDataForPlayer(history, replayDataArray, numReplays);
  
     if (res->code == GET_REPLAYS)
     {      
