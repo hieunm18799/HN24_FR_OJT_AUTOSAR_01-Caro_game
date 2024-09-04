@@ -77,15 +77,15 @@ void handleClickOnWatchReplayScreen() {
 
         } else if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
          // Trở về màn hình SHOW REPLAY
-         replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
-		if (replayDataArray == NULL) {
-			printf("Không thể cấp phát bộ nhớ\n");
-			return;
-		}
+        //  replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
+		// if (replayDataArray == NULL) {
+		// 	printf("Không thể cấp phát bộ nhớ\n");
+		// 	return;
+		// }
 
         // handleReplayButton(move_data[14], move_data_count);
 		// Data fetching from server
-        fetchReplayInfoData();
+        // fetchReplayInfoData();
         
 		// Draw the initial UI
 		drawReplayInfoUI();

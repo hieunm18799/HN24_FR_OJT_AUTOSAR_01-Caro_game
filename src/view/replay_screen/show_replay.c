@@ -87,15 +87,15 @@ void handleOnScreenReplayInfo() {
 }
 
 
-void fetchReplayInfoData() {
-    // Simulate fetching replay data (example data)
-    for (int i = 0; i < MAX_REPLAYS; i++) {
-        replayDataArray[i].id = i + 1;
-        sprintf(replayDataArray[i].player1, "Player %d", i + 1);
-        sprintf(replayDataArray[i].player2, "Player %d", MAX_REPLAYS - i);
-        sprintf(replayDataArray[i].result, i % 2 == 0 ? "Win" : "Loss");
-    }
-}
+// void fetchReplayInfoData() {
+//     // Simulate fetching replay data (example data)
+//     for (int i = 0; i < MAX_REPLAYS; i++) {
+//         replayDataArray[i].id = i + 1;
+//         sprintf(replayDataArray[i].player1, "Player %d", i + 1);
+//         sprintf(replayDataArray[i].player2, "Player %d", MAX_REPLAYS - i);
+//         sprintf(replayDataArray[i].result, i % 2 == 0 ? "Win" : "Loss");
+//     }
+// }
 
 void addReplayData(unsigned int game_id, char *player1, char *player2, char *result) {
     if (player1 == NULL || player2 == NULL || result == NULL) return;
