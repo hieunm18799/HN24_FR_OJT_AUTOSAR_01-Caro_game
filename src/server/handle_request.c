@@ -206,22 +206,24 @@ bool handleControlReplay(int clientfd, Request *req, Response *res)
 }
 
 
-bool handleshowReplay(int clientfd, Request *req, Response *res)
+bool handleShowReplay(int clientfd, Request *req, Response *res)
 {
     char username[MAX_LENGTH];
     strcpy(username, strtok(req->message, "\0"));
-    ReplayData *replayDataArray;
-    int *numReplays;
-    res->code = fetchReplayDataForPlayer(replayDataArray, numReplays);
+    printf("%s\n", username);
+    ReplayData replayDataArray[100];
+    int numReplays = 0;
+    res->code = fetchReplayDataForPlayer(replayDataArray, &numReplays, username);
 
-    res->code = GET_REPLAY_CONTINUE;
+    res->code = GET_REPLAYS_CONTINUE;
     setMessageResponse(res);
     for (int index = 0; index < numReplays; index++) {
         snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c%s%c%s%c%s%c", replayDataArray[index].id , '@', replayDataArray[index].player1, '@', replayDataArray[index].player2, '@', replayDataArray[index].result, '\0');
+        printf("%s\n", res->data);
         sendRes(clientfd, res, sizeof(Response), 0);
     }
 
-    res->code = GET_REPLAY_SUCCESS;
+    res->code = GET_REPLAYS_SUCCESS;
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;

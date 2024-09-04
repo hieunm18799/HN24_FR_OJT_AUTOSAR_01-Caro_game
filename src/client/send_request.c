@@ -135,7 +135,7 @@ int getUsersData(int clientfd) {
 
 int getReplaysData(int clientfd, char *username) {
     Request *req = createRequest();
-    createGetReplaysDataRequest(STRING_REPLAY_CONTROL, req, username);
+    createGetReplaysDataRequest(STRING_GET_REPLAYS, req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;

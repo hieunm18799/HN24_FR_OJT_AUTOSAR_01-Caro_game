@@ -55,11 +55,12 @@ int readGetUsersContinue(char *input, char *username, char *password, char *role
     return 1;
 }
 
-int readGetUsersContinue(char *input, unsigned int *game_id, char *player1, char *player2, char *result){
+int readGetReplaysContinue(char *input, unsigned int *game_id, char *player1, char *player2, char *result){
     if (strcmp(input, "\0") == 0) return 0;
     *game_id = atoi(strtok(input, "@"));
     strcpy(player1, strtok(NULL, "@"));
     strcpy(player2, strtok(NULL, "@"));
     strcpy(result, strtok(NULL, "\0"));
+    printf("%d %s %s %s\n", *game_id, player1, player2, result);
     return 1;
 }

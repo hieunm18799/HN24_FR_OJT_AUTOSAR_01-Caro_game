@@ -159,16 +159,13 @@ int main(int argc, char *argv[]) {
                                 handleQuit(tempfd, req, res);
                                 break;
                                 case GET_REPLAYS:
-                          //      handleshowReplay(tempfd, req, res);
+                                handleShowReplay(tempfd, req, res);
                                 break;
                                 case REPLAY_CONTROL:
                                 handleControlReplay(tempfd, req, res);
                                 break;
                                 case GET_USERS:
                                 handleGetUsers(tempfd, req, res);
-                                break;
-                                case GET_GAMES:
-                                //
                                 break;
                                 case ADD_USER:
                                 handleAdminAddUser(tempfd, req, res);

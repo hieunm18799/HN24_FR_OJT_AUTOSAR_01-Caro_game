@@ -57,14 +57,7 @@ void frameDashboardAdmin(char* role, char* username) {
 			printf("Không thể cấp phát bộ nhớ\n");
 			return;
 		}
-		// Data fetching from server
-		fetchReplayInfoData();
-
-		// Draw the initial UI
-		drawReplayInfoUI();
-
-		// Display the fetched data
-		displayReplayInfoData();
+		getReplaysData(sockfd, signed_in_username);
 	 }
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
 		 frameAdminScreen();
@@ -87,15 +80,7 @@ void frameDashboardAdmin(char* role, char* username) {
 			printf("Không thể cấp phát bộ nhớ\n");
 			return;
 		}
-		// Data fetching from server
-		fetchReplayInfoData();
-
-
-		// Draw the initial UI
-		drawReplayInfoUI();
-
-		// Display the fetched data
-		displayReplayInfoData();
+		getReplaysData(sockfd, signed_in_username);
 	 }
 
 	 else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {

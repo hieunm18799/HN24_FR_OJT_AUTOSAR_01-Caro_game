@@ -109,7 +109,7 @@ void ReplayGameInfo(const MatchHistory *history) {
     printf("Kết quả: %s\n", history->result);
 
     // Vẽ bảng cờ trước khi phát lại các nước đi
-    DrawBoard();
+    DrawReplayBoard();
 
     int moves_replayed = 0;
     Move *current_move = history->moves;
