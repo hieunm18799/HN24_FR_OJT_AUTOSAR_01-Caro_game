@@ -38,7 +38,7 @@ void DrawReplayBoard() {
     printf("<X> Player: %s - %d Win %d - Lose",player1_username, player1_win, player1_lose);
 
     gotoxy(PLAYER_2_POSITION_X, PLAYER_2_POSITION_Y);
-    printf("<O> Player: %s - %d Win - %d Lose",player2_username, player2_win, player2_lose);
+    printf("<O> Player: %s - %d Win %d - Lose",player2_username, player2_win, player2_lose);
 
     gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y);
     for (int i = 0; i < board_height * 2 + 1; i++) {
@@ -96,12 +96,17 @@ void handleClickOnWatchReplayScreen() {
     // }
 }
 
-
 void ReplayGameInfo(const MatchHistory *history) {
     if (history == NULL || history->moves == NULL) {
         printf("No match history available.\n");
         return;
     }
+
+    // Hiển thị thông tin trận đấu
+    printf("Player 1: %s\n", history->player1_name);
+    printf("Player 2: %s\n", history->player2_name);
+    printf("Game ID: %u\n", history->game_id);
+    printf("Kết quả: %s\n", history->result);
 
     // Vẽ bảng cờ trước khi phát lại các nước đi
     DrawReplayBoard();
@@ -121,14 +126,16 @@ void ReplayGameInfo(const MatchHistory *history) {
             printf("O");
         }
 
+        // Cập nhật lại mảng `board[][]` với nước đi mới
+        board[current_move->y][current_move->x] = (moves_replayed % 2 == 0) ? 'X' : 'O';
+
         moves_replayed++;
         current_move = current_move->next;
 
         // Tạm dừng giữa các nước đi
         Sleep(1000);  // Pause for 1 second
     }
-
-    // Hiển thị thông báo và chờ người dùng nhấn phím trước khi kết thúc
     printf("\nReplay completed. Press any key to exit...");
     getchar(); // Đọc ký tự từ bàn phím để dừng chương trình
 }
+
