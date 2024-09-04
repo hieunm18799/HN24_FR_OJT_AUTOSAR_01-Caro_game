@@ -185,34 +185,14 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
 
 bool handleControlReplay(int clientfd, Request *req, Response *res)
 {
-    // Lấy tên người dùng từ yêu cầu
-    char *username = strtok(req->message, "@");
-
-    // Tìm kiếm người dùng dựa trên tên người dùng
-    User *user = findUserByName(username);
-    if (user == NULL) {
-        res->code = USERNAME_NOT_EXISTED;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return true;
-    }
-
+    char username[MAX_LENGTH];
+    strcpy(username, strtok(req->message, "@"));
     MatchHistory *history = NULL;
     ReplayData *replayDataArray = NULL;
     int numReplays = 0;
-
-    // Gọi hàm để lấy danh sách các trận đấu (replay) của người dùng
-    res->code = fetchReplayDataForPlayer(&history, user->username, &replayDataArray, &numReplays);
-    if (res->code != GET_REPLAYS) {
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return true;
-    }
-
     // Tiến hành xóa replay
     unsigned int game_id = atoi(strtok(NULL, "\0"));
     res->code = fetchDeleteReplay(&history, game_id);
-
     // Kiểm tra kết quả của việc xóa replay
     if (res->code == DELETE_REPLAY_SUCCESS) {
         setMessageResponse(res);

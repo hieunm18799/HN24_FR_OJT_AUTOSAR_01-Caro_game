@@ -1,4 +1,5 @@
 #include "top_screen.h"
+#include "E:\D\HN24_FR_OJT_AUTOSAR_01-Caro_game\src\control\replay_watch\show_replay.c"
 
 void frameDashboardAdmin(char* role, char* username) {
 	system("cls");
@@ -58,7 +59,6 @@ void frameDashboardAdmin(char* role, char* username) {
 			return;
 		}
 		// Data fetching from server
-		fetchReplayDataForAllPlayers();
 
 		// Draw the initial UI
 		drawReplayInfoUI();
@@ -88,9 +88,6 @@ void frameDashboardAdmin(char* role, char* username) {
 			return;
 		}
 		// Data fetching from server
-		fetchReplayDataForPlayer();
-
-
 		// Draw the initial UI
 		drawReplayInfoUI();
 

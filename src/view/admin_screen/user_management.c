@@ -107,7 +107,7 @@ void displayUserData() {
         printf("%-9s", userDataArray[i].password);
 
         gotoxy(column3 + 1, tableStartY + i * rowHeight);
-        printf("%02d", userDataArray[i].role);
+        printf("%-9s", userDataArray[i].role);
 
         gotoxy(column4 + 1, tableStartY + i  * rowHeight);
         printf("%-9s", userDataArray[i].win);
@@ -350,28 +350,9 @@ void editUser() {
     displayUserData();
 }
 
-//ham nhap du lieu 
-void enterData() {
-    int i = 0;
-    char ch;
-    while ((ch = _getch()) != '\r') { // Enter key
-        if (ch == '\b') { // Backspace key
-            if (i > 0) {
-                i--;
-                printf("\b \b"); // Move back, overwrite with space, move back again
-            }
-        }
-        else if (ch != 0 && ch != '\xE0') { // Ignore special keys
-            newData[i] = ch;
-            i++;
-            printf("%c", ch); // Echo the character
-        }
-    }
-    newData[i] = '\0'; // Null-terminate the string
-}
-
 void addUserData(char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws) {
     if (username == NULL || password == NULL || role == NULL) return;
+    userDataArray[numUsers].id = numUsers + 1;
     strcpy(userDataArray[numUsers].username, username);
     strcpy(userDataArray[numUsers].password, password);
     strcpy(userDataArray[numUsers].role, role);
