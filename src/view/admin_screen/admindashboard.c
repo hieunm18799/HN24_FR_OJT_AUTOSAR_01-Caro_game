@@ -38,7 +38,7 @@ void openAdminScreen() {
 			return;
 		}
 		// Data fetching from server
-		fetchReplayInfoData();
+		// fetchReplayInfoData();
 
 		// Draw the initial UI
 		drawReplayManagementUI();
