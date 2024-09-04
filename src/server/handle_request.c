@@ -210,7 +210,6 @@ bool handleShowReplay(int clientfd, Request *req, Response *res)
 {
     char username[MAX_LENGTH];
     strcpy(username, strtok(req->message, "\0"));
-    printf("%s\n", username);
     ReplayData replayDataArray[100];
     int numReplays = 0;
     res->code = fetchReplayDataForPlayer(replayDataArray, &numReplays, username);

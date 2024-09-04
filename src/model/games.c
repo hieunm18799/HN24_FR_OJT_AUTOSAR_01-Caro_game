@@ -56,9 +56,9 @@ unsigned int addGame(char *player1_name, char *player2_name) {
 
 // Thay đổi thông tin của một trận đấu
 int changeGame(Game *current, char *player1_name, char *player2_name, char *result, GAME_STATUS status) {
-    if (player1_name != "\0") strncpy(current->player1_name, player1_name, MAX_LENGTH);
-    if (player2_name != "\0")  strncpy(current->player2_name, player2_name, MAX_LENGTH);
-    if (result != "\0")  strncpy(current->result, result, MAX_LENGTH);
+    if ( strcmp (player1_name, "\0") != 0) strncpy(current->player1_name, player1_name, MAX_LENGTH);
+    if (strcmp (player2_name, "\0") != 0)  strncpy(current->player2_name, player2_name, MAX_LENGTH);
+    if (strcmp (result, "\0") != 0)  strncpy(current->result, result, MAX_LENGTH);
     current->status = status;
     return 1;
 }
@@ -173,7 +173,7 @@ void freeMoves(Game *game) {
 
 
 // Hàm thêm một replay vào danh sách
-void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves) {
+void addReplay(MatchHistory** head, char* player1_name, char* player2_name, unsigned int game_id, char* result, Move* moves) {
     MatchHistory* newNode = (MatchHistory*)malloc(sizeof(MatchHistory));
     if (newNode == NULL) {
         printf("Không thể cấp phát bộ nhớ cho trận đấu mới.\n");
@@ -181,7 +181,9 @@ void addReplay(MatchHistory** head, const char* player1_name, const char* player
     }
 
     strcpy(newNode->player1_name, player1_name);
+    printf("%s", newNode->player1_name);
     strcpy(newNode->player2_name, player2_name);
+    printf("%s", newNode->player2_name);
     newNode->game_id = game_id;
     strcpy(newNode->result, result);
     newNode->moves = moves; // Gán danh sách các nước đi

@@ -61,6 +61,6 @@ int readGetReplaysContinue(char *input, unsigned int *game_id, char *player1, ch
     strcpy(player1, strtok(NULL, "@"));
     strcpy(player2, strtok(NULL, "@"));
     strcpy(result, strtok(NULL, "\0"));
-    printf("%d %s %s %s\n", *game_id, player1, player2, result);
+    // printf("%d %s %s %s\n", *game_id, player1, player2, result);
     return 1;
 }
