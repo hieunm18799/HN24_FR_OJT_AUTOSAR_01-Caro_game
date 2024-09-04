@@ -12,7 +12,7 @@ void saveMatchHistoryToIniFile(MatchHistory* global_replay, const char* filename
         printf("Can't open file %s to write.\n", filename);
         return;
     }
-    int gameCount = 1;
+    static int gameCount = 1;
     while (global_replay != NULL) {
         fprintf(file, "[Game_%d]\n", gameCount);
         fprintf(file, "Player1=%s\n", global_replay->player1_name);
