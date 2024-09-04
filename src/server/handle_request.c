@@ -213,7 +213,7 @@ bool handleshowReplay(int clientfd, Request *req, Response *res)
     MatchHistory *history;
     ReplayData *replayDataArray;
     int *numReplays;
-    res->code = fetchReplayDataForPlayer(history, replayDataArray, numReplays);
+    res->code = fetchReplayDataForAllPlayers(history, replayDataArray, numReplays);
  
     if (res->code == GET_REPLAYS)
     {      
