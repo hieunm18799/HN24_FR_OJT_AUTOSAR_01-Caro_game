@@ -9,25 +9,34 @@ void initializeUser() {
     readUsersIni("Users.ini");
 }
 
-User *createUser(const char* username, const char* password, const char* role) {
+User *createUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
     User *res = (User*)malloc(sizeof(User));
     if (res == NULL) return NULL;
     strcpy(res->username, username);
     strcpy(res->password, password);
-    if (role == "") strcpy(res->role, "default");
+    if (role == NULL) strcpy(res->role, "default");
     else strcpy(res->role, role);
     strcpy(res->status, "NOT_SIGN_IN");
     res->clientfd = INVALID_SOCKET;
-    res->wins = 0;
-    res->losses = 0;
-    res->draws = 0;
+    res->wins = wins;
+    res->losses = losses;
+    res->draws = draws;
     return res;
 }
 
-void newUser(const char* username, const char* password, const char* role) {
-    User* newUser = createUser(username, password, role);
+void newUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    User* newUser = createUser(username, password, role, wins, losses, draws);
     newUser->next = userList;
     userList = newUser;
+}
+
+void changeUser(User *user, const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    strcpy(user->username, username);
+    strcpy(user->password, password);
+    strcpy(user->role, role);
+    user->wins = wins;
+    user->losses = losses;
+    user->draws = draws;
 }
 
 bool setUserStatus(const char* username, const char* status) {
@@ -50,7 +59,7 @@ void increasedLosses(User *user) {
     user->losses++;
 }
 
-void deleteUser(const char* username) {
+int deleteUser(const char* username) {
     User* current = userList;
     User* prev = NULL;
     while (current != NULL) {
@@ -61,12 +70,12 @@ void deleteUser(const char* username) {
                 prev->next = current->next;
             }
             free(current);
-            writeUsersIni();
-            return;
+            return 1;
         }
         prev = current;
         current = current->next;
     }
+    return 0;
 }
 
 char* getUserRole(const char* username) {
