@@ -12,6 +12,10 @@ void createPickClientRequest(char *opcode, Request *req, unsigned int game_id, c
 void createQuitClientRequest(char *opcode, Request *req, unsigned int game_id, char *username);
 void createRedoAskRequest(char *opcode, Request *req, unsigned int game_id, char* username);
 void createRedoAgreeRequest(char *opcode, Request *req, unsigned int game_id, char* username);
+void createGetUsersDataRequest(char *opcode, Request *req);
+void createAdminAddUserRequest(char *opcode, Request *req, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
+void createAdminEditUserRequest(char *opcode, Request *req, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
+void createAdminDeleteUserRequest(char *opcode, Request *req, char *username);
 
 int signin(int clientfd, char* username, char* password);
 int signup(int clientfd, char* username, char* password, char* confirm_pass);
@@ -22,6 +26,10 @@ int pick(int clientfd, unsigned int game_id, char* username, unsigned char x, un
 int redoAsk(int clientfd, char *username, unsigned int game_id);
 int redoAgree(int clientfd, char *username, unsigned int game_id);
 int quit(int clientfd, unsigned int game_id, char *username);
+int getUsersData(int clientfd);
+int adminAddUser(int clientfd, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
+int adminEditUser(int clientfd, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws);
+int adminDeleteUser(int clientfd, char *username);
 
 int signup(int clientfd, char* username, char* password, char* confirm_pass) {
     Request *req = createRequest();
@@ -113,7 +121,48 @@ int quit(int clientfd, unsigned int game_id, char *username) {
     return 1;
 }
 
+int getUsersData(int clientfd) {
+    Request *req = createRequest();
+    createGetUsersDataRequest(STRING_GET_USERS, req);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    free(req);
+    return 1;
+}
+
+int adminAddUser(int clientfd, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    Request *req = createRequest();
+    createAdminAddUserRequest(STRING_ADD_USER, req, username, password, role, wins, losses, draws);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    free(req);
+    return 1;
+}
+int adminEditUser(int clientfd, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    Request *req = createRequest();
+    createAdminEditUserRequest(STRING_ADD_USER, req, username, password, role, wins, losses, draws);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    free(req);
+    return 1;
+}
+
+int adminDeleteUser(int clientfd, char *username) {
+    Request *req = createRequest();
+    createAdminDeleteUserRequest(STRING_ADD_USER, req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    free(req);
+    return 1;
+}
+
+////////////////////////////////////////////////////////
 /*Create request*/
+////////////////////////////////////////////////////////
 void createSignInRequest(char *opcode, char *username, char *pass, Request *req) {
     char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
@@ -187,5 +236,29 @@ void createQuitClientRequest(char *opcode, Request *req, unsigned int game_id, c
     // strcat(sendbuff, " ");
     // strcat(sendbuff, username);
     snprintf(sendbuff, sizeof(sendbuff), "%s %s%c%d%c", opcode, username, '@', game_id, '\0');
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createGetUsersDataRequest(char *opcode, Request *req) {
+    char sendbuff[MAX_LENGTH];
+    snprintf(sendbuff, sizeof(sendbuff), "%s Admin get users!%c", opcode, '\0');
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createAdminAddUserRequest(char *opcode, Request *req, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    char sendbuff[MAX_LENGTH];
+    snprintf(sendbuff, sizeof(sendbuff), "%s %s%c%s%c%s%c%d%c%d%c%d%c", opcode, username, '@', password, '@', role, '@', wins, '@', losses, '@', draws, '\0');
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createAdminEditUserRequest(char *opcode, Request *req, char *username, char *password, char *role, unsigned int wins, unsigned int losses, unsigned int draws) {
+    char sendbuff[MAX_LENGTH];
+    snprintf(sendbuff, sizeof(sendbuff), "%s %s%c%s%c%s%c%d%c%d%c%d%c", opcode, username, '@', password, '@', role, '@', wins, '@', losses, '@', draws, '\0');
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createAdminDeleteUserRequest(char *opcode, Request *req, char *username) {
+    char sendbuff[MAX_LENGTH];
+    snprintf(sendbuff, sizeof(sendbuff), "%s %s%c", opcode, username, '\0');
     setOpcodeRequest(req, sendbuff);
 }

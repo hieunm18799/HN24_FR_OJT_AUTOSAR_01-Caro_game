@@ -44,10 +44,10 @@ bool handleSignin(int clientfd, Request *req, Response *res) {
 }
 
 bool handleSignout(int clientfd, Request *req, Response *res) {
-    char username[MAX_LENGTH];
+    char *username;
     
     printf("Message: %s\n", req->message);
-    strcpy(username, strtok(req->message, "\0"));
+    username = strtok(req->message, "\0");
     res->code = sign_out(clientfd, username);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
@@ -55,11 +55,11 @@ bool handleSignout(int clientfd, Request *req, Response *res) {
 }
 
 bool handleFindGame(int clientfd, Request *req, Response *res) {
-    char username[MAX_LENGTH];
+    char *username;
     unsigned int game_id;
     printf("Message: %s\n", req->message);
-    strcpy(username, strtok(req->message, "\0"));
-    User *hostPlayer = createUser("", "", "");
+    username = strtok(req->message, "\0");
+    User *hostPlayer = createUser("", "", "", 0, 0, 0);
     User *curUser = findUserByName(username);
     res->code = findGame(curUser, &game_id, hostPlayer);
 
@@ -90,9 +90,9 @@ bool handleFindGame(int clientfd, Request *req, Response *res) {
 
 bool handlePick(int clientfd, Request *req, Response *res) {
     printf("Message: %s\n", req->message);
-    char username[MAX_LENGTH];
+    char *username;
     SOCKET opofd;
-    strcpy(username, strtok(req->message, "@"));
+    username = strtok(req->message, "@");
     unsigned int game_id = atoi(strtok(NULL, "@"));
     unsigned char x = atoi(strtok(NULL, "@")), y = atoi(strtok(NULL, "\0"));
 
@@ -125,9 +125,9 @@ bool handlePick(int clientfd, Request *req, Response *res) {
 }
 
 bool handleRedoAsk(int clientfd, Request *req, Response *res) {
-    char username[MAX_LENGTH];
+    char username;
     SOCKET opofd;
-    strcpy(username, strtok(req->message, "@"));
+    username = strtok(req->message, "@");
     unsigned int game_id = atoi(strtok(NULL, "\0"));
     res->code = redoAsk(username, game_id, &opofd);
     setMessageResponse(res);
@@ -140,10 +140,10 @@ bool handleRedoAsk(int clientfd, Request *req, Response *res) {
 }
 
 bool handleRedoAgree(int clientfd, Request *req, Response *res) {
-    char username[MAX_LENGTH];
+    char *username;
     SOCKET opofd;
     unsigned char x, y;
-    strcpy(username, strtok(req->message, "@"));
+    username = strtok(req->message, "@");
     unsigned int game_id = atoi(strtok(NULL, "\0"));
 
     res->code = redoAgree(username, game_id, &opofd, &x, &y);
@@ -166,9 +166,9 @@ bool handleRedoAgree(int clientfd, Request *req, Response *res) {
 }
 
 bool handleQuit(int clientfd, Request *req, Response *res) {
-    char username[MAX_LENGTH];
+    char *username;
     SOCKET opofd = SOCKET_ERROR;
-    strcpy(username, strtok(req->message, "@"));
+    username = strtok(req->message, "@");
     unsigned int game_id = atoi(strtok(NULL, "\0"));
 
     res->code = quitLogic(username, game_id, &opofd);
@@ -181,23 +181,6 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
         sendRes(opofd, res, sizeof(Response), 0);
     }
     return true;
-}
-
-bool handleshowReplay(int clientfd, Request *req, Response *res)
-{
-    char username[MAX_LENGTH];
-    strcpy(username, strtok(req->message, "@"));
-    MatchHistory *history;
-    ReplayData *replayDataArray;
-    int *numReplays;
-    res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
- 
-    if (res->code == GET_REPLAYS)
-    {      
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-        return true;
-    }
 }
 
 bool handleControlReplay(int clientfd, Request *req, Response *res)
@@ -214,4 +197,67 @@ bool handleControlReplay(int clientfd, Request *req, Response *res)
         sendRes(clientfd, res, sizeof(Response), 0);
         return true;
     }
+}
+
+bool handleGetUsers(int clientfd, Request *req, Response *res) {
+    printf("Message: %s\n", req->message);
+    User *temp = getUsers();
+    
+    res->code = GET_USERS_CONTINUE;
+    setMessageResponse(res);
+    while (temp != NULL) {
+        snprintf(res->data, sizeof(char) * MAX_LENGTH, "%s%c%s%c%s%c%d%c%d%c%d%c", temp->username, '@', temp->password, '@', temp->role, '@', temp->wins, '@', temp->losses, '@', temp->draws, '\0');
+        sendRes(clientfd, res, sizeof(Response), 0);
+        temp = temp->next;
+    }
+
+    res->code = GET_USERS_SUCCESS;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
+bool handleAdminAddUser(int clientfd, Request *req, Response *res) {
+    printf("Message: %s\n", req->message);
+    char *username, *password, *role;
+    unsigned int wins, losses, draws;
+    username = strtok(req->message, "@");
+    password = strtok(NULL, "@");
+    role = strtok(NULL, "@");
+    wins = atoi(strtok(NULL, "@"));
+    losses = atoi(strtok(NULL, "@"));
+    draws = atoi(strtok(NULL, "\0"));
+    
+    res->code = adminAddUser(username, password, role, wins, losses, draws);
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
+bool handleAdminEditUser(int clientfd, Request *req, Response *res) {
+    printf("Message: %s\n", req->message);
+    char *username, *password, *role;
+    unsigned int wins, losses, draws;
+    username = strtok(req->message, "@");
+    password = strtok(NULL, "@");
+    role = strtok(NULL, "@");
+    wins = atoi(strtok(NULL, "@"));
+    losses = atoi(strtok(NULL, "@"));
+    draws = atoi(strtok(NULL, "\0"));
+    
+    res->code = adminEditUser(username, password, role, wins, losses, draws);
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
+bool handleAdminDeleteUser(int clientfd, Request *req, Response *res) {
+    printf("Message: %s\n", req->message);
+    char *username;
+    username = strtok(req->message, "\0");
+    
+    res->code = adminDeleteUser(username);
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
 }

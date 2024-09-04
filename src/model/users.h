@@ -20,17 +20,17 @@ typedef struct User {
 } User;
 
 static char userFileName[] = "Users.ini";
-extern User* userList;
 
 // Hàm quản lý người dùng
 void initializeUser();                        // Khởi tạo danh sách người dùng từ Users.ini
-User *createUser(const char* username, const char* password, const char* role);
-void newUser(const char* username, const char* password, const char* role);  // Tạo người dùng mới
+User *createUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws);
+void newUser(const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws);  // Tạo người dùng mới
+void changeUser(User *user, const char* username, const char* password, const char* role, unsigned int wins, unsigned int losses, unsigned int draws);  // Tạo người dùng mới
 bool setUserStatus(const char* username, const char* status);  // Cập nhật trạng thái người dùng
 void increasedWins(User *user);
 void increasedLosses(User *user);
 User *findUserByName(const char* username);
-void deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
+int deleteUser(const char* username);       // Xóa người dùng khỏi danh sách và cập nhật tệp INI
 User* getUsers();                            // Lấy danh sách người dùng
 char* getUserRole(const char* username);      // Lấy role người dùng
 void freeUsers();
