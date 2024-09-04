@@ -87,7 +87,15 @@ void handleClickOnSigninScreen() {
     }
 }
 
+void clearMessageLine() {
+    gotoxy(10, 20);
+    for (int i = 0; i < 50; i++) {
+        printf(" "); // Ghi đè bằng khoảng trắng
+    }
+}
+
 void showErrorNotification(const char* errorMessage) {
+    clearMessageLine();
     gotoxy(10, 20);
     printf("Error: %s", errorMessage);
 }

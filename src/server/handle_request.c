@@ -185,28 +185,56 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
 
 bool handleControlReplay(int clientfd, Request *req, Response *res)
 {
-    char username[MAX_LENGTH];
-    strcpy(username, strtok(req->message, "@"));
-    MatchHistory** head;
-    int *game_id;
-    res->code = deleteReplay(head, game_id);
+    // Lấy tên người dùng từ yêu cầu
+    char *username = strtok(req->message, "@");
 
-    if (res->code == REPLAY_CONTROL)
-    {      
+    // Tìm kiếm người dùng dựa trên tên người dùng
+    User *user = findUserByName(username);
+    if (user == NULL) {
+        res->code = USERNAME_NOT_EXISTED;
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);
         return true;
     }
+
+    MatchHistory *history = NULL;
+    ReplayData *replayDataArray = NULL;
+    int numReplays = 0;
+
+    // Gọi hàm để lấy danh sách các trận đấu (replay) của người dùng
+    res->code = fetchReplayDataForPlayer(&history, user->username, &replayDataArray, &numReplays);
+    if (res->code != GET_REPLAYS) {
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return true;
+    }
+
+    // Tiến hành xóa replay
+    unsigned int game_id = atoi(strtok(NULL, "\0"));
+    res->code = fetchDeleteReplay(&history, game_id);
+
+    // Kiểm tra kết quả của việc xóa replay
+    if (res->code == DELETE_REPLAY_SUCCESS) {
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+    } else {
+        res->code = DELETE_REPLAY_NOT_FOUND;
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+    }
+    return true;
 }
 
-// bool handleshowReplay(int clientfd, Request *req, Response *res)
-// {
-//     char username[MAX_LENGTH];
-//     strcpy(username, strtok(req->message, "@"));
-//     MatchHistory *history;
-//     ReplayData *replayDataArray;
-//     int *numReplays;
-//     res->code = fetchReplayDataForDisplay(history, replayDataArray, numReplays);
+
+bool handleshowReplay(int clientfd, Request *req, Response *res)
+{
+    char username[MAX_LENGTH];
+    strcpy(username, strtok(req->message, "@"));
+    MatchHistory *history;
+    ReplayData *replayDataArray;
+    int *numReplays;
+    res->code = fetchReplayDataForPlayer(history, replayDataArray, numReplays);
+
  
 //     if (res->code == GET_REPLAYS)
 //     {      

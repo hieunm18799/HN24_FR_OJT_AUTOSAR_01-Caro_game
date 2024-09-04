@@ -36,9 +36,11 @@ typedef struct MatchHistory {
     char player2_name[MAX_LENGTH];
     unsigned int game_id;
     char result[MAX_LENGTH];
-    unsigned char moves[BOARD_LENGTH * BOARD_LENGTH * 2];
+    Move *moves;
     struct MatchHistory *next;
 } MatchHistory;
+
+extern MatchHistory* global_replay; // Khai báo biến toàn cục
 
 // Định nghĩa cấu trúc để giữ dữ liệu replay
 typedef struct {
@@ -59,5 +61,7 @@ int getGamesByUsername(char *username);
 Game *getGames();
 void freeGames();
 void freeMoves(Game *game);
+//void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves)void saveMatchHistoryToIniFile(MatchHistory* history, const char* filename);
+MatchHistory* loadMatchHistoryFromFile(const char* filename);
 
 #endif
