@@ -126,11 +126,11 @@ void setMessageResponse(Response *msg) {
         case GET_USERS_FAIL:
             strcpy(msg->message, "Get users failed!");
             break;
-        case GET_GAMES_SUCCESS:
-            strcpy(msg->message, "Get games done!");
+        case GET_REPLAYS_SUCCESS:
+            strcpy(msg->message, "Get replays done!");
             break;
-        case GET_GAMES_FAIL:
-            strcpy(msg->message, "Get games failed!");
+        case GET_REPLAYS_FAIL:
+            strcpy(msg->message, "Get replays failed!");
             break;
         case ADD_USER_SUCCESS:
             strcpy(msg->message, "Added user!");
@@ -156,8 +156,8 @@ void setMessageResponse(Response *msg) {
         case DELETE_GAME_FAIL:
             strcpy(msg->message, "Game not deleted!");
             break;
-        case GET_REPLAY_SUCCESS:
-            strcpy(msg->message, "Get replays done!");
+        case GET_REPLAYS_CONTINUE:
+            strcpy(msg->message, "Getting replays!");
             break;
         default:
             strcpy(msg->message, "No Message!");
@@ -194,8 +194,8 @@ void setOpcodeRequest(Request *req, char *input) {
         req->code = GET_REPLAYS;
     else if (strcmp(code, STRING_GET_USERS) == 0)
         req->code = GET_USERS;
-    else if (strcmp(code, STRING_GET_GAMES) == 0)
-        req->code = GET_GAMES;
+    else if (strcmp(code, STRING_GET_REPLAYS) == 0)
+        req->code = GET_REPLAYS;
     else if (strcmp(code, STRING_ADD_USER) == 0)
         req->code = ADD_USER;
     else if (strcmp(code, STRING_ADD_USER) == 0)
