@@ -38,7 +38,14 @@ unsigned int addGame(char *player1_name, char *player2_name) {
         return 0;
     }
 
-    newGame->id = gameCount + 1;  // ID cho trận đấu mới
+    UUID uuid;
+
+    // Create the UUID
+    if (UuidCreate(&uuid) == RPC_S_OK) {
+        // Use the first 4 bytes of the UUID as an unsigned int
+        newGame->id = *(unsigned int*)(&uuid);
+        printf("Generated unsigned int UUID: %u\n", newGame->id);
+    }
     strcpy(newGame->player1_name, player1_name);
     strcpy(newGame->player2_name, player2_name);
     strcpy(newGame->result, "");

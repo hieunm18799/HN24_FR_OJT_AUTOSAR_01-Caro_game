@@ -2,6 +2,9 @@
 #define GAMES_H
 
 #include "protocol.h"
+#include <rpcdce.h>  // for UuidCreate and UUID structure
+
+#pragma comment(lib, "Rpcrt4.lib") // Link the Rpcrt4.lib for UUID functions
 
 extern int MAX_REPLAYS;
 
