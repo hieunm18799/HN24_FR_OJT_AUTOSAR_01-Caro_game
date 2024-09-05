@@ -3,27 +3,26 @@
 #include <string.h>
 #include "games.h"
 
-
-
-
-void sendReplayData(MatchHistory* replay) {
-    if (replay == NULL) {
-        printf("Không có dữ liệu để hiển thị.\n");
-        return;
+RES_OPCODE watchReplay(unsigned int replay_id, char *moves) {
+    MatchHistory *history = loadMatchHistoryFromFile("Re_play.ini");
+    
+    while (history != NULL) {
+        // Kiểm tra nếu người chơi cụ thể là một trong hai người chơi trong trận đấu
+        if (history->game_id == replay_id) {
+            // Sao chép dữ liệu trận đấu vào mảng replayDataArray
+            Move *temp = history->moves;
+            strcpy(moves, "\0");
+            while (temp != NULL) {
+                char str[50];
+                if (temp->next == NULL) sprintf(str, "%d%c%d%c", temp->x, '-', temp->y, '\0');
+                else sprintf(str, "%d%c%d%c", temp->x, '-', temp->y, '@');
+                strcat(moves, str);
+                temp = temp->next;
+            }
+            return GET_REPLAYID_MOVES_SUCCESS;
+        }
+        history = history->next;
     }
 
-    // Gửi tên người chơi và ID game
-    printf("Player 1: %s\n", replay->player1_name);
-    printf("Player 2: %s\n", replay->player2_name);
-    printf("Game ID: %u\n", replay->game_id);
-    printf("Kết quả: %s\n", replay->result);
-
-    // Hiển thị thứ tự các nước đi
-    Move* currentMove = replay->moves;
-    int moveNumber = 1;
-    while (currentMove != NULL) {
-        printf("Nước đi %d: (%d, %d)\n", moveNumber, currentMove->x, currentMove->y);
-        moveNumber++;
-        currentMove = currentMove->next;
-    }
+    return GET_REPLAYID_MOVES_FAIL;
 }

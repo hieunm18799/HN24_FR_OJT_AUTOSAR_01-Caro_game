@@ -206,23 +206,45 @@ bool handleControlReplay(int clientfd, Request *req, Response *res)
 }
 
 
-bool handleshowReplay(int clientfd, Request *req, Response *res)
+bool handleShowReplay(int clientfd, Request *req, Response *res)
 {
     char username[MAX_LENGTH];
-    strcpy(username, strtok(req->message, "@"));
-    MatchHistory *history;
-    ReplayData *replayDataArray;
-    int *numReplays;
-    res->code = fetchReplayDataForPlayer(history, replayDataArray, numReplays);
+    strcpy(username, strtok(req->message, "\0"));
+    ReplayData replayDataArray[100];
+    int numReplays = 0;
+    res->code = fetchReplayDataForPlayer(replayDataArray, &numReplays, username);
 
- 
-     if (res->code == GET_REPLAYS)
-     {      
-         setMessageResponse(res);
-         sendRes(clientfd, res, sizeof(Response), 0);
-         return true;
-     }
- }
+    res->code = GET_USERNAME_REPLAYS_CONTINUE;
+    setMessageResponse(res);
+    for (int index = 0; index < numReplays; index++) {
+        snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c%s%c%s%c%s%c", replayDataArray[index].id , '@', replayDataArray[index].player1, '@', replayDataArray[index].player2, '@', replayDataArray[index].result, '\0');
+        sendRes(clientfd, res, sizeof(Response), 0);
+    }
+
+    res->code = GET_USERNAME_REPLAYS_SUCCESS;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
+bool handleShowAllReplayData(int clientfd, Request *req, Response *res)
+{
+    ReplayData replayDataArray[100];
+    int numReplays = 0;
+    res->code = fetchReplayDataForAllPlayers(replayDataArray, &numReplays);
+
+    res->code = GET_ALL_REPLAYS_CONTINUE;
+    setMessageResponse(res);
+    for (int index = 0; index < numReplays; index++) {
+        snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c%s%c%s%c%s%c", replayDataArray[index].id , '@', replayDataArray[index].player1, '@', replayDataArray[index].player2, '@', replayDataArray[index].result, '\0');
+        sendRes(clientfd, res, sizeof(Response), 0);
+    }
+
+    res->code = GET_ALL_REPLAYS_SUCCESS;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
 
 bool handleGetUsers(int clientfd, Request *req, Response *res) {
     printf("Message: %s\n", req->message);
@@ -283,6 +305,21 @@ bool handleAdminDeleteUser(int clientfd, Request *req, Response *res) {
     
     res->code = adminDeleteUser(username);
     setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
+bool handleWatchReplay(int clientfd, Request *req, Response *res) {
+    printf("Message: %s\n", req->message);
+    unsigned int replay_id;
+    replay_id = atoi(strtok(req->message, "\0"));
+    char moves[MAX_LENGTH];
+    moves[0] = '\0';
+    
+    res->code = watchReplay(replay_id, moves);
+    setMessageResponse(res);
+    strcpy(res->data, moves);
+    printf("%s\n", res->data);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
 }

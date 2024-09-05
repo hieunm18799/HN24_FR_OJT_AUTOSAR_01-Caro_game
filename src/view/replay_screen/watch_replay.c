@@ -38,7 +38,7 @@ void DrawReplayBoard() {
     printf("<X> Player: %s - %d Win %d - Lose",player1_username, player1_win, player1_lose);
 
     gotoxy(PLAYER_2_POSITION_X, PLAYER_2_POSITION_Y);
-    printf("<O> Player: %s - %d Win - %d Lose",player2_username, player2_win, player2_lose);
+    printf("<O> Player: %s - %d Win %d - Lose",player2_username, player2_win, player2_lose);
 
     gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y);
     for (int i = 0; i < board_height * 2 + 1; i++) {
@@ -77,59 +77,65 @@ void handleClickOnWatchReplayScreen() {
 
         } else if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
          // Trở về màn hình SHOW REPLAY
-         replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
-		if (replayDataArray == NULL) {
-			printf("Không thể cấp phát bộ nhớ\n");
-			return;
-		}
+        //  replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
+		// if (replayDataArray == NULL) {
+		// 	printf("Không thể cấp phát bộ nhớ\n");
+		// 	return;
+		// }
 
-        // handleReplayButton(move_data[14], move_data_count);
-		// Data fetching from server
-        fetchReplayInfoData();
+        // // handleReplayButton(move_data[14], move_data_count);
+		// // Data fetching from server
+        // fetchReplayInfoData();
         
-		// Draw the initial UI
-		drawReplayInfoUI();
+		// // Draw the initial UI
+		// drawReplayInfoUI();
 
-		// Display the fetched data
-		displayReplayInfoData();
+		// // Display the fetched data
+		// displayReplayInfoData();
         }
     // }
 }
 
-
-void ReplayGameInfo(char board[MAXIMUM_SIZE][MAXIMUM_SIZE]) {
-    int move_count = 0;
-
-    // Calculate the total number of moves from the board
-    for (int cell_x = 0; cell_x < MAXIMUM_SIZE; ++cell_x) {
-        for (int cell_y = 0; cell_y < MAXIMUM_SIZE; ++cell_y) {
-            if (board[cell_x][cell_y] == 'X' || board[cell_x][cell_y] == 'O') {
-                move_count++;
-            }
-        }
+void ReplayGameInfo(const MatchHistory *history) {
+    if (history == NULL || history->moves == NULL) {
+        printf("No match history available.\n");
+        return;
     }
+
+    // Hiển thị thông tin trận đấu
+    printf("Player 1: %s\n", history->player1_name);
+    printf("Player 2: %s\n", history->player2_name);
+    printf("Game ID: %u\n", history->game_id);
+    printf("Kết quả: %s\n", history->result);
+
+    // Vẽ bảng cờ trước khi phát lại các nước đi
+    DrawReplayBoard();
 
     int moves_replayed = 0;
+    Move *current_move = history->moves;
 
-    // Iterate over the board to replay the moves
-    for (int cell_x = 0; cell_x < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_x) {
-        for (int cell_y = 0; cell_y < MAXIMUM_SIZE && moves_replayed < move_count; ++cell_y) {
-            if (board[cell_x][cell_y] != 0) {  // A move has been made at this position
-                // Move cursor to the drawing position
-                gotoxy(CARO_BOARD_POSITION_X + cell_x * 4 + 2, CARO_BOARD_POSITION_Y + cell_y * 2 + 1);
+    // Duyệt qua danh sách liên kết để phát lại các nước đi
+    while (current_move != NULL) {
+        // Di chuyển con trỏ đến vị trí vẽ
+        gotoxy(CARO_BOARD_POSITION_X + current_move->x * 4 + 2, CARO_BOARD_POSITION_Y + current_move->y * 2 + 1);
 
-                // Check the player and print X or O
-                if (board[cell_x][cell_y] == 'X') {
-                    printf("X");
-                } else if (board[cell_x][cell_y] == 'O') {
-                    printf("O");
-                }
-
-                moves_replayed++;
-                // Pause for a short period between moves
-                Sleep(1000);  // Pause for 1 second
-            }
+        // Xác định người chơi và in X hoặc O
+        if (moves_replayed % 2 == 0) { // Nước đi chẵn: Người chơi 1
+            printf("X");
+        } else { // Nước đi lẻ: Người chơi 2
+            printf("O");
         }
-    }
 
+        // Cập nhật lại mảng `board[][]` với nước đi mới
+        board[current_move->y][current_move->x] = (moves_replayed % 2 == 0) ? 'X' : 'O';
+
+        moves_replayed++;
+        current_move = current_move->next;
+
+        // Tạm dừng giữa các nước đi
+        Sleep(1000);  // Pause for 1 second
+    }
+    printf("\nReplay completed. Press any key to exit...");
+    getchar(); // Đọc ký tự từ bàn phím để dừng chương trình
 }
+

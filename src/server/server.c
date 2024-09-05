@@ -158,17 +158,17 @@ int main(int argc, char *argv[]) {
                                 case QUIT:
                                 handleQuit(tempfd, req, res);
                                 break;
-                                case GET_REPLAYS:
-                          //      handleshowReplay(tempfd, req, res);
+                                case GET_USERNAME_REPLAYS:
+                                handleShowReplay(tempfd, req, res);
+                                break;
+                                case GET_ALL_REPLAYS:
+                                handleShowAllReplayData(tempfd, req, res);
                                 break;
                                 case REPLAY_CONTROL:
                                 handleControlReplay(tempfd, req, res);
                                 break;
                                 case GET_USERS:
                                 handleGetUsers(tempfd, req, res);
-                                break;
-                                case GET_GAMES:
-                                //
                                 break;
                                 case ADD_USER:
                                 handleAdminAddUser(tempfd, req, res);
@@ -181,6 +181,9 @@ int main(int argc, char *argv[]) {
                                 break;
                                 case DELETE_GAME:
                                 //
+                                break;
+                                case GET_REPLAYID_MOVES:
+                                handleWatchReplay(tempfd, req, res);
                                 break;
                                 default:
                                 break;

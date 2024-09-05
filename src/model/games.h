@@ -2,6 +2,9 @@
 #define GAMES_H
 
 #include "protocol.h"
+#include <rpcdce.h>  // for UuidCreate and UUID structure
+
+#pragma comment(lib, "Rpcrt4.lib") // Link the Rpcrt4.lib for UUID functions
 
 extern int MAX_REPLAYS;
 
@@ -61,7 +64,8 @@ int getGamesByUsername(char *username);
 Game *getGames();
 void freeGames();
 void freeMoves(Game *game);
-//void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves)void saveMatchHistoryToIniFile(MatchHistory* history, const char* filename);
+//void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves)
+void saveMatchHistoryToIniFile(MatchHistory* history, const char* filename);
 MatchHistory* loadMatchHistoryFromFile(const char* filename);
 
 #endif

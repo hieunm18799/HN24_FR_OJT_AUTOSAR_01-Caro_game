@@ -264,7 +264,8 @@ void addUser() {
 
     gotoxy(column3 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), newData);
+    if (strcmp(newData, "admin") == 0) strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), newData);
+    else strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), "default");
 
     gotoxy(column4 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
@@ -279,7 +280,6 @@ void addUser() {
     enterData();
     strcpy_s(userDataArray[numUsers-1].draw, sizeof(userDataArray[numUsers].draw), newData);
 
-    strcpy(userDataArray[numUsers-1].role, "default");
     adminAddUser(sockfd, userDataArray[numUsers-1].username, userDataArray[numUsers-1].password, userDataArray[numUsers-1].role, atoi(userDataArray[numUsers-1].win), atoi(userDataArray[numUsers-1].lose), atoi(userDataArray[numUsers-1].draw));
     // update the UI
     frameUserManagement();

@@ -27,7 +27,7 @@
 #define WIN_NOTIFY 15
 
 // Function prototypes
-// void SetConsoleSize(int width, int height);
+void SetConsoleSize(int width, int height);
 void drawPlayCaroBoard();
 int MovePlayCaro();
 // void DisplayCountdown();
@@ -63,13 +63,13 @@ int last_move_y = -1;
 HANDLE hThread;
 
 // Function to set the console size
-// void SetConsoleSize(int width, int height) {
-//     COORD buffer_size = { width, height };
-//     SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
+void SetConsoleSize(int width, int height) {
+    COORD buffer_size = { width, height };
+    SMALL_RECT window_size = { 0, 0, width - 1, height - 1 };
     
-//     SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), buffer_size);
-//     SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &window_size);
-// }
+    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), buffer_size);
+    SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &window_size);
+}
 
 // Function to draw the board and initialize board state
 void drawPlayCaroBoard() {
@@ -87,7 +87,6 @@ void drawPlayCaroBoard() {
     
     system("cls");
 
-    currentScreen = VIEW_PLAY_GAME;
     // Input board size from the user
     // printf("Enter board width (number of cells): ");
     // scanf("%d", &board_width);
@@ -95,12 +94,12 @@ void drawPlayCaroBoard() {
     // scanf("%d", &board_height);
     system("cls");
 
-    // // Initialize the board state
-    // for (int i = 0; i < board_height; i++) {
-    //     for (int j = 0; j < board_width; j++) {
-    //         board[i][j] = ' '; // Empty cell
-    //     }
-    // }
+    // Initialize the board state
+    for (int i = 0; i < board_height; i++) {
+        for (int j = 0; j < board_width; j++) {
+            board[i][j] = ' '; // Empty cell
+        }
+    }
 
     // Calculate console size based on board dimensions
     // console_width = board_width * 4 + 5;
@@ -161,6 +160,7 @@ void drawPlayCaroBoard() {
     //     printf("Error creating thread\n");
     //     return;
     // }
+    currentScreen = VIEW_PLAY_GAME;
 }
 
 // void DisplayCountdown() {
@@ -229,16 +229,11 @@ int MovePlayCaro() {  // Change return type to int
             // Check if the cell is empty
             pick(sockfd, game_id, signed_in_username, cell_x, cell_y);
 
-            // if (board[cell_y][cell_x] == ' ') {
-            //     // Save the move in the board array
-            //     if (Player1_turn) {
-            //         board[cell_y][cell_x] = 'X';
-            //         Player1_turn = 0;
-            //     } else {
-            //         board[cell_y][cell_x] = 'O';
-            //         Player1_turn = 1;
-            //     }
-            // }
+        // if (board[cell_y][cell_x] == ' ') {
+        //     // Save the move in the board array
+        //     board[cell_y][cell_x] = move_sig;
+        // }
+
 
 
                 // Save the last move position
@@ -272,13 +267,79 @@ void addPicked(char *username, unsigned char cell_x, unsigned char cell_y) {
     printf("%c", temp);
     last_move_x = cell_x;
     last_move_y = cell_y;
-    // board[cell_y][cell_x] = temp; // Update the board state
-    // if (CheckWin(cell_x, cell_y)) {
-    //     printMessagePlayCaro("Player %s won!", username);
-    //     End_flag = 0; // End the game
-    //     //Direct to TOP (LOGINED)
-    //     // dashboard();
-    // }
+    board[cell_y][cell_x] = temp; // Update the board state
+    GetConsoleSize(&console_width, &console_height);
+    
+    // Kiểm tra nếu nước đi không nằm trong vùng hiển thị của console
+    if (CARO_BOARD_POSITION_X + cell_x * CELL_WIDTH + 2 >= console_width || CARO_BOARD_POSITION_Y + cell_y * CELL_HEIGHT + 1 >= console_height) {
+
+        // Tăng kích thước console nếu cần thiết
+        if (CARO_BOARD_POSITION_X + cell_x * CELL_WIDTH + 4 > console_width) {
+            console_width = CARO_BOARD_POSITION_X + cell_x * CELL_WIDTH + 10;
+        }
+        if (CARO_BOARD_POSITION_Y + cell_y * CELL_HEIGHT + 2 > console_height) {
+            console_height = CARO_BOARD_POSITION_Y + cell_y * CELL_HEIGHT + 4;
+        }
+
+        // Cập nhật kích thước mới cho console
+        SetConsoleSize(console_width, console_height);
+
+        // Vẽ lại bàn cờ
+        system("cls");
+
+        // Set up game title position
+        gotoxy(CARO_GAME_STRING_POSITION_X, CARO_GAME_STRING_POSITION_Y);
+        printf("CARO GAME");
+
+        // Set up player 1 label position
+        gotoxy(PLAYER_1_POSITION_X, PLAYER_1_POSITION_Y);
+        printf("<X> Player: %s - %d Win - %d Lose", player1_username, player1_win, player1_lose);
+
+        // Set up player 2 label position
+        gotoxy(PLAYER_2_POSITION_X, PLAYER_2_POSITION_Y);
+        printf("<O> Player: %s - %d Win - %d Lose", player2_username, player2_win, player2_lose);
+
+        // Set up board drawing position
+        gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y);
+
+        // Draw the board
+        board_width = (console_width - 5) / 4;
+        board_height = (console_height - 10) / 2;
+        for (int i = 0; i < board_height * 2 + 1; i++) {
+            if (i % 2 == 0) {
+                for (int j = 0; j < board_width * 4 + 1; j++) {
+                    if (j % 4 == 0) printf("+");
+                    else printf("-");
+                }
+            } else {
+                for (int j = 0; j < board_width * 4 + 1; j++) {
+                    if (j % 4 == 0) printf("|");
+                    else printf(" ");
+                }
+            }
+            printf("\n");
+        }
+
+        // Vẽ lại các nút
+        gotoxy(REDO_POSITION_X, REDO_POSITION_Y);
+        printf("[REDO]");
+
+        gotoxy(AGREE_POSITION_X, AGREE_POSITION_Y);
+        printf("[AGREE]");
+
+        gotoxy(QUIT_POSITION_X, QUIT_POSITION_Y);
+        printf("[QUIT]");
+
+        // Vẽ lại các nước đi đã có trên bàn cờ
+        for (int y = 0; y < board_height; y++) {
+            for (int x = 0; x < board_width; x++) {
+                if (board[y][x] != ' ') {
+                    gotoxy(CARO_BOARD_POSITION_X + x * CELL_WIDTH + 2, CARO_BOARD_POSITION_Y + y * CELL_HEIGHT + 1);
+                    printf("%c", board[y][x]);
+                }
+            }
+        }
+    }
 }
 
 void printMessagePlayCaro(const char *format, ...) {
@@ -346,12 +407,54 @@ void RedrawPlayCaroBoard () {
 
     // Kiểm tra nếu kích thước console đã thay đổi
     if(new_console_height != console_height || new_console_width != console_width){
-        // Cập nhật kích thước bảng
-        board_width = (new_console_width - 5) / 4;
-        board_height = (new_console_height - 10) / 2;
 
         // Vẽ lại bàn cờ
-        drawPlayCaroBoard();
+        system("cls");
+
+        // Set up game title position
+        gotoxy(CARO_GAME_STRING_POSITION_X,CARO_GAME_STRING_POSITION_Y);
+        printf("CARO GAME");
+
+        // Set up player 1 label position
+        gotoxy(PLAYER_1_POSITION_X,PLAYER_1_POSITION_Y);
+        printf("<X> Player: %s - %d Win - %d Lose",player1_username, player1_win, player1_lose);
+
+        // Set up player 2 label position
+        gotoxy(PLAYER_2_POSITION_X,PLAYER_2_POSITION_Y);
+        printf("<O> Player: %s - %d Win - %d Lose",player2_username, player2_win, player2_lose);
+
+        // Set up board drawing position
+        gotoxy(CARO_BOARD_POSITION_X,CARO_BOARD_POSITION_Y);
+
+        // Draw the board
+        GetConsoleSize(&console_width, &console_height);
+        board_width = (console_width - 5) / 4;
+        board_height = (console_height - 10) / 2;
+        for (int i = 0; i < board_height * 2 + 1; i++) {
+            if (i % 2 == 0) {
+                for (int j = 0; j < board_width * 4 + 1; j++) {
+                    if (j % 4 == 0) printf("+");
+                    else printf("-");
+                }
+            } else {
+                for (int j = 0; j < board_width * 4 + 1; j++) {
+                    if (j % 4 == 0) printf("|");
+                    else printf(" ");
+                }
+            }
+            printf("\n");
+        }
+
+        // Draw buttons
+        gotoxy(REDO_POSITION_X,REDO_POSITION_Y);
+        printf("[REDO]");
+
+        gotoxy(AGREE_POSITION_X,AGREE_POSITION_Y);
+        printf("[AGREE]");
+
+        gotoxy(QUIT_POSITION_X,QUIT_POSITION_Y); 
+        printf("[QUIT]");
+
 
         // Vẽ lại các nước đi
         for (int cell_y = 0; cell_y < board_height; cell_y++) {
