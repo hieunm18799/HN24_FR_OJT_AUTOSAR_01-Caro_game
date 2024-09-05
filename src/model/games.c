@@ -210,28 +210,58 @@ void addReplay(MatchHistory** head, char* player1_name, char* player2_name, unsi
 
 
 //ham xoa 1 replay
-int deleteReplay(MatchHistory** head, unsigned int game_id) {
-    MatchHistory* current = *head;
-    MatchHistory* prev = NULL;
+int deleteReplayNgoc(unsigned int game_id) {
+    MatchHistory* head = loadMatchHistoryFromFile("Re_play.ini");
+    MatchHistory* prev = NULL, *current = head;
 
     while (current != NULL) {
+        printf("%d\n", current->game_id);
         if (current->game_id == game_id) {
             if (prev == NULL) {
-                *head = current->next;
+                head = head->next;
             }
             else {
                 prev->next = current->next;
             }
-
-            // Giải phóng bộ nhớ của danh sách moves
-            Move* tempMove;
-            while (current->moves != NULL) {
-                tempMove = current->moves;
-                current->moves = current->moves->next;
-                free(tempMove);
+            FILE* file = fopen("Re_play.ini", "w");
+            if (file == NULL) {
+                printf("Can't open file to write.\n");
+                return 0;
             }
+            int gameCount = 1;
+            while (head != NULL) {
+                fprintf(file, "[Game_%d]\n", gameCount);
+                fprintf(file, "Player1=%s\n", head->player1_name);
+                fprintf(file, "Player2=%s\n", head->player2_name);
+                fprintf(file, "GameID=%u\n", head->game_id);
+                fprintf(file, "Result=%s\n", head->result);
+                fprintf(file, "Moves=");
 
-            free(current);
+                // Lưu các nước đi
+                Move* move = head->moves;
+                while (move != NULL) {
+                    fprintf(file, "(%d-%d)", move->x, move->y);
+                    if (move->next != NULL) {
+                        fprintf(file, ",");
+                    }
+                    move = move->next;
+                }
+                fprintf(file, "\n\n");
+
+                current = head;
+                head = head->next;
+                Move* tempMove;
+                while (current->moves != NULL) {
+                    tempMove = current->moves;
+                    current->moves = current->moves->next;
+                    free(tempMove);
+                }
+                free(current);
+
+                gameCount++;
+            }
+            fclose(file);
+            
             return 1;
         }
         prev = current;

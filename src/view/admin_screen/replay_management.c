@@ -130,6 +130,6 @@ void deleteReplay(int replayId) {
         // Step 7: Send updated data to server (if needed)
         // Call function to send data to server here
         // deleteGame(replayId);
-        //adminDeleteReplay(sockfd, replayId);
+        adminDeleteReplay(sockfd, replayId);
     }
 }
