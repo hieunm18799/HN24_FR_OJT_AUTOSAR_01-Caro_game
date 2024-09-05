@@ -24,7 +24,7 @@ void saveMatchHistoryToIniFile(MatchHistory* global_replay, const char* filename
         // Lưu các nước đi
         Move* move = global_replay->moves;
         while (move != NULL) {
-            fprintf(file, "(%d,%d)", move->x, move->y);
+            fprintf(file, "(%d-%d)", move->x, move->y);
             if (move->next != NULL) {
                 fprintf(file, ",");
             }

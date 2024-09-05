@@ -7,15 +7,20 @@ RES_OPCODE watchReplay(unsigned int replay_id, char *moves) {
     MatchHistory *history = loadMatchHistoryFromFile("Re_play.ini");
     
     while (history != NULL) {
-        // Kiểm tra nếu người chơi cụ thể là một trong hai người chơi trong trận đấu
+        // Kiểm tra nếu trận đấu có ID khớp với replay_id
         if (history->game_id == replay_id) {
-            // Sao chép dữ liệu trận đấu vào mảng replayDataArray
+            // Sao chép dữ liệu trận đấu vào mảng moves
             Move *temp = history->moves;
-            strcpy(moves, "\0");
+            moves[0] = '\0';  // Khởi tạo chuỗi rỗng thay vì dùng "\0"
+            
             while (temp != NULL) {
                 char str[50];
-                if (temp->next == NULL) sprintf(str, "%d%c%d%c", temp->x, '-', temp->y, '\0');
-                else sprintf(str, "%d%c%d%c", temp->x, '-', temp->y, '@');
+                // Kiểm tra nếu nước đi là cuối cùng, không thêm ký tự '@'
+                if (temp->next != NULL) {
+                    sprintf(str, "%d-%d@", temp->x, temp->y);                   
+                } else {
+                    sprintf(str, "%d-%d@", temp->x, temp->y);   
+                }
                 strcat(moves, str);
                 temp = temp->next;
             }
@@ -26,3 +31,4 @@ RES_OPCODE watchReplay(unsigned int replay_id, char *moves) {
 
     return GET_REPLAYID_MOVES_FAIL;
 }
+

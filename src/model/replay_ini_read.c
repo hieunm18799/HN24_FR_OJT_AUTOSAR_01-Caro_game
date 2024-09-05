@@ -66,7 +66,7 @@ MatchHistory* loadMatchHistoryFromFile(const char* filename) {
             int x, y;
             char* move = strtok(movesStr, ",");
             while (move != NULL) {
-                sscanf(move, "(%d,%d)", &x, &y);
+                sscanf(move, "(%d-%d)", &x, &y);
                 Move* newMove = (Move*)malloc(sizeof(Move));
                 if (newMove == NULL) {
                     printf("Không thể tạo move mới.\n");
