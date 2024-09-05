@@ -231,7 +231,7 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
             case REDO_FAIL:
                 break;
             case REDO_SUCCESS:
-                if (readPickSuccess(res->data, username, &x, &y)) redoLastPicked(x, y);
+                if (readRedoSuccess(res->data, &x, &y)) redoLastPicked(x, y);
                 break;
             case REDO_ASK_SUCCESS:
                 printMessagePlayCaro(res->message);
