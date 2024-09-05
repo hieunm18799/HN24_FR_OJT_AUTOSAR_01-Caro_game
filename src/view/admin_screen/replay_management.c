@@ -73,7 +73,11 @@ void displayReplayData() {
 
 // Function to handle row clicks and determine the selected row and ID
 void handleRowClick() {
+<<<<<<< HEAD
     if (MousePos.Y >= TABLE_START_Y && MousePos.Y < TABLE_START_Y + (MAX_REPLAYS * ROW_HEIGHT)) {
+=======
+    if (MousePos.Y >= TABLE_START_Y && MousePos.Y <= (TABLE_START_Y + 3 + (MAX_REPLAYS * ROW_HEIGHT))) {
+>>>>>>> a3db7f738c6ee34cfaf388cf3bbc650bd11ee34d
         int clickedRow = (MousePos.Y - TABLE_START_Y) / ROW_HEIGHT - 1;
         if (clickedRow < MAX_REPLAYS) {
             replayId = replayDataArray[clickedRow].id;

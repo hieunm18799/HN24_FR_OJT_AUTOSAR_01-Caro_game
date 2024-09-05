@@ -33,7 +33,11 @@ void drawReplayInfoUI() {
     gotoxy(1, TABLE_START_Y + 1);
     printf("|   id   |   player1   |   player2   |   result   |");
 
+<<<<<<< HEAD
     gotoxy(TABLE_START_X, TABLE_START_Y + 2);
+=======
+    gotoxy(TABLE_START_X, TABLE_START_Y+2);
+>>>>>>> a3db7f738c6ee34cfaf388cf3bbc650bd11ee34d
     printf("----------------------------------------------------");
 
     // Draw table rows

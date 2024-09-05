@@ -21,7 +21,7 @@ typedef struct Move {
 } Move;
 
 typedef struct Game {
-    unsigned int id;
+    int id;
     char player1_name[MAX_LENGTH], player2_name[MAX_LENGTH], result[MAX_LENGTH];
     unsigned char board_width, board_height;
     GAME_STATUS status;
@@ -37,7 +37,7 @@ extern Game *global_games;
 typedef struct MatchHistory {
     char player1_name[MAX_LENGTH];
     char player2_name[MAX_LENGTH];
-    unsigned int game_id;
+    int game_id;
     char result[MAX_LENGTH];
     Move *moves;
     struct MatchHistory *next;
@@ -64,7 +64,7 @@ int getGamesByUsername(char *username);
 Game *getGames();
 void freeGames();
 void freeMoves(Game *game);
-//void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves)
+void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves);
 void saveMatchHistoryToIniFile(MatchHistory* history, const char* filename);
 MatchHistory* loadMatchHistoryFromFile(const char* filename);
 
