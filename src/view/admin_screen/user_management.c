@@ -264,19 +264,8 @@ void addUser() {
 
     gotoxy(column3 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
-<<<<<<< HEAD
-    //role: "admin", "user" or "default"
-    if ((strcmp(newData, "admin") == 0) || (strcmp(newData, "user") == 0)) {
-        strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers-1].role), newData);
-    }
-    else {
-        strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers-1].role), "default");
-    }
-    
-=======
     if (strcmp(newData, "admin") == 0) strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), newData);
     else strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), "default");
->>>>>>> ec88112bc19cf776dd3522fced3de4eb16e7abb5
 
     gotoxy(column4 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
