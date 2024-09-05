@@ -91,14 +91,11 @@ RES_OPCODE quitLogic(char* username, unsigned int game_id, SOCKET* oppfd) {
     *oppfd = findUserByName(oppUserName)->clientfd;
 
     changeGame(curGame, "\0", "\0", oppUserName, END);
-    // increasedWins(findUserByName(oppUserName));
-    // increasedLosses(findUserByName(username));
-    // writeUsersIni();
+    increasedWins(findUserByName(oppUserName));
+    increasedLosses(findUserByName(username));
+    writeUsersIni();
 
     MatchHistory* global_replay = NULL; // Đây là con trỏ kiểu MatchHistory*
-
-    printf("Player 1: %s\n", curGame->player1_name);
-    printf("Player 2: %s\n", curGame->player2_name);
 
     // Thêm trận đấu vào danh sách
     addReplay(&global_replay, curGame->player1_name, curGame->player2_name, curGame->id, curGame->result, curGame->moves);
