@@ -32,19 +32,22 @@ void openAdminScreen() {
 	else if (MousePos.Y == 10 && MousePos.X >= 10 && MousePos.X <= 33) {
 		//chuyen sang man hinh replay
 		// Cấp phát bộ nhớ động cho mảng replayDataArray
-		replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
-		if (replayDataArray == NULL) {
-			printf("Không thể cấp phát bộ nhớ\n");
-			return;
-		}
-		// Data fetching from server
-		fetchReplayInfoData();
+		// replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
+		// if (replayDataArray == NULL) {
+		// 	printf("Không thể cấp phát bộ nhớ\n");
+		// 	return;
+		// }
+		// // Data fetching from server
+		// fetchReplayInfoData();
 
-		// Draw the initial UI
-		drawReplayManagementUI();
+		// // Draw the initial UI
+		// drawReplayManagementUI();
 
-		// Display the fetched data
-		displayReplayData();
+		// // Display the fetched data
+		// displayReplayData();
+		MAX_REPLAYS = 0;
+		replayDataArray = NULL;
+		getAllReplayData(sockfd);
 	}
 	else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
 		dashboard();

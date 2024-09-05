@@ -10,15 +10,13 @@
 RES_OPCODE fetchReplayDataForPlayer(ReplayData *replayDataArray, int *numReplays, const char *playerName) {
     int index = 0;
     MatchHistory *history = loadMatchHistoryFromFile("Re_play.ini");
-    printf("ok\n");
-    printf("%p\n", history);
     
-    while (history != NULL && index < MAX_REPLAYS) {
+    while (history != NULL) {
         // Kiểm tra nếu người chơi cụ thể là một trong hai người chơi trong trận đấu
+        printf("%d\n", history->game_id);
         if (strcmp(history->player1_name, playerName) == 0 || strcmp(history->player2_name, playerName) == 0) {
             // Sao chép dữ liệu trận đấu vào mảng replayDataArray
             replayDataArray[index].id = history->game_id;
-            printf("%d\n", replayDataArray[index].id);
 
             strncpy(replayDataArray[index].player1, history->player1_name, sizeof(replayDataArray[index].player1) - 1);
             replayDataArray[index].player1[sizeof(replayDataArray[index].player1) - 1] = '\0';
@@ -36,13 +34,14 @@ RES_OPCODE fetchReplayDataForPlayer(ReplayData *replayDataArray, int *numReplays
 
     *numReplays = index;
 
-    return GET_REPLAYS_SUCCESS;
+    return GET_USERNAME_REPLAYS_SUCCESS;
 }
 
-RES_OPCODE fetchReplayDataForAllPlayers(MatchHistory *history, ReplayData *replayDataArray, int *numReplays) {
+RES_OPCODE fetchReplayDataForAllPlayers(ReplayData *replayDataArray, int *numReplays) {
     int index = 0;
+    MatchHistory *history = loadMatchHistoryFromFile("Re_play.ini");
 
-    while (history != NULL && index < MAX_REPLAYS) {
+    while (history != NULL) {
         // Sao chép dữ liệu trận đấu vào mảng replayDataArray
         replayDataArray[index].id = history->game_id;
 
@@ -61,5 +60,5 @@ RES_OPCODE fetchReplayDataForAllPlayers(MatchHistory *history, ReplayData *repla
 
     *numReplays = index;
 
-    return GET_REPLAYS_SUCCESS;
+    return GET_ALL_REPLAYS_SUCCESS;
 }

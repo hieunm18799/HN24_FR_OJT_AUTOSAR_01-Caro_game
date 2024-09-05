@@ -66,7 +66,7 @@ void displayReplayData() {
         gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-9s", replayDataArray[i].player2);
 
-        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
+        gotoxy(RESULT_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-7s", replayDataArray[i].result);
     }
 }
@@ -126,5 +126,6 @@ void deleteReplay(int replayId) {
         // Step 7: Send updated data to server (if needed)
         // Call function to send data to server here
         // deleteGame(replayId);
+        //adminDeleteReplay(sockfd, replayId);
     }
 }
