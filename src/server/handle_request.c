@@ -185,10 +185,9 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
 
 bool handleControlReplay(int clientfd, Request* req, Response* res)
 {
-    MatchHistory* head = NULL;
-    // Tiến hành xóa replay
-    unsigned int game_id;
-    res->code = fetchDeleteReplay(&head, &game_id);
+    printf("Message: %s\n", req->message);
+    int gameId = atoi(req->message); 
+    res->code = fetchDeleteReplay(gameId);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;

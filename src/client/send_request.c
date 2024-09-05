@@ -18,7 +18,7 @@ void createAdminEditUserRequest(char *opcode, Request *req, char *username, char
 void createAdminDeleteUserRequest(char *opcode, Request *req, char *username);
 void createGetUsernameReplaysDataRequest(char *opcode, Request *req, char *username);
 void createWatchReplay(char *opcode, Request *req, unsigned int replay_id);
-void createAdminDeleteReplayRequest(char* opcode, Request* req, unsigned int replay_id, char* username);
+void createAdminDeleteReplayRequest(char* opcode, Request* req, int replay_id);
 void createGetAllReplayDataRequest(char *opcode, Request *req);
 
 int signin(int clientfd, char* username, char* password);
@@ -36,7 +36,7 @@ int adminEditUser(int clientfd, char *username, char *password, char *role, unsi
 int adminDeleteUser(int clientfd, char *username);
 int getUsernameReplaysData(int clientfd, char *username);
 int watchReplay(int clientfd, unsigned int replay_id);
-int adminDeleteReplay(int clientfd, unsigned int replay_id, char* username);
+int adminDeleteReplay(int clientfd, int replay_id);
 int getAllReplayData(int clientfd);
 
 int signup(int clientfd, char* username, char* password, char* confirm_pass) {
@@ -187,9 +187,9 @@ int watchReplay(int clientfd, unsigned int replay_id) {
     free(req);
     return 1;
 }
-int adminDeleteReplay(int clientfd, unsigned int game_id, char* username) {
+int adminDeleteReplay(int clientfd, int game_id) {
     Request* req = createRequest();
-    createAdminDeleteReplayRequest(STRING_DELETE_REPLAY, req, game_id, username);
+    createAdminDeleteReplayRequest(STRING_DELETE_REPLAY, req, game_id);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -321,9 +321,9 @@ void createWatchReplay(char *opcode, Request *req, unsigned int replay_id) {
     snprintf(sendbuff, sizeof(sendbuff), "%s %d%c", opcode, replay_id, '\0');
     setOpcodeRequest(req, sendbuff);
 }
-void createAdminDeleteReplayRequest(char* opcode, Request* req, unsigned int replay_id, char* username) {
+void createAdminDeleteReplayRequest(char* opcode, Request* req, int replay_id) {
     char sendbuff[MAX_LENGTH];
-    snprintf(sendbuff, sizeof(sendbuff), "%s %s%c%d%c", opcode, username, '@', replay_id, '\0');
+    snprintf(sendbuff, sizeof(sendbuff), "%s %d%c", opcode, replay_id, '\0');
     setOpcodeRequest(req, sendbuff);
 }
 

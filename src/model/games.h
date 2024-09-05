@@ -67,5 +67,6 @@ void freeMoves(Game *game);
 void addReplay(MatchHistory** head, const char* player1_name, const char* player2_name, unsigned int game_id, const char* result, Move* moves);
 void saveMatchHistoryToIniFile(MatchHistory* history, const char* filename);
 MatchHistory* loadMatchHistoryFromFile(const char* filename);
+int deleteReplayNgoc(unsigned int game_id);
 
 #endif
