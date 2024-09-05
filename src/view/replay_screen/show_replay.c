@@ -17,6 +17,8 @@
 #define PLAYER2_COLUMN 28
 #define RESULT_COLUMN 43
 
+static int clickedRow;
+
 void drawReplayInfoUI() {
     system("cls");
 
@@ -25,59 +27,60 @@ void drawReplayInfoUI() {
     printf("Replay Information");
 
     // Draw table header
-    gotoxy(TABLE_START_X, TABLE_START_Y);
+    gotoxy(TABLE_START_X, TABLE_START_Y - 2);
     printf("----------------------------------------------------");
 
-    gotoxy(1, TABLE_START_Y + 1);
+    gotoxy(1, TABLE_START_Y - 1);
     printf("|   id   |   player1   |   player2   |   result   |");
 
-    gotoxy(TABLE_START_X, TABLE_START_Y + 2);
+    gotoxy(TABLE_START_X, TABLE_START_Y);
     printf("----------------------------------------------------");
 
     // Draw table rows
     for (int i = 0; i < MAX_REPLAYS; i++) {
-        gotoxy(1, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT);
+        gotoxy(1, TABLE_START_Y + 1 + i * TABLE_ROW_HEIGHT);
         printf("|        |             |             |            |");
     }
 
     // Draw table footer
-    gotoxy(TABLE_START_X, TABLE_START_Y + 3 + MAX_REPLAYS * TABLE_ROW_HEIGHT);
+    gotoxy(TABLE_START_X, TABLE_START_Y + 1 + MAX_REPLAYS * TABLE_ROW_HEIGHT);
     printf("----------------------------------------------------");
 
     // Draw buttons
-    gotoxy(BUTTON_WATCH_X, TABLE_START_Y + 3 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET);
+    gotoxy(BUTTON_WATCH_X, TABLE_START_Y + 1 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET);
     printf("[ Watch ]");
 
-    gotoxy(BUTTON_BACK_X, TABLE_START_Y + 3 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET);
+    gotoxy(BUTTON_BACK_X, TABLE_START_Y + 1 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET);
     printf("[ Back ]");
 
     // Set the current screen
     currentScreen = VIEW_REPLAY_LIST;
 }
 
-void displayReplay(ReplayData replayDataArray[], int numReplays) {
-    for (int i = 0; i < numReplays && i < MAX_REPLAYS; i++) {
-        gotoxy(3, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // id column
-        printf("%-6d", replayDataArray[i].id);
+void displayReplayInfoData() {
+    for (int i = 0; i < MAX_REPLAYS; i++) {
+        gotoxy(ID_COLUMN, TABLE_START_Y + 1 + i * TABLE_ROW_HEIGHT);
+        printf("%02d", replayDataArray[i].id);
 
-        gotoxy(11, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // player1 column
-        printf("%-11s", replayDataArray[i].player1);
+        gotoxy(PLAYER1_COLUMN, TABLE_START_Y + 1 + i * TABLE_ROW_HEIGHT);
+        printf("%-9s", replayDataArray[i].player1);
 
-        gotoxy(25, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // player2 column
-        printf("%-11s", replayDataArray[i].player2);
+        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 1 + i * TABLE_ROW_HEIGHT);
+        printf("%-9s", replayDataArray[i].player2);
 
-        gotoxy(39, TABLE_START_Y + 3 + i * TABLE_ROW_HEIGHT); // result column
-        printf("%-10s", replayDataArray[i].result);
+        gotoxy(RESULT_COLUMN, TABLE_START_Y + 1 + i * TABLE_ROW_HEIGHT);
+        printf("%-7s", replayDataArray[i].result);
     }
 }
 
 
 void handleOnScreenReplayInfo() {
-    int buttonY = TABLE_START_Y + 3 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET;
+    int buttonY = TABLE_START_Y + 1 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET;
 
     // Handle "Watch" button click
     if (MousePos.Y == buttonY && MousePos.X >= BUTTON_WATCH_X && MousePos.X <= (BUTTON_WATCH_X + BUTTON_WIDTH)) {
-        DrawReplayBoard();
+        watchReplay(sockfd, replayId);
+        // DrawReplayBoard();
         // Implement returning replayId to control
     }
     // Handle "Back" button click
@@ -100,6 +103,11 @@ void handleOnScreenReplayInfo() {
 
 void addReplayData(unsigned int game_id, char *player1, char *player2, char *result) {
     if (player1 == NULL || player2 == NULL || result == NULL) return;
+    replayDataArray = (ReplayData*)realloc(replayDataArray, sizeof(ReplayData) * (MAX_REPLAYS + 1));
+    if (replayDataArray == NULL) {
+        printf("Không thể cấp phát bộ nhớ\n");
+        return;
+    }
     replayDataArray[MAX_REPLAYS].id = game_id;
     strcpy(replayDataArray[MAX_REPLAYS].player1, player1);
     strcpy(replayDataArray[MAX_REPLAYS].player2, player2);

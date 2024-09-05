@@ -66,7 +66,7 @@ void displayReplayData() {
         gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-9s", replayDataArray[i].player2);
 
-        gotoxy(PLAYER2_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
+        gotoxy(RESULT_COLUMN, TABLE_START_Y + 3 + i * ROW_HEIGHT);
         printf("%-7s", replayDataArray[i].result);
     }
 }
