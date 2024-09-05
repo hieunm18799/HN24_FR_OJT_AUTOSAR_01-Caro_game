@@ -87,7 +87,6 @@ void drawPlayCaroBoard() {
     
     system("cls");
 
-    currentScreen = VIEW_PLAY_GAME;
     // Input board size from the user
     // printf("Enter board width (number of cells): ");
     // scanf("%d", &board_width);
@@ -161,6 +160,7 @@ void drawPlayCaroBoard() {
     //     printf("Error creating thread\n");
     //     return;
     // }
+    currentScreen = VIEW_PLAY_GAME;
 }
 
 // void DisplayCountdown() {
