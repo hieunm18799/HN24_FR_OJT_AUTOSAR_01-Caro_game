@@ -13,8 +13,8 @@
 #define START_POSITION_Y (board_height * 2 + 7)
 #define STOP_POSITION_X 20
 #define STOP_POSITION_Y (board_height * 2 + 7)
-#define BACK_POSITION_X 5
-#define BACK_POSITION_Y (board_height * 2 + 9) 
+#define BACK_POSITION_X 25
+#define BACK_POSITION_Y 2
 #define board_width 10
 #define board_height 10
 #define BUTTON_WIDTH 10
@@ -35,10 +35,10 @@ void DrawReplayBoard() {
     printf("CARO GAME");
 
     gotoxy(PLAYER_1_POSITION_X, PLAYER_1_POSITION_Y);
-    printf("<X> Player: %s - %d Win %d - Lose",player1_username, player1_win, player1_lose);
+    printf("<X> Player 1");
 
     gotoxy(PLAYER_2_POSITION_X, PLAYER_2_POSITION_Y);
-    printf("<O> Player: %s - %d Win %d - Lose",player2_username, player2_win, player2_lose);
+    printf("<O> Player 2");
 
     gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y);
     for (int i = 0; i < board_height * 2 + 1; i++) {
@@ -56,16 +56,42 @@ void DrawReplayBoard() {
         printf("\n");
     }
 
-    gotoxy(START_POSITION_X, START_POSITION_Y);
-    printf("[ START ]");
-
-    gotoxy(STOP_POSITION_X, STOP_POSITION_Y);
-    printf("[ STOP ]");
-
     gotoxy(BACK_POSITION_X, BACK_POSITION_Y);
     printf("[ BACK ]");
 }
 
+
+// Function to draw the game board with dynamic dimensions
+void DrawDynamicReplayBoard(int width, int height) {
+    system("cls");  // Clear the console screen
+
+    gotoxy(CARO_GAME_STRING_POSITION_X, CARO_GAME_STRING_POSITION_Y);
+    printf("CARO GAME");
+
+    gotoxy(PLAYER_1_POSITION_X, PLAYER_1_POSITION_Y);
+    printf("<X> Player 1");
+
+    gotoxy(PLAYER_2_POSITION_X, PLAYER_2_POSITION_Y);
+    printf("<O> Player 2");
+
+    gotoxy(CARO_BOARD_POSITION_X, CARO_BOARD_POSITION_Y);
+    for (int i = 0; i < height * 2 + 1; i++) {
+        if (i % 2 == 0) {
+            for (int j = 0; j < width * 4 + 1; j++) {
+                if (j % 4 == 0) printf("+");
+                else printf("-");
+            }
+        } else {
+            for (int j = 0; j < width * 4 + 1; j++) {
+                if (j % 4 == 0) printf("|");
+                else printf(" ");
+            }
+        }
+        printf("\n");
+    }
+    gotoxy(BACK_POSITION_X, BACK_POSITION_Y);
+    printf("[ BACK ]");
+}
 
 void handleClickOnWatchReplayScreen() {
 
@@ -76,22 +102,10 @@ void handleClickOnWatchReplayScreen() {
             replay_active = 0; // Dừng replay
 
         } else if (MousePos.Y == BACK_POSITION_Y && MousePos.X >= BACK_POSITION_X && MousePos.X <= (BACK_POSITION_X + BUTTON_WIDTH)) {
-         // Trở về màn hình SHOW REPLAY
-        //  replayDataArray = (ReplayData *)malloc(MAX_REPLAYS * sizeof(ReplayData));
-		// if (replayDataArray == NULL) {
-		// 	printf("Không thể cấp phát bộ nhớ\n");
-		// 	return;
-		// }
-
-        // // handleReplayButton(move_data[14], move_data_count);
-		// // Data fetching from server
-        // fetchReplayInfoData();
-        
-		// // Draw the initial UI
-		// drawReplayInfoUI();
-
-		// // Display the fetched data
-		// displayReplayInfoData();
+            drawReplayInfoUI();
+            MAX_REPLAYS = 0;
+            replayDataArray = NULL;
+            getUsernameReplaysData(sockfd, signed_in_username);
         }
     // }
 }
@@ -102,13 +116,40 @@ void ReplayGameInfo(const char *move_data) {
         return;
     }
 
-    int moves_replayed = 0;
+    int max_x = board_width;  // Initial maximum width of the board
+    int max_y = board_height; // Initial maximum height of the board
     char moves_copy[MAXIMUM_SIZE];
     strncpy(moves_copy, move_data, MAXIMUM_SIZE - 1);
     moves_copy[MAXIMUM_SIZE - 1] = '\0';  // Ensure the string is null-terminated
 
-    // Parse the move data using strtok
+    // First pass: Check for the maximum x and y coordinates in the move data
     char *move = strtok(moves_copy, "@");
+    while (move != NULL) {
+        int x, y;
+        if (sscanf(move, "%d-%d", &x, &y) == 2) {
+            // Update the maximum dimensions based on the move coordinates
+            if (x >= max_x) max_x = x + 1;
+            if (y >= max_y) max_y = y + 1;
+        }
+        move = strtok(NULL, "@");
+    }
+
+    // Calculate the required console dimensions
+    int console_width = max_x * 4 + 10;  // Board width + extra space
+    int console_height = max_y * 2 + 15; // Board height + UI space
+
+    // Set the console size dynamically
+    SetConsoleSize(console_width, console_height);    
+
+    // Re-draw the board based on the largest detected move coordinates
+    DrawDynamicReplayBoard(max_x, max_y);
+
+    // Second pass: Replay the moves
+    strncpy(moves_copy, move_data, MAXIMUM_SIZE - 1);  // Reset the move data string
+    moves_copy[MAXIMUM_SIZE - 1] = '\0';  // Ensure null termination
+    move = strtok(moves_copy, "@");  // Restart parsing the moves
+    int moves_replayed = 0;
+
     while (move != NULL) {
         int x, y;
         if (sscanf(move, "%d-%d", &x, &y) == 2) {
@@ -134,6 +175,7 @@ void ReplayGameInfo(const char *move_data) {
         Sleep(1000);  // 1-second delay between moves
     }
 
-    printf("\nReplay completed. Press any key to exit...");
-    getchar();  // Wait for user input to end the replay
+    gotoxy(PLAYER_2_POSITION_X + 20, PLAYER_2_POSITION_Y);
+    printf("Replay completed.");
 }
+
