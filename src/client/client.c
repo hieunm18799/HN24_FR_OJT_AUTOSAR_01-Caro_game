@@ -283,6 +283,13 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
                 unsigned int game_id;
                 if (readGetReplaysContinue(res->data, &game_id, player1, player2, result)) addReplayData(game_id, player1, player2, result);
                 break;
+            case GET_ALL_REPLAYS_CONTINUE:
+                if (readGetReplaysContinue(res->data, &game_id, player1, player2, result)) addReplayData(game_id, player1, player2, result);
+                break;
+            case GET_ALL_REPLAYS_SUCCESS:
+                drawReplayManagementUI();
+                displayReplayData();
+                break;
             case GET_REPLAYID_MOVES_SUCCESS:
                 // DrawReplayBoard();
                 printf("%s\n", res->data);

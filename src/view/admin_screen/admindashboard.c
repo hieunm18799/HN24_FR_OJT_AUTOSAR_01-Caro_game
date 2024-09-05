@@ -45,6 +45,9 @@ void openAdminScreen() {
 
 		// // Display the fetched data
 		// displayReplayData();
+		MAX_REPLAYS = 0;
+		replayDataArray = NULL;
+		getAllReplayData(sockfd);
 	}
 	else if (MousePos.Y == 14 && MousePos.X >= 10 && MousePos.X <= 33) {
 		dashboard();

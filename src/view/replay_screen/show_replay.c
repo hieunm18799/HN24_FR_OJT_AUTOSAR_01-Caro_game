@@ -73,6 +73,7 @@ void displayReplayInfoData() {
     }
 }
 
+
 void handleOnScreenReplayInfo() {
     int buttonY = TABLE_START_Y + 1 + MAX_REPLAYS * TABLE_ROW_HEIGHT + BUTTON_Y_OFFSET;
 

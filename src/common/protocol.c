@@ -204,6 +204,8 @@ void setOpcodeRequest(Request *req, char *input) {
         req->code = GET_USERNAME_REPLAYS;
     else if (strcmp(code, STRING_ADD_USER) == 0)
         req->code = ADD_USER;
+    else if (strcmp(code, STRING_GET_ALL_REPLAYS) == 0)
+        req->code = GET_ALL_REPLAYS;
     else if (strcmp(code, STRING_ADD_USER) == 0)
         req->code = ADD_USER;
     else if (strcmp(code, STRING_EDIT_USER) == 0)
