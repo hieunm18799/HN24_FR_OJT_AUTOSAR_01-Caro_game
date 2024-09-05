@@ -256,29 +256,40 @@ void addUser() {
     //enter and save the data
     gotoxy(column1+1, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers-1].username, sizeof(userDataArray[numUsers].username), newData);
+    strcpy_s(userDataArray[numUsers-1].username, sizeof(userDataArray[numUsers-1].username), newData);
 
     gotoxy(column2 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers-1].password, sizeof(userDataArray[numUsers].password), newData);
+    strcpy_s(userDataArray[numUsers-1].password, sizeof(userDataArray[numUsers-1].password), newData);
 
     gotoxy(column3 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
+<<<<<<< HEAD
+    //role: "admin", "user" or "default"
+    if ((strcmp(newData, "admin") == 0) || (strcmp(newData, "user") == 0)) {
+        strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers-1].role), newData);
+    }
+    else {
+        strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers-1].role), "default");
+    }
+    
+=======
     if (strcmp(newData, "admin") == 0) strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), newData);
     else strcpy_s(userDataArray[numUsers - 1].role, sizeof(userDataArray[numUsers].role), "default");
+>>>>>>> ec88112bc19cf776dd3522fced3de4eb16e7abb5
 
     gotoxy(column4 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers-1].win, sizeof(userDataArray[numUsers].win), newData);
+    strcpy_s(userDataArray[numUsers-1].win, sizeof(userDataArray[numUsers-1].win), newData);
 
 
     gotoxy(column5 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers-1].lose, sizeof(userDataArray[numUsers].lose), newData);
+    strcpy_s(userDataArray[numUsers-1].lose, sizeof(userDataArray[numUsers-1].lose), newData);
 
     gotoxy(column6 + 1, tableStartY + numUsers * rowHeight - 2);
     enterData();
-    strcpy_s(userDataArray[numUsers-1].draw, sizeof(userDataArray[numUsers].draw), newData);
+    strcpy_s(userDataArray[numUsers-1].draw, sizeof(userDataArray[numUsers-1].draw), newData);
 
     adminAddUser(sockfd, userDataArray[numUsers-1].username, userDataArray[numUsers-1].password, userDataArray[numUsers-1].role, atoi(userDataArray[numUsers-1].win), atoi(userDataArray[numUsers-1].lose), atoi(userDataArray[numUsers-1].draw));
     // update the UI
@@ -308,14 +319,18 @@ void editUser() {
         enterData();
         strcpy_s(userDataArray[foundIndex].password, sizeof(userDataArray[foundIndex].password), newData);
     }
-    else if (selectedColumn == 5) {//role
+    else if (selectedColumn == 5) {//role: "admin", "user" or "default"
         userDataArray[foundIndex].role[0] = '\0';
         frameUserManagement();
         displayUserData();
         gotoxy(column3+1, tableStartY + foundIndex * rowHeight);
         enterData();
-        strcpy_s(userDataArray[foundIndex].role, sizeof(userDataArray[foundIndex].role), newData);
-        printf("%d", selectedColumn);
+        if ((strcmp(newData, "admin") == 0) || (strcmp(newData, "user") == 0)) {
+            strcpy_s(userDataArray[foundIndex].role, sizeof(userDataArray[foundIndex].role), newData);
+        }
+        else {
+            strcpy_s(userDataArray[foundIndex].role, sizeof(userDataArray[foundIndex].role), "default");
+        }
     }
     else if (selectedColumn == 1) {
         userDataArray[foundIndex].win[0] = '\0';
@@ -324,7 +339,6 @@ void editUser() {
         gotoxy(column4+1, tableStartY + foundIndex * rowHeight);
         enterData();
         strcpy_s(userDataArray[foundIndex].win, sizeof(userDataArray[foundIndex].win), newData);
-        printf("%d", selectedColumn);
     }
     else if (selectedColumn == 2) {
         userDataArray[foundIndex].lose[0] = '\0';
