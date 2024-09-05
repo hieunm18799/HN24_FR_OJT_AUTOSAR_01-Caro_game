@@ -43,7 +43,7 @@ unsigned int addGame(char *player1_name, char *player2_name) {
     // Create the UUID
     if (UuidCreate(&uuid) == RPC_S_OK) {
         // Use the first 4 bytes of the UUID as an unsigned int
-        newGame->id = *(unsigned int*)(&uuid);
+        newGame->id = *(unsigned short int*)(&uuid);
         printf("Generated unsigned int UUID: %u\n", newGame->id);
     }
     strcpy(newGame->player1_name, player1_name);
@@ -185,6 +185,16 @@ void addReplay(MatchHistory** head, char* player1_name, char* player2_name, unsi
     if (newNode == NULL) {
         printf("Không thể cấp phát bộ nhớ cho trận đấu mới.\n");
         return;
+    }
+
+
+    UUID uuid;
+
+    // Create the UUID
+    if (UuidCreate(&uuid) == RPC_S_OK) {
+        // Use the first 4 bytes of the UUID as an unsigned int
+        newNode->game_id = *(unsigned short int*)(&uuid);
+        printf("Generated unsigned int UUID: %u\n", newNode->game_id);
     }
 
     strcpy(newNode->player1_name, player1_name);
