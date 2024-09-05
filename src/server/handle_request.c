@@ -183,25 +183,14 @@ bool handleQuit(int clientfd, Request *req, Response *res) {
     return true;
 }
 
-bool handleControlReplay(int clientfd, Request *req, Response *res)
+bool handleControlReplay(int clientfd, Request* req, Response* res)
 {
-    char username[MAX_LENGTH];
-    strcpy(username, strtok(req->message, "@"));
-    MatchHistory *history = NULL;
-    ReplayData *replayDataArray = NULL;
-    int numReplays = 0;
+    MatchHistory* head = NULL;
     // Tiến hành xóa replay
-    unsigned int game_id = atoi(strtok(NULL, "\0"));
-    res->code = fetchDeleteReplay(&history, game_id);
-    // Kiểm tra kết quả của việc xóa replay
-    if (res->code == DELETE_REPLAY_SUCCESS) {
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-    } else {
-        res->code = DELETE_REPLAY_NOT_FOUND;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-    }
+    unsigned int game_id;
+    res->code = fetchDeleteReplay(&head, &game_id);
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
     return true;
 }
 
@@ -301,6 +290,25 @@ bool handleWatchReplay(int clientfd, Request *req, Response *res) {
     setMessageResponse(res);
     strcpy(res->data, moves);
     printf("%s\n", res->data);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
+
+bool handleShowAllReplayData(int clientfd, Request *req, Response *res)
+{
+    ReplayData replayDataArray[100];
+    int numReplays = 0;
+    res->code = fetchReplayDataForAllPlayers(replayDataArray, &numReplays);
+
+    res->code = GET_ALL_REPLAYS_CONTINUE;
+    setMessageResponse(res);
+    for (int index = 0; index < numReplays; index++) {
+        snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c%s%c%s%c%s%c", replayDataArray[index].id , '@', replayDataArray[index].player1, '@', replayDataArray[index].player2, '@', replayDataArray[index].result, '\0');
+        sendRes(clientfd, res, sizeof(Response), 0);
+    }
+
+    res->code = GET_ALL_REPLAYS_SUCCESS;
+    setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
 }

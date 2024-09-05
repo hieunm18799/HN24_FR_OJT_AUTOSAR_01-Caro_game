@@ -37,8 +37,9 @@ RES_OPCODE fetchReplayDataForPlayer(ReplayData *replayDataArray, int *numReplays
     return GET_USERNAME_REPLAYS_SUCCESS;
 }
 
-RES_OPCODE fetchReplayDataForAllPlayers(MatchHistory *history, ReplayData *replayDataArray, int *numReplays) {
+RES_OPCODE fetchReplayDataForAllPlayers(ReplayData *replayDataArray, int *numReplays) {
     int index = 0;
+    MatchHistory *history = loadMatchHistoryFromFile("Re_play.ini");
 
     while (history != NULL) {
         // Sao chép dữ liệu trận đấu vào mảng replayDataArray
@@ -59,5 +60,5 @@ RES_OPCODE fetchReplayDataForAllPlayers(MatchHistory *history, ReplayData *repla
 
     *numReplays = index;
 
-    return GET_USERNAME_REPLAYS_SUCCESS;
+    return GET_ALL_REPLAYS_SUCCESS;
 }

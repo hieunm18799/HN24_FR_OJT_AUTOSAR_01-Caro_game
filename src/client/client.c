@@ -231,7 +231,7 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
             case REDO_FAIL:
                 break;
             case REDO_SUCCESS:
-                if (readPickSuccess(res->data, username, &x, &y)) redoLastPicked(x, y);
+                if (readRedoSuccess(res->data, &x, &y)) redoLastPicked(x, y);
                 break;
             case REDO_ASK_SUCCESS:
                 printMessagePlayCaro(res->message);
@@ -283,9 +283,17 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
                 unsigned int game_id;
                 if (readGetReplaysContinue(res->data, &game_id, player1, player2, result)) addReplayData(game_id, player1, player2, result);
                 break;
+            case GET_ALL_REPLAYS_CONTINUE:
+                if (readGetReplaysContinue(res->data, &game_id, player1, player2, result)) addReplayData(game_id, player1, player2, result);
+                break;
+            case GET_ALL_REPLAYS_SUCCESS:
+                drawReplayManagementUI();
+                displayReplayData();
+                break;
             case GET_REPLAYID_MOVES_SUCCESS:
-                // DrawReplayBoard();
+                DrawReplayBoard();
                 printf("%s\n", res->data);
+                ReplayGameInfo(res->data);
                 break;
             case GET_REPLAYID_MOVES_FAIL:
                 break;

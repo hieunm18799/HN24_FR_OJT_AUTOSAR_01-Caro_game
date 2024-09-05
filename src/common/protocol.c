@@ -206,12 +206,16 @@ void setOpcodeRequest(Request *req, char *input) {
         req->code = ADD_USER;
     else if (strcmp(code, STRING_ADD_USER) == 0)
         req->code = ADD_USER;
+    else if (strcmp(code, STRING_GET_ALL_REPLAYS) == 0)
+        req->code = GET_ALL_REPLAYS;
     else if (strcmp(code, STRING_EDIT_USER) == 0)
         req->code = EDIT_USER;
     else if (strcmp(code, STRING_DELETE_USER) == 0)
         req->code = DELETE_USER;
     else if (strcmp(code, STRING_DELETE_GAME) == 0)
         req->code = DELETE_GAME;
+    else if (strcmp(code, STRING_DELETE_REPLAY) == 0)
+        req->code = DELETE_REPLAY;
     else if (strcmp(code, STRING_GET_REPLAYID_MOVES) == 0)
         req->code = GET_REPLAYID_MOVES;
     else{
