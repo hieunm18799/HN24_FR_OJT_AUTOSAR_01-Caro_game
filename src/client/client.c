@@ -292,7 +292,6 @@ DWORD WINAPI ReceiveHandler(LPVOID lpParameter) {
                 break;
             case GET_REPLAYID_MOVES_SUCCESS:
                 DrawReplayBoard();
-                printf("%s\n", res->data);
                 ReplayGameInfo(res->data);
                 break;
             case GET_REPLAYID_MOVES_FAIL:
