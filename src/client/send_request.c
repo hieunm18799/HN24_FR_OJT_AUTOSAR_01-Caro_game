@@ -19,7 +19,7 @@ void createAdminDeleteUserRequest(char *opcode, Request *req, char *username);
 void createGetUsernameReplaysDataRequest(char *opcode, Request *req, char *username);
 void createWatchReplay(char *opcode, Request *req, unsigned int replay_id);
 void createAdminDeleteReplayRequest(char* opcode, Request* req, unsigned int replay_id, char* username);
-
+void createGetAllReplayDataRequest(char *opcode, Request *req);
 
 int signin(int clientfd, char* username, char* password);
 int signup(int clientfd, char* username, char* password, char* confirm_pass);
@@ -37,7 +37,7 @@ int adminDeleteUser(int clientfd, char *username);
 int getUsernameReplaysData(int clientfd, char *username);
 int watchReplay(int clientfd, unsigned int replay_id);
 int adminDeleteReplay(int clientfd, unsigned int replay_id, char* username);
-
+int getAllReplayData(int clientfd);
 
 int signup(int clientfd, char* username, char* password, char* confirm_pass) {
     Request *req = createRequest();
@@ -197,6 +197,16 @@ int adminDeleteReplay(int clientfd, unsigned int game_id, char* username) {
     return 1;
 }
 
+int getAllReplayData(int clientfd){
+    Request *req = createRequest();
+    createGetAllReplayDataRequest(STRING_GET_ALL_REPLAYS, req);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    free(req);
+    return 1;
+}
+
 ////////////////////////////////////////////////////////
 /*Create request*/
 ////////////////////////////////////////////////////////
@@ -314,5 +324,11 @@ void createWatchReplay(char *opcode, Request *req, unsigned int replay_id) {
 void createAdminDeleteReplayRequest(char* opcode, Request* req, unsigned int replay_id, char* username) {
     char sendbuff[MAX_LENGTH];
     snprintf(sendbuff, sizeof(sendbuff), "%s %s%c%d%c", opcode, username, '@', replay_id, '\0');
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createGetAllReplayDataRequest(char *opcode, Request *req){
+    char sendbuff[MAX_LENGTH];
+    snprintf(sendbuff, sizeof(sendbuff), "%s Admin get all data replays!%c", opcode, '\0');
     setOpcodeRequest(req, sendbuff);
 }

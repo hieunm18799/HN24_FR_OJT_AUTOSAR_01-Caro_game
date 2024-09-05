@@ -293,3 +293,22 @@ bool handleWatchReplay(int clientfd, Request *req, Response *res) {
     sendRes(clientfd, res, sizeof(Response), 0);
     return true;
 }
+
+bool handleShowAllReplayData(int clientfd, Request *req, Response *res)
+{
+    ReplayData replayDataArray[100];
+    int numReplays = 0;
+    res->code = fetchReplayDataForAllPlayers(replayDataArray, &numReplays);
+
+    res->code = GET_ALL_REPLAYS_CONTINUE;
+    setMessageResponse(res);
+    for (int index = 0; index < numReplays; index++) {
+        snprintf(res->data, sizeof(char) * MAX_LENGTH, "%d%c%s%c%s%c%s%c", replayDataArray[index].id , '@', replayDataArray[index].player1, '@', replayDataArray[index].player2, '@', replayDataArray[index].result, '\0');
+        sendRes(clientfd, res, sizeof(Response), 0);
+    }
+
+    res->code = GET_ALL_REPLAYS_SUCCESS;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+    return true;
+}
